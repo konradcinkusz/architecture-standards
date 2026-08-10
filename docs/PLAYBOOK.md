@@ -73,7 +73,7 @@ branch and push when done; don't open a PR unless I ask.
   copilot-scope/AureliusPromptus instead of reading them.
 - **Optional — `copilot-scope` / `AureliusPromptus`:** attach only for MODERNIZE mode,
   when you want the agent to copy real code (e.g. `ServiceDefaults`, the `fly.toml`
-  pattern), the way it was done for the FSE.CORE plan. For REVIEW alone they aren't
+  pattern), the way it was done for the FSE plan. For REVIEW alone they aren't
   needed — the whole pattern is already described in the blueprint.
 
 ## Choosing REVIEW vs MODERNIZE
