@@ -96,8 +96,11 @@ verify it" entry point at all.
 
 A RECOVER plan therefore begins with **archaeology, not design**:
 
-1. Dump the live database schema — with no migrations, the running database is the only
-   truth, and it will disagree with the ORM model.
+1. Reconstruct the schema from whatever survives. If a database is live, dump it — with
+   no migrations it is the only truth and it will disagree with the ORM model. If the
+   infrastructure is gone, the ORM's own model snapshots are usually a complete schema
+   description that nobody thinks to look at: FSE's `PrimatesContextModelSnapshot.cs`
+   turned out to specify 42 entities, 23 of which exist in no surviving source file.
 2. Attempt package/source recovery (decompile what is still on the feed), time-boxed.
 3. Extract the API contract from whatever clients still run — a working frontend is an
    executable specification of every endpoint that matters.
@@ -106,8 +109,10 @@ A RECOVER plan therefore begins with **archaeology, not design**:
 5. Only then fix the target design.
 
 It also front-loads `00-SECURITY-IMMEDIATE.md`: a repo that has been unbuildable for
-years has almost certainly been accumulating credentials in source, and rotation has an
-active clock on it that no other work does.
+years has almost certainly been accumulating credentials in source. Triage them by
+whether they outlive the infrastructure — credentials to deleted cloud resources are
+inert, but third-party accounts (payment, email, SMS) keep billing and keep working long
+after the servers are gone, and those are the ones with a clock on them.
 
 ## Output conventions
 
