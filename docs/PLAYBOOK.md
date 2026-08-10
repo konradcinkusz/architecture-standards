@@ -15,9 +15,9 @@ Two systems already broadly follow it, with known deviations catalogued:
 - `copilot-scope/docs/architecture/ARCHITECTURE_REVIEW.md`
 - `AureliusPromptus/docs/architecture/ARCHITECTURE_REVIEW.md`
 
-FSE.CORE predates the architecture and is being modernized toward it; its
-`docs/architecture/` directory (`01-CURRENT-STATE.md` … `05-DECISIONS.md`) is the worked
-example of what a MODERNIZE session produces.
+FSE predates the architecture and is being modernized toward it; its
+`docs/architecture/` directory (`00-SECURITY-IMMEDIATE.md` … `07-STANDARDS-FEEDBACK.md`)
+is the worked example of what a RECOVER session produces.
 
 ## Session prompt template
 
@@ -48,13 +48,18 @@ Mode (pick one, or let the agent recommend one after a first look):
                SAME style as the two examples above: strengths, findings
                ranked by severity with concrete failure scenarios, an
                alignment-actions table. No migration plan.
-  MODERNIZE  — repo predates the architecture and needs restructuring.
-               Produce the 5-document set in docs/architecture/, mirroring
-               FSE.CORE's: 01-CURRENT-STATE, 02-GAP-ANALYSIS,
+  MODERNIZE  — repo predates the architecture and needs restructuring,
+               but still builds. Produce the 5-document set in
+               docs/architecture/: 01-CURRENT-STATE, 02-GAP-ANALYSIS,
                03-TARGET-ARCHITECTURE, 04-MIGRATION-PLAN, 05-DECISIONS —
                each measured against the 00-REFERENCE-ARCHITECTURE.md
                checklist, not against copilot-scope/AureliusPromptus
                directly.
+  RECOVER    — repo does not build, or its dependencies/source are partly
+               lost. Produce the MODERNIZE set plus 00-SECURITY-IMMEDIATE
+               and a dedicated dependency analysis, and open the plan with
+               an archaeology phase before any target design is fixed.
+               FSE is the worked example.
 ──────────────────────────────────────────────────────────────────────────
 
 Docs only for now, no code changes, unless I say otherwise. Commit to a new
@@ -76,8 +81,33 @@ branch and push when done; don't open a PR unless I ask.
 | Signal | Mode |
 |---|---|
 | Repo already uses Aspire, a ServiceDefaults-equivalent, per-service DB | REVIEW |
-| Repo predates the architecture (custom DI container, monolith host, no shared kernel) | MODERNIZE |
+| Repo predates the architecture (custom DI container, monolith host, no shared kernel) but builds | MODERNIZE |
+| `dotnet restore`/`build` fails · TFM out of support · packages referenced with no reachable feed · production credentials in source | **RECOVER** |
 | Unsure | Let the agent look first and recommend one |
+
+### Why RECOVER is its own mode
+
+MODERNIZE assumes a running system to move incrementally — the strangler-fig
+assumption. When the repo does not build, that assumption fails silently and the
+resulting plan reads well but cannot be started. FSE made this concrete: no
+`nuget.config` for six private packages, 19 namespaces imported from source that exists
+nowhere, and two out-of-support target frameworks. There was no "make a small change and
+verify it" entry point at all.
+
+A RECOVER plan therefore begins with **archaeology, not design**:
+
+1. Dump the live database schema — with no migrations, the running database is the only
+   truth, and it will disagree with the ORM model.
+2. Attempt package/source recovery (decompile what is still on the feed), time-boxed.
+3. Extract the API contract from whatever clients still run — a working frontend is an
+   executable specification of every endpoint that matters.
+4. Resolve every "is this still deployed?" question **before** anything depends on the
+   answer.
+5. Only then fix the target design.
+
+It also front-loads `00-SECURITY-IMMEDIATE.md`: a repo that has been unbuildable for
+years has almost certainly been accumulating credentials in source, and rotation has an
+active clock on it that no other work does.
 
 ## Output conventions
 

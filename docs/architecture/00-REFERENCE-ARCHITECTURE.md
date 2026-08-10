@@ -109,9 +109,28 @@ builder.Services.AddDatabaseContext<MyDbContext>(builder.Configuration, "mydb", 
 ```
 
 **What must not go in the shared kernel:** business entities, business rules, pricing
-tables, user-facing strings, repository implementations for a specific aggregate. Those
-belong to the service that owns them. The AureliusPromptus kernel is ~700 lines across
-six files; that is roughly the ceiling.
+tables, user-facing strings, seed datasets, repository implementations for a specific
+aggregate. Those belong to the service that owns them.
+
+**The ceiling is mechanical, not advisory.** ~800 lines, checked in CI, plus an
+architecture test asserting the kernel references no entity type. Stating the limit in
+prose has already failed twice in this estate:
+
+- FSE's `CORE` began as shared plumbing and ended as a shared *domain* — advert
+  entities, points pricing, Polish category names, `CloudinaryDotNet` and `Ninject` in
+  its innermost project. Every consumer was coupled to every change; version skew
+  across consumers followed; the source was eventually lost while the packages stayed
+  in production.
+  > `FSE/docs/architecture/02-DEPENDENCY-ANALYSIS.md`
+- `AureliusPromptus.ServiceDefaults` was 700 lines across six files when this document
+  was written. It is now 1,365 across nine, of which 607 are `KonradPromptSeeds.cs` —
+  50 seeded domain prompts — plus `SeedingConstants.cs` and a `QuotaConsumptionService`.
+  The stated reason is *"single source of truth consumed by both PromptTemplatesService
+  and MarketplaceService"*, which is the same reasoning that produced FSE's CORE.
+
+**Where two services need the same domain data**, it goes in a `Contracts` project or is
+owned by one service and served over HTTP. It does not go in the kernel, however
+identical the two copies need to be.
 
 **Corollary (P2a):** *every* service calls `AddServiceDefaults()`. AureliusPromptus's
 AuthService does not, and it is precisely the service with no traces when its quota
@@ -159,6 +178,12 @@ repo's review §3.1). Do not copy that.
 **Migrations run as a hosted service, after Kestrel starts**, so health probes answer
 while schema work is in flight and a slow migration is not read as a failed deploy.
 
+**Migrations describe schema; reference data is seeded separately** — by a versioned
+script or a seeding service run once per environment. `HasData` in `OnModelCreating`
+embeds the whole dataset in every migration snapshot: FSE seeds its category taxonomy
+this way and pays for it with six Designer files of ~18,000 lines each, which means its
+schema changes ship unreviewed because the diffs are unreadable.
+
 > `AureliusPromptus.AuthService/Extensions/MigrationBackgroundService.cs`
 
 ### P5 — Configuration through the environment; secrets through the platform
@@ -179,6 +204,23 @@ No secret is ever a literal in a `csproj`, an `appsettings.json` committed to th
 source comment, or an XML doc comment. Optional secrets are read with
 `Configuration["Parameters:x"] ?? ""` so a missing value degrades a feature rather than
 failing startup (P8).
+
+**This is enforced by a scanner, not by review.** A secret scanner runs as a pre-commit
+hook and as a CI job; a repository without one is assumed to contain credentials until
+proven otherwise. Every clause of the sentence above is violated somewhere in FSE —
+production SQL credentials as C# property literals *and* in committed `appsettings.json`,
+a SendGrid key, an Azure Storage account key, and a Twilio SID and auth token written
+into XML doc comments as documentation of each property's value.
+> `FSE/docs/architecture/00-SECURITY-IMMEDIATE.md`
+
+**Exactly one service holds a signing key.** Every other service validates tokens against
+that service's published JWKS endpoint and holds no key material of its own. A symmetric
+secret shared between services means verify = mint: any holder can forge a token for any
+user. This is the estate's most reliably recurring mistake — AureliusPromptus distributes
+one HS256 secret to six services and two frontends, and FSE arrived at the same shape
+independently, with `Primates.API` shipping a `GenerateTokens` implementation it never
+calls and has no business owning. Asymmetric signing makes the mistake structurally
+impossible rather than merely discouraged.
 
 ### P6 — One container per service, built from a multi-stage Dockerfile
 
@@ -245,7 +287,10 @@ Rules that carry:
   > `flyio/postgres.fly.toml`
 - **Scale to zero by default, except on a synchronous path.** `min_machines_running = 0`
   is the default; a service another service calls in-request needs `1`, or the caller's
-  timeout must cover a cold boot (AureliusPromptus review §3.4).
+  timeout must cover a cold boot (AureliusPromptus review §3.4). The diagnostic is
+  mechanical: for every in-request call A→B, either B pins a machine or A's timeout
+  exceeds B's cold start — and in practice the second option is written down far more
+  often than it is actually configured, so prefer the first.
 - **Volumes are declared with an initial size and a `PGDATA` subdirectory**, because
   initdb requires an empty data directory and the volume root carries `lost+found`.
 - **Cost is reasoned about explicitly**, per service, in the repository.
@@ -399,7 +444,7 @@ AureliusPromptus's side here without qualification.
 | Registry | GHCR, public images | `registry.fly.io`, private | **GHCR** — P12, portable and free at this scale |
 | Schema management | not applicable (jsonb snapshot) | `MigrateAsync` on SQL Server, `EnsureCreated` on Postgres | **`MigrateAsync` always** — P4 |
 | API auth | one shared ingest key, read API open | JWT everywhere | **JWT / OIDC** — P5 |
-| Token signing | n/a | HS256 shared secret | **Asymmetric + JWKS** — neither repo does this yet |
+| Token signing | n/a | HS256 shared secret | **Asymmetric + JWKS** — P5; required, not aspirational. FSE implements it first (ADR-007) |
 | Endpoint style | minimal API | MVC controllers | either, per service; keep transport thin — P9 |
 | Program.cs size | ~280 lines (Collector, justified — it *is* the API) | 130 (Agentic) vs 399 (Auth) | **Agentic's shape** — P9 |
 | Docs language | mixed EN/PL | mixed EN/PL | **English for anything needed to build or deploy** |
@@ -416,18 +461,37 @@ Any service claiming to follow this blueprint answers yes to all of these:
 - [ ] Emits OTLP traces, metrics and logs
 - [ ] Owns its database; no other service connects to it
 - [ ] Schema applied by `MigrateAsync` from provider-specific migrations, in a hosted service
-- [ ] All configuration from environment variables; no secret in source, config file, or comment
+- [ ] All configuration from environment variables; no secret in source, config file, or comment, with a secret scanner in CI
+- [ ] Exactly one service holds a signing key; all others validate against its JWKS endpoint
+- [ ] The shared kernel holds no entity, DTO, enum, seed dataset, pricing constant or user-facing string — asserted by an architecture test and a CI size check
 - [ ] Every optional integration has a working no-op or fallback
 - [ ] Multi-stage Dockerfile; runtime image major version equals the TFM major version; listens on `:8080`; non-root where the base image allows
 - [ ] One `fly.toml`; `min_machines_running = 1` if another service calls it in-request
 - [ ] Outbound `HttpClient`s carry the standard resilience handler with explicit timeouts
 - [ ] `Program.cs` is a manifest; wiring is in `ServiceCollectionExtensions`
 - [ ] Extension points are interfaces registered in DI, not base classes
-- [ ] Has a test project; the logic-bearing layer is covered
+- [ ] Has a test project; the logic-bearing layer is covered. When behaviour is being *migrated*, its characterisation tests are written before the move, not after
 - [ ] Built by the tag-driven workflow with path-based change detection
 - [ ] Its architectural decisions are recorded in `docs/`
 
 ---
+
+## 3a. Known open deviations
+
+A principle whose named violation stays open indefinitely reads as optional. These are
+the deviations this document calls out that are **still unfixed**, as of 2026-08-10.
+
+| Repo | Deviation | Principle | Since |
+|---|---|---|---|
+| copilot-scope | All 8 projects target `net8.0`; both Dockerfiles are `sdk:10.0` / `aspnet:10.0`. Roll-forward does not cross a major, so these images fail at startup. | P6 | flagged in its ARCHITECTURE_REVIEW; survived a Dependabot bump |
+| copilot-scope | No ServiceDefaults, no self-instrumentation — in an observability product | P2, P15 | as reviewed |
+| AureliusPromptus | `EnsureCreated` on PostgreSQL; live Fly schema frozen at first-boot state while migrations accumulate in code | P4 | as reviewed |
+| AureliusPromptus | `ServiceDefaults` carries 607 lines of seeded domain prompts plus a `QuotaConsumptionService` — 1,365 lines total against a stated ~700 ceiling | P2 | grew after the review |
+| AureliusPromptus | One HS256 secret distributed to six services and two frontends | P5 | as reviewed |
+| AureliusPromptus | `AuthService` does not call `AddServiceDefaults()` | P2a | as reviewed |
+
+When one is fixed, delete the row. When a new one is accepted deliberately, add it with
+the reasoning — an acknowledged deviation is a decision; an unacknowledged one is drift.
 
 ## 4. Deliberate non-goals of this blueprint
 
@@ -442,8 +506,12 @@ Stated so that scope creep has something to fail against:
   small enough that this is honest rather than naive. Introducing a broker is an explicit,
   recorded decision, not a default.
 - **No custom DI container.** `Microsoft.Extensions.DependencyInjection` only. This
-  matters most for FSE.CORE, which is built on Ninject — see that repo's
-  `docs/architecture/02-GAP-ANALYSIS.md` G-2.
+  matters most for FSE, which is built on Ninject — see
+  `FSE/docs/architecture/03-GAP-ANALYSIS.md` G-3. The asymmetry is the argument: the
+  removal cost is small (Ninject touches 7 files there, and each `Bind<I>().To<C>()`
+  maps one-to-one onto `services.AddTransient<I, C>()`), while the blocking cost is
+  total — every capability in this blueprint is an extension method over
+  `IServiceCollection`, and none of them are reachable from inside a Ninject module.
 - **No abstraction over the platform.** `fly.toml` is written directly. A hand-rolled
   deployment abstraction over Fly, ACA and Kubernetes costs more than it saves at this
   size.
@@ -452,9 +520,18 @@ Stated so that scope creep has something to fail against:
 
 ## Provenance
 
-This document was originally authored inside `FSE.CORE/docs/architecture/` while that
-repo was itself being modernized against it — a workable but logically awkward home for
+This document was originally authored inside `FSE.CORE/docs/architecture/` (now the
+`FSE` monorepo) while that repo was itself being modernized against it — a workable but logically awkward home for
 a constitution meant to govern the whole estate. It now lives here, in
 `architecture-standards`, a neutral repo with no modernization work of its own, so every
 other repo's review or modernization session can point at one stable path instead of a
 moving target.
+
+**Amendment history.**
+
+- *2026-08-10* — amendments driven by the FSE monorepo analysis
+  (`FSE/docs/architecture/07-STANDARDS-FEEDBACK.md`): P2's kernel ceiling made
+  mechanical after a second occurrence of domain-in-kernel drift; P4 given a rule on
+  seed data; P5 extended with scanner enforcement and promoted asymmetric signing from
+  aspiration to requirement; P7 given the cold-start diagnostic; three checklist items
+  added; §3a "Known open deviations" introduced; RECOVER mode added to the playbook.
