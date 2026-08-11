@@ -1,11 +1,15 @@
 # architecture-standards
 
 Canonical architecture reference for the estate (copilot-scope, AureliusPromptus,
-FSE.CORE, and future repos).
+primates, FSE.CORE, and future repos).
 
 - [`docs/architecture/00-REFERENCE-ARCHITECTURE.md`](docs/architecture/00-REFERENCE-ARCHITECTURE.md)
   — the 15-principle blueprint, each principle backed by a working example, plus a
   compliance checklist. This is the constitution: read it, don't re-derive it.
+- [`docs/guides/FLY-IO-DEPLOYMENT.md`](docs/guides/FLY-IO-DEPLOYMENT.md) — the
+  operational guide behind principles P7 and P12: how to make any app deployable to
+  Fly.io, every `fly.toml` field annotated, the tag-driven pipeline, and the failure
+  modes each rule exists to prevent.
 - [`docs/PLAYBOOK.md`](docs/PLAYBOOK.md) — how to start a Claude Code session against
   any repo to either review it against this architecture or modernize it toward it,
   including the ready-to-use session prompt template and which repos to attach.
