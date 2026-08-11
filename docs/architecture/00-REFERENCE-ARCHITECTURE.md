@@ -296,6 +296,11 @@ Rules that carry:
 - **Cost is reasoned about explicitly**, per service, in the repository.
   > `flyio/INFRASTRUCTURE-ANALYSIS.md`
 
+The operational detail this principle implies — what a service must satisfy to be
+deployable at all, every `fly.toml` field annotated, the four app shapes, private
+networking, volumes, and the failure modes each rule exists to prevent — is in
+[`docs/guides/FLY-IO-DEPLOYMENT.md`](../guides/FLY-IO-DEPLOYMENT.md).
+
 ### P8 — Optional dependencies degrade; they do not fail startup
 
 Every external integration is registered conditionally on its configuration being
@@ -389,6 +394,16 @@ Additional rules both repositories arrived at:
 - **Build once, deploy many.** Where a repository targets two platforms, the same image
   digest should reach both. AureliusPromptus builds twice and documents the cost of it;
   do not repeat that.
+- **A service whose Fly app does not exist is always selected**, whatever the diff says.
+  This is the rule that lets a cold estate come up from a single tag with no manual
+  `fly launch`, and it is the one most often missing.
+- **Deploy gates accept `success || skipped` from upstream jobs.** Without it, change
+  detection and ordering fight each other and any unchanged service in the middle of the
+  chain blocks everything behind it.
+
+The workflow in full — change detection against the previous tag, the build matrix,
+per-job gating, bootstrapping, and the scale/destroy companions — is in
+[`docs/guides/FLY-IO-DEPLOYMENT.md`](../guides/FLY-IO-DEPLOYMENT.md) §10–§12.
 
 ### P13 — Test at the layer that has the logic
 

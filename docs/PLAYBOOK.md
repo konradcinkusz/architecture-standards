@@ -71,6 +71,11 @@ branch and push when done; don't open a PR unless I ask.
 - **Always:** the target repo + `architecture-standards` (this repo) — without the
   latter the agent has no reference point and will re-derive principles from
   copilot-scope/AureliusPromptus instead of reading them.
+- **When the session will touch deployment:** point the agent at
+  [`docs/guides/FLY-IO-DEPLOYMENT.md`](guides/FLY-IO-DEPLOYMENT.md) as well. A
+  MODERNIZE or RECOVER plan that reaches "deploy it" needs the operational rules, not
+  just principles P7 and P12 — and without them the agent will reconstruct a `fly.toml`
+  from an existing repo and inherit whatever is wrong with it.
 - **Optional — `copilot-scope` / `AureliusPromptus`:** attach only for MODERNIZE mode,
   when you want the agent to copy real code (e.g. `ServiceDefaults`, the `fly.toml`
   pattern), the way it was done for the FSE plan. For REVIEW alone they aren't
