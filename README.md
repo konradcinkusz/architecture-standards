@@ -10,6 +10,12 @@ primates, FSE.CORE, and future repos).
   operational guide behind principles P7 and P12: how to make any app deployable to
   Fly.io, every `fly.toml` field annotated, the tag-driven pipeline, and the failure
   modes each rule exists to prevent.
+- [`docs/guides/AZURE-AI-FOUNDRY-AGENTS.md`](docs/guides/AZURE-AI-FOUNDRY-AGENTS.md) —
+  the operational guide for provisioning Azure AI Foundry agents: the Hub/Project/
+  Connection Bicep pattern, per-service managed identity and RBAC (including the
+  two-role gotcha that costs the most time), the agent-as-code + startup-bootstrapper
+  pattern, `azd` provisioning, GitHub Actions → Azure authentication, and what's cheap
+  versus expensive to re-provision per PR environment.
 - [`docs/PLAYBOOK.md`](docs/PLAYBOOK.md) — how to start a Claude Code session against
   any repo to either review it against this architecture or modernize it toward it,
   including the ready-to-use session prompt template and which repos to attach.
