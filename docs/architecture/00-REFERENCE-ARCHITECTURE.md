@@ -319,6 +319,14 @@ present, with a working fallback:
 > `AureliusPromptus.AgenticService/Infrastructure/ServiceCollectionExtensions.cs`;
 > `copilot-scope/src/CopilotScope.Collector/Program.cs`
 
+How the Azure AI Foundry side of that table gets provisioned in the first place — the
+Hub/Project/Connection Bicep, per-service managed identity and RBAC, and the
+agent-as-code + startup-bootstrapper pattern that turns a JSON file into a running
+agent — is in
+[`docs/guides/AZURE-AI-FOUNDRY-AGENTS.md`](../guides/AZURE-AI-FOUNDRY-AGENTS.md). That
+guide is orthogonal to P7: the agents it describes can back a service running on Fly.io
+or on Azure Container Apps.
+
 The test: `git clone && dotnet run` with zero cloud credentials must produce a working
 system with reduced features.
 
@@ -550,3 +558,7 @@ moving target.
   seed data; P5 extended with scanner enforcement and promoted asymmetric signing from
   aspiration to requirement; P7 given the cold-start diagnostic; three checklist items
   added; §3a "Known open deviations" introduced; RECOVER mode added to the playbook.
+- *2026-08-12* — P8 cross-referenced to the new
+  [`docs/guides/AZURE-AI-FOUNDRY-AGENTS.md`](../guides/AZURE-AI-FOUNDRY-AGENTS.md) guide,
+  covering how the Azure AI Foundry integration it lists as an optional dependency is
+  actually provisioned (Bicep Hub/Project/Connection, per-service RBAC, agent-as-code).
