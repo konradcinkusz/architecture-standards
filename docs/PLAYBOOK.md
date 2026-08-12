@@ -76,10 +76,18 @@ branch and push when done; don't open a PR unless I ask.
   MODERNIZE or RECOVER plan that reaches "deploy it" needs the operational rules, not
   just principles P7 and P12 — and without them the agent will reconstruct a `fly.toml`
   from an existing repo and inherit whatever is wrong with it.
+- **When the session will touch Azure AI Foundry agents:** point the agent at
+  [`docs/guides/AZURE-AI-FOUNDRY-AGENTS.md`](guides/AZURE-AI-FOUNDRY-AGENTS.md) as
+  well. The Hub/Project/Connection Bicep shape, the RBAC gotcha where "Azure AI
+  Developer" alone is not enough, and the agent-as-code + startup-bootstrapper pattern
+  are not covered by the 15 principles and will not be reconstructed correctly from
+  first principles — the guide exists precisely because getting this wrong looks like a
+  healthy deploy until the first agent-creation call.
 - **Optional — `copilot-scope` / `AureliusPromptus`:** attach only for MODERNIZE mode,
   when you want the agent to copy real code (e.g. `ServiceDefaults`, the `fly.toml`
-  pattern), the way it was done for the FSE plan. For REVIEW alone they aren't
-  needed — the whole pattern is already described in the blueprint.
+  pattern, or the Azure AI Foundry Bicep modules), the way it was done for the FSE
+  plan. For REVIEW alone they aren't needed — the whole pattern is already described in
+  the blueprint and guides.
 
 ## Choosing REVIEW vs MODERNIZE
 
