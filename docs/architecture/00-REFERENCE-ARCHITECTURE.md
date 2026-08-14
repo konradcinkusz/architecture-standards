@@ -132,6 +132,12 @@ prose has already failed twice in this estate:
 owned by one service and served over HTTP. It does not go in the kernel, however
 identical the two copies need to be.
 
+The catalogue of plumbing a kernel *should* offer beyond the table above — rate
+limiting, validation filters, hardened cross-service HTTP, the migration completion
+signal — is in [`docs/guides/SERVICE-API-PATTERNS.md`](../guides/SERVICE-API-PATTERNS.md);
+its frontend counterpart (the shared web-kit workspace package) is in
+[`docs/guides/FRONTEND-BFF.md`](../guides/FRONTEND-BFF.md) §7.
+
 **Corollary (P2a):** *every* service calls `AddServiceDefaults()`. AureliusPromptus's
 AuthService does not, and it is precisely the service with no traces when its quota
 endpoint misbehaves. A service that opts out of the kernel opts out of being operable.
@@ -222,6 +228,12 @@ independently, with `Primates.API` shipping a `GenerateTokens` implementation it
 calls and has no business owning. Asymmetric signing makes the mistake structurally
 impossible rather than merely discouraged.
 
+Everything the identity service must get right *beyond* signing — refresh rotation,
+OAuth callbacks and account linking, enumeration safety, deletion, versioned consent —
+is in [`docs/guides/IDENTITY-AND-ACCOUNTS.md`](../guides/IDENTITY-AND-ACCOUNTS.md).
+Where the system charges money, the billing counterpart is
+[`docs/guides/PAYMENTS-AND-MONETIZATION.md`](../guides/PAYMENTS-AND-MONETIZATION.md).
+
 ### P6 — One container per service, built from a multi-stage Dockerfile
 
 The contract every service container satisfies:
@@ -299,7 +311,9 @@ Rules that carry:
 The operational detail this principle implies — what a service must satisfy to be
 deployable at all, every `fly.toml` field annotated, the four app shapes, private
 networking, volumes, and the failure modes each rule exists to prevent — is in
-[`docs/guides/FLY-IO-DEPLOYMENT.md`](../guides/FLY-IO-DEPLOYMENT.md).
+[`docs/guides/FLY-IO-DEPLOYMENT.md`](../guides/FLY-IO-DEPLOYMENT.md). A fifth,
+customer-hosted shape — the vendor pushes images, the customer runs everything — is in
+[`docs/guides/PRIVATE-CLOUD-DELIVERY.md`](../guides/PRIVATE-CLOUD-DELIVERY.md).
 
 ### P8 — Optional dependencies degrade; they do not fail startup
 
@@ -395,7 +409,9 @@ push tag v*
 Additional rules both repositories arrived at:
 
 - **PR environments** are provisioned and destroyed by workflow
-  (`flyio-pr-env-deploy.yml` / `-destroy.yml`).
+  (`flyio-pr-env-deploy.yml` / `-destroy.yml`) — the full pattern, including the
+  shared-vs-per-PR classification and teardown discipline, is in
+  [`docs/guides/PR-PREVIEW-ENVIRONMENTS.md`](../guides/PR-PREVIEW-ENVIRONMENTS.md).
 - **One-shot jobs run as ephemeral machines** that run and exit — Fly `machine run`, not a
   long-lived app. AureliusPromptus's agent provisioner is the worked example, including
   flushing stdout and sleeping before exit so the log forwarder captures output.
@@ -427,6 +443,10 @@ per-job gating, bootstrapping, and the scale/destroy companions — is in
 
 The InMemory fallback in `AddDatabaseContext` exists partly so tests need no container.
 
+The strategy above this principle — what each tier is for, when each runs, the per-test
+quality bar, and what only a human can test — is in
+[`docs/guides/TESTING-STRATEGY.md`](../guides/TESTING-STRATEGY.md).
+
 **A green E2E run is only evidence if the suite is verified and wired to CI — neither is
 optional.** A 2026-08-14 audit of `AureliusPromptus.AcceptanceTests` (447 Playwright
 tests) found roughly 45% were placeholders or guarded-away from ever asserting anything,
@@ -452,6 +472,12 @@ Both repositories keep decision records next to the code, and both are better fo
 
 A document that says "we considered X and rejected it because Y" is worth more than a
 document that lists commands.
+
+**Corollary: a stale README is a review finding.** Documentation that describes a
+system that no longer exists is worse than none. The hygiene that keeps a repository's
+claims true — and everything else a repo carries before its first feature — is in
+[`docs/guides/REPO-BASELINE.md`](../guides/REPO-BASELINE.md); the review method that
+audits it is in [`docs/guides/SECURITY-REVIEW.md`](../guides/SECURITY-REVIEW.md).
 
 ### P15 — Observability is a build-time decision, not an afterthought
 
@@ -523,6 +549,9 @@ the deviations this document calls out that are **still unfixed**, as of 2026-08
 | AureliusPromptus | `ServiceDefaults` carries 607 lines of seeded domain prompts plus a `QuotaConsumptionService` — 1,365 lines total against a stated ~700 ceiling | P2 | grew after the review |
 | AureliusPromptus | One HS256 secret distributed to six services and two frontends | P5 | as reviewed |
 | AureliusPromptus | `AuthService` does not call `AddServiceDefaults()` | P2a | as reviewed |
+| AureliusPromptus | Live credentials committed in a tracked helper script (`scripts/test-provision-agents.ps1`); no secret scanner in pre-commit or CI. Rotate first, then clean history | P5 | found 2026-08-14 |
+| AureliusPromptus | Rate-limiting policy copy-pasted into four services; the kernel has no `AddStandardRateLimiting()` | P2 | found 2026-08-14 |
+| AureliusPromptus | Committed Playwright config references a renamed app directory and a nonexistent test dir; no CI context executes E2E | P13 | found 2026-08-14 |
 | AureliusPromptus | E2E suite (447 tests, separate `AcceptanceTests` repo) never wired to CI; ~45% of tests are placeholders or guard-then-bail with no reachable assertion; duplicated across a retired frontend (`Web.NextJs`) and its live replacement (`Portal`) with no record of which was current | P13 | found in the 2026-08-14 audit that produced `docs/guides/E2E-ACCEPTANCE-TESTING.md`; remediation plan lives in the AcceptanceTests repo's own `E2E_Tests_analysis.md` |
 
 When one is fixed, delete the row. When a new one is accepted deliberately, add it with
@@ -578,3 +607,11 @@ moving target.
   [`docs/guides/E2E-ACCEPTANCE-TESTING.md`](../guides/E2E-ACCEPTANCE-TESTING.md) guide,
   extracted from a full audit of AureliusPromptus's 447-test E2E suite; §3a gained a row
   for the suite's CI-wiring and assertion-discipline gaps found by that audit.
+- *2026-08-14* — eleven operational guides added, extracted from a full sweep of
+  AureliusPromptus (docs, code, infra/CI) for generic knowledge the standards lacked:
+  `PAYMENTS-AND-MONETIZATION`, `IDENTITY-AND-ACCOUNTS`, `SERVICE-API-PATTERNS`,
+  `FRONTEND-BFF`, `BROWSER-EXTENSIONS`, `TESTING-STRATEGY`, `SECURITY-REVIEW`,
+  `REPO-BASELINE`, `PR-PREVIEW-ENVIRONMENTS`, `PRIVATE-CLOUD-DELIVERY`,
+  `AZURE-OPERATIONS`. Cross-references added from P2, P5, P7, P12, P13 and P14; P14
+  given the stale-README corollary; three deviations recorded in §3a (committed
+  credentials, copy-pasted rate limiting, rotted E2E config).

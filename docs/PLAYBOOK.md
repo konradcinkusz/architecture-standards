@@ -83,6 +83,17 @@ branch and push when done; don't open a PR unless I ask.
   are not covered by the 15 principles and will not be reconstructed correctly from
   first principles — the guide exists precisely because getting this wrong looks like a
   healthy deploy until the first agent-creation call.
+- **When the session will touch any other covered domain**, point the agent at the
+  matching guide rather than letting it re-derive the patterns: payments/subscriptions/
+  quotas (`PAYMENTS-AND-MONETIZATION`), the identity service and OAuth
+  (`IDENTITY-AND-ACCOUNTS`), recurring service plumbing (`SERVICE-API-PATTERNS`),
+  Next.js frontends and BFFs (`FRONTEND-BFF`), browser extensions
+  (`BROWSER-EXTENSIONS`), test suites (`TESTING-STRATEGY`, `E2E-ACCEPTANCE-TESTING`),
+  security audits
+  (`SECURITY-REVIEW`), repo setup and dev tooling (`REPO-BASELINE`), per-PR
+  environments (`PR-PREVIEW-ENVIRONMENTS`), customer-hosted delivery
+  (`PRIVATE-CLOUD-DELIVERY`), and Azure beyond Foundry (`AZURE-OPERATIONS`) — all in
+  [`docs/guides/`](guides/). The README groups them.
 - **Optional — `copilot-scope` / `AureliusPromptus`:** attach only for MODERNIZE mode,
   when you want the agent to copy real code (e.g. `ServiceDefaults`, the `fly.toml`
   pattern, or the Azure AI Foundry Bicep modules), the way it was done for the FSE
