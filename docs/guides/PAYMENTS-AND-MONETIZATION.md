@@ -6,8 +6,8 @@ lifecycle, quota metering and a self-hosted tenant mode; the reasons are the par
 transfers.
 
 It is deliberately repo-agnostic: nothing here names a product, a plan or a price. The
-worked example is `AureliusPromptus.AuthService` (payment controller, subscription
-services, quota services) and `AureliusPromptus/docs/quota-plan.md`.
+worked example is `<saas>.AuthService` (payment controller, subscription
+services, quota services) and `<saas>/docs/quota-plan.md`.
 
 **Contents**
 
@@ -266,9 +266,9 @@ Per metering setup:
 
 ---
 
-Worked example: `AureliusPromptus.AuthService` — `Controllers/PayProController.cs`,
+Worked example: `<saas>.AuthService` — `Controllers/PayProController.cs`,
 `Services/PayProMORService.cs`, `Services/QuotaService.cs`,
 `Services/SubscriptionExpirationService.cs`,
-`AureliusPromptus.ServiceDefaults/Services/QuotaConsumptionService.cs` (the thin
+`<saas>.ServiceDefaults/Services/QuotaConsumptionService.cs` (the thin
 client — noting that per P2 its namespace/home should be the kernel proper), and
-`AureliusPromptus/docs/quota-plan.md` for the recorded transport decision.
+`<saas>/docs/quota-plan.md` for the recorded transport decision.

@@ -7,7 +7,7 @@ with a PR. The two hard problems are not deployment: they are **deciding what is
 shared** and **guaranteeing teardown**.
 
 It is deliberately repo-agnostic. The worked example is
-`AureliusPromptus/.github/workflows/flyio-pr-env-deploy.yml` and its two destroy
+`<saas>/.github/workflows/flyio-pr-env-deploy.yml` and its two destroy
 companions, with the Azure cost half in the Foundry guide §10.
 
 **Contents**
@@ -129,7 +129,7 @@ deploying previews on demand (a label or a comment command) instead of on every 
 
 ---
 
-Worked example: `AureliusPromptus/.github/workflows/flyio-pr-env-deploy.yml`,
+Worked example: `<saas>/.github/workflows/flyio-pr-env-deploy.yml`,
 `flyio-pr-env-destroy.yml`, `flyio-pr-env-destroy-manual.yml`, and
-`AureliusPromptus/docs/PR_DEPLOYMENT_RESOURCE_CLASSIFICATION.md` (the evidence-cited
+`<saas>/docs/PR_DEPLOYMENT_RESOURCE_CLASSIFICATION.md` (the evidence-cited
 classification).

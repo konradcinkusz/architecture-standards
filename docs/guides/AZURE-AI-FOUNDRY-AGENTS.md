@@ -5,12 +5,12 @@ just a stateless chat completion. Azure AI Foundry is the estate's pattern for t
 This guide is repo-agnostic infrastructure guidance, the Azure-side counterpart to
 [`FLY-IO-DEPLOYMENT.md`](FLY-IO-DEPLOYMENT.md): compute can run anywhere — Fly.io per
 that guide, or Azure Container Apps — while the AI Foundry resources described here back
-it. AureliusPromptus runs exactly this hybrid: `AgenticService` deploys to Fly.io, and
+it. The reference SaaS runs exactly this hybrid: `AgenticService` deploys to Fly.io, and
 its agents are provisioned in an Azure resource group that Fly never touches.
 
-It is deliberately repo-agnostic. The worked example is `AureliusPromptus/infra/` and
-`AureliusPromptus/AureliusPromptus.AgenticService/`; the rules below are what that
-implementation teaches, with AureliusPromptus-specific names replaced by placeholders.
+It is deliberately repo-agnostic. The worked example is `<saas>/infra/` and
+`<saas>.AgenticService/`; the rules below are what that
+implementation teaches, with system-specific names replaced by placeholders.
 
 **Contents**
 
@@ -383,7 +383,7 @@ provisioning job of §6 needs the same value, so pass it to both.
 
 **Two options; pick OIDC for a new repository.**
 
-The concrete implementation (AureliusPromptus) uses **service-principal client-secret**
+The concrete implementation (the reference SaaS) uses **service-principal client-secret**
 auth via `azure/login@v2` with `auth-type: SERVICE_PRINCIPAL`:
 
 ```yaml
@@ -503,6 +503,6 @@ Per repository:
 
 ---
 
-Worked example: `AureliusPromptus/infra/azure-ai-foundry/`,
-`AureliusPromptus/infra/*-identity/`, and `AureliusPromptus.AgenticService/agents/` +
+Worked example: `<saas>/infra/azure-ai-foundry/`,
+`<saas>/infra/*-identity/`, and `<saas>.AgenticService/agents/` +
 its `AgentProvisioner`, run as the `provision-agents` job in `.github/workflows/flyio.yml`.

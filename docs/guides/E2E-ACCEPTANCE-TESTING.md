@@ -4,7 +4,7 @@ An E2E suite that reports green while testing nothing is worse than no suite at 
 because it is *trusted*. No suite prompts someone to check manually before a release;
 a suite with 447 passing tests does not. This guide is the operational half of P13 —
 what makes an E2E suite a real regression net rather than a green checkmark generator —
-extracted after a full audit of `AureliusPromptus.AcceptanceTests` found it was the
+extracted after a full audit of `<saas>.AcceptanceTests` found it was the
 latter.
 
 It is deliberately repo-agnostic. The worked example throughout is that audit — cited by
@@ -29,7 +29,7 @@ plausible-looking suite looks like when nobody checked it against reality.
 
 ## 1. The audit that motivated this guide
 
-`AureliusPromptus.AcceptanceTests` holds 447 xUnit/Playwright tests generated in a
+`<saas>.AcceptanceTests` holds 447 xUnit/Playwright tests generated in a
 single push (first commit, 2026-02-13), self-described in its own delivery docs as
 "500+ hours of test design... Production Ready." A 2026-08-14 audit of the actual test
 bodies — not the docs describing them — found:
@@ -105,7 +105,7 @@ public async Task Should_AcceptOrganizationInvitation() { ... }
 `[Ignore("reason")]`, a `[Trait("status", "scaffold")]` filtered out of the CI run) costs
 nothing and turns "447/447 passed, uniformly opaque" into "301 passed, 146 skipped with
 reasons," which is the honest number. A suite with no skip/trait mechanism in use at all,
-the way AureliusPromptus's did, cannot distinguish a real test from a scaffold at the CI
+the way the reference SaaS's did, cannot distinguish a real test from a scaffold at the CI
 level even if every author knew the difference while writing it.
 
 **Once a test has a real assertion, that only proves it can pass — not that it can catch
@@ -136,7 +136,7 @@ reliable accessible name, not as the default for everything:
 | **3rd — `data-testid`, for what the above can't reach** | `[data-testid="prompt-save-button"]` | Never, by design — but only covers what it was added for |
 | **Avoid — CSS class chains, DOM traversal** | `.card[tabindex='0'] .modal button.relative.rounded-full` | Any styling refactor, with no relation to behavior |
 
-AureliusPromptus's frontend has **zero** `data-testid` attributes anywhere in any of its
+the reference SaaS's frontend has **zero** `data-testid` attributes anywhere in any of its
 four Next.js apps, despite the test repo's own strategy doc listing `data-testid`
 attributes as the preferred selector and listing "replace fragile selectors with
 `data-testid`" as an open backlog item since March. The convention was written down and
@@ -167,7 +167,7 @@ Fixed sleeps (`Thread.Sleep`, `Task.Delay`, `WaitForTimeoutAsync(60000)`) are a 
 someone hit real flakiness and reached for the wrong fix. The correct fix is an
 auto-retrying assertion that polls until it passes or times out — Playwright's own
 `Assertions.Expect(locator).ToBeVisibleAsync()`/`ToHaveTextAsync()`/etc., or an equivalent
-your framework provides. AureliusPromptus's own code shows both instincts side by side:
+your framework provides. The reference SaaS's own code shows both instincts side by side:
 `LogoutTests.cs` uses a correct polling wait for one redirect check and a `WaitForTimeoutAsync(2000)`
 five lines later for a second one in the same test — proof the fix was known and just not
 applied consistently. A repo-wide grep for the fixed-sleep APIs in CI (or a pre-commit
@@ -176,7 +176,7 @@ hook) turns "know the right pattern" into "always use the right pattern."
 **Verify any custom assertion wrapper actually retries, by reading its body, not its
 signature.** A wrapper that accepts a `timeoutMs` parameter looks safe at every call site;
 whether it's safe depends on whether that parameter reaches a retry loop or is silently
-ignored. AureliusPromptus's `LocatorAssertionsExtensions` did the former for 2 of its 7
+ignored. The reference SaaS's `LocatorAssertionsExtensions` did the former for 2 of its 7
 methods and the latter for the other 5 — indistinguishable from the call site, and the
 kind of bug that only shows up as occasional, hard-to-reproduce flakiness in the tests
 that happened to call the broken half.
@@ -205,7 +205,7 @@ actually, mechanically guaranteed to be thrown away after the run.
 **Parallelization settings and actual test behavior have to be checked against each
 other, not just declared.** A config flag (`"parallelizeTestCollections": true,
 "maxParallelThreads": 4`) plus a handful of unused `[CollectionDefinition]` declarations
-is not a parallelization strategy, it's the appearance of one. AureliusPromptus declared
+is not a parallelization strategy, it's the appearance of one. The reference SaaS declared
 7 named test collections; 6 had zero member classes, meaning every class in those 6 was
 implicitly its own parallel unit by default, running concurrently with up to 3 others
 against one shared app instance. The one class that actually needed serialization — the
@@ -231,12 +231,12 @@ in practice this means:
   `flyio-pr-env-deploy.yml` / `-destroy.yml`). Point the E2E job at that environment's URL
   instead of re-deriving a docker-compose-in-CI setup from scratch; the environment
   already exists for exactly this purpose and is already torn down automatically.
-- **Run a small, fast smoke subset on every PR** (the AureliusPromptus strategy doc's own
-  target — 5-10 minutes, ~7 critical-path scenarios — was a reasonable design that was
+- **Run a small, fast smoke subset on every PR** (the audited suite's own strategy doc
+  targeted 5-10 minutes and ~7 critical-path scenarios — a reasonable design that was
   simply never implemented) and the full suite less frequently (nightly, or pre-release)
   if its runtime doesn't fit in PR feedback loops.
 - **A base URL default has to match what's actually orchestrated, and that match has to
-  be re-verified whenever a port changes.** AureliusPromptus's own `AppHost.cs` is the
+  be re-verified whenever a port changes.** The reference SaaS's own `AppHost.cs` is the
   single source of truth for what runs on which port; the test project's compiled-in
   fallback default had drifted to a port matching no currently-orchestrated app, while the
   runsettings file developers are actually told to use had (correctly) been updated.
@@ -248,7 +248,7 @@ in practice this means:
 
 When a frontend is redesigned or renamed, retire (or explicitly, visibly archive) the old
 test project **in the same change** that the new frontend replaces the old one. Letting
-both drift independently is how AureliusPromptus ended up with two Playwright projects in
+both drift independently is how the reference SaaS ended up with two Playwright projects in
 one repo — `Web.NextJs.E2ETests` (447 tests, targeting a frontend called "Web.NextJs" that
 no longer exists as a distinct codebase) and `Web.Portal.E2ETests` (53 tests, correctly
 targeting the current live app, "Portal," which was built to reach feature parity with
@@ -271,7 +271,7 @@ current.
 A test suite generated in one large pass — by a person working fast or an AI agent asked
 to "write comprehensive E2E tests for this app" — needs a fact-checking pass before
 anyone treats its test count or its own documentation as ground truth. Concrete,
-mechanical tells worth grepping for specifically, each one found in AureliusPromptus's
+mechanical tells worth grepping for specifically, each one found in the reference SaaS's
 suite:
 
 - **Impossible or inconsistent dates.** Delivery docs stamped "December 2024" in a repo
@@ -282,7 +282,7 @@ suite:
   Actual counts (`grep -c` for `[Fact]`/`[Test]`/etc., `ls | wc -l`) taking thirty seconds
   to verify and disagreeing with the prose is worth treating as suite-wide evidence, not
   an isolated typo.
-- **A "bug fix" document for a bug that isn't in the code.** AureliusPromptus's suite
+- **A "bug fix" document for a bug that isn't in the code.** The reference SaaS's suite
   carried a doc titled around a `.FirstOrDefault` issue (invalid on the type it claimed to
   be called on) whose own code samples showed the "wrong" pattern as valid, unrelated
   syntax — the described problem never existed; a real-looking artifact with zero
@@ -336,9 +336,9 @@ A suite claiming to be a real regression net answers yes to all of these:
 
 ## Provenance
 
-Extracted 2026-08-14 from a full audit of `AureliusPromptus.AcceptanceTests` (447 tests,
-`AureliusPromptus.Web.NextJs.E2ETests` + `AureliusPromptus.Web.Portal.E2ETests`), cross-
-referenced against `AureliusPromptus`'s actual frontend orchestration (`AppHost.cs`) and
+Extracted 2026-08-14 from a full audit of `<saas>.AcceptanceTests` (447 tests,
+`<saas>.Web.NextJs.E2ETests` + `<saas>.Web.Portal.E2ETests`), cross-
+referenced against the reference SaaS's actual frontend orchestration (`AppHost.cs`) and
 CI configuration (`.github/workflows/pr-validation.yml`), and checked the same day against
 current external practice (Playwright's own locator guidance, and 2026 industry writing on
 verifying AI-generated test suites, which independently converged on the same "tests that

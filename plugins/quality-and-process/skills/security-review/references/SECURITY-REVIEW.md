@@ -9,7 +9,7 @@ much as the rules — an audit whose output format changes each time cannot show
 the system is getting safer.
 
 It is deliberately repo-agnostic. Worked examples:
-`AureliusPromptus/docs/SECURITY_AUDIT_REPORT.md`,
+`<saas>/docs/SECURITY_AUDIT_REPORT.md`,
 `docs/SECURITY_AUDIT_OWASP_SUPPLEMENT.md`, `docs/SECURITY_FIXES*.md`,
 `docs/PRODUCTION_READINESS.md`.
 
@@ -178,7 +178,7 @@ does:
 
 ---
 
-Worked examples: `AureliusPromptus/docs/SECURITY_AUDIT_OWASP_SUPPLEMENT.md` (method,
+Worked examples: `<saas>/docs/SECURITY_AUDIT_OWASP_SUPPLEMENT.md` (method,
 justified N/A, matrices), `docs/SECURITY_AUDIT_REPORT.md` (finding format, priorities),
 `docs/SECURITY_FIXES.md` (path validation spec), `docs/SECURITY_FIXES_IMPLEMENTED.md`
 (ledger + residual risk), `docs/PRODUCTION_READINESS.md` (readiness ledger, the

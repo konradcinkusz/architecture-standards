@@ -12,7 +12,7 @@ to a schema — the only sanctioned way to change it.**
 
 It is deliberately repo-agnostic. Worked examples: `copilot-scope` (the OTLP ingestion
 pipeline and the composite scoring engine — reliability, acceptance, friction, latency —
-this guide generalizes), `AureliusPromptus.AgenticService` (the step pipeline and
+this guide generalizes), `<saas>.AgenticService` (the step pipeline and
 per-phase degradation the scenarios exercise), and
 [`E2E-ACCEPTANCE-TESTING.md`](E2E-ACCEPTANCE-TESTING.md), whose assertion discipline
 transfers here almost verbatim — a green eval that checked nothing is *worse* than no
@@ -245,7 +245,7 @@ Per agent or LLM-backed feature:
 
 Worked examples: `copilot-scope/src/CopilotScope.Collector/` (OTLP ingestion, the
 composite scoring engine and `IInsightAnalyzer` pipeline this guide's §7 generalizes),
-`AureliusPromptus.AgenticService/Services/Orchestration/` (the step pipeline and
+`<saas>.AgenticService/Services/Orchestration/` (the step pipeline and
 per-phase degradation §3's degradation class exercises), and
 [`E2E-ACCEPTANCE-TESTING.md`](E2E-ACCEPTANCE-TESTING.md) for the assertion discipline
 §4 inherits. The first full worked example of the complete loop — spec, scenario

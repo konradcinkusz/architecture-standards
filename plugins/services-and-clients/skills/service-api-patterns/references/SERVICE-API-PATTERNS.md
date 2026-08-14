@@ -190,8 +190,8 @@ Solved-once shapes; reach for these before inventing:
 
 ---
 
-Worked example: `AureliusPromptus.AgenticService` (rate-limiting extension, 202
-orchestrators, flow seeder), `AureliusPromptus.MarketplaceService/Program.cs` (endpoint
-triad, clamping, hardened HTTP), `AureliusPromptus.PromptTemplatesService`
+Worked example: `<saas>.AgenticService` (rate-limiting extension, 202
+orchestrators, flow seeder), `<saas>.MarketplaceService/Program.cs` (endpoint
+triad, clamping, hardened HTTP), `<saas>.PromptTemplatesService`
 (versioning/approval, single-round-trip counts),
-`AureliusPromptus.AuthService/Extensions/MigrationCompletionSignal.cs`.
+`<saas>.AuthService/Extensions/MigrationCompletionSignal.cs`.

@@ -124,7 +124,7 @@ outside the repository — a university submission, a conference, a PDF to
 hand someone who won't read GitHub markdown — it graduates to a LaTeX
 paper. The paper is a *presentation* of a study, never a replacement for
 one, and the estate already writes its formal documents in LaTeX
-(`AureliusPromptus/docs/business_analysis.tex`,
+(`<saas>/docs/business_analysis.tex`,
 `pitch-deck-demium.tex`), whose shared preamble — 11pt A4 `article`, the
 house color palette, `titlesec` section styling, `fancyhdr`,
 `hyperref` — is the house look papers keep.

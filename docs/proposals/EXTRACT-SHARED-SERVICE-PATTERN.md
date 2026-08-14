@@ -1,7 +1,7 @@
 # Proposal — shared services reused across the estate, not just within one system
 
-> Source: building `konradcinkusz/authservice` (an extraction of `AureliusPromptus.AuthService`
-> into its own standalone, generically-reusable repo) and adopting it as `FSE.Club`'s identity
+> Source: building `konradcinkusz/authservice` (an extraction of `<saas>.AuthService`
+> into its own standalone, generically-reusable repo) and adopting it as `<consumer>`'s identity
 > provider, 2026-08-14. Checked against the constitution (P1–P15) and every guide's header to
 > avoid proposing a duplicate — the closest neighbors are `PRIVATE-CLOUD-DELIVERY.md`
 > (image-push delivery to a paying customer) and `IDENTITY-AND-ACCOUNTS.md` (what a good
@@ -10,8 +10,8 @@
 > `EXTRACT-FROM-COPILOT-SCOPE.md`.
 >
 > Confidence note, stated plainly: this pattern has **one real data point** (authservice →
-> FSE.Club), not the months of production mileage behind the eleven guides extracted from
-> AureliusPromptus. Proposed as a guide candidate rather than merged directly for that reason.
+> <consumer>), not the months of production mileage behind the eleven guides extracted from
+> the reference SaaS. Proposed as a guide candidate rather than merged directly for that reason.
 
 ---
 
@@ -28,7 +28,7 @@ siblings, without becoming a shared runtime dependency between them.
 ## The pattern
 
 **One codebase, N independent instances — never one shared runtime.** Each consumer
-(`FSE.Club` today; the next repo that needs auth, tomorrow) deploys its own compute, its own
+(`<consumer>` today; the next repo that needs auth, tomorrow) deploys its own compute, its own
 database, its own signing key. Two systems using the "same" service share nothing at runtime
 except the Docker image that produced both — which is the point: an incident, a schema
 change, or a compromised credential in one consumer's instance cannot reach another's.
@@ -99,13 +99,13 @@ logical boundary P3 actually cares about is unaffected either way.
 6. What doesn't change: everything in `IDENTITY-AND-ACCOUNTS.md` (or whatever domain the
    shared service covers) still applies *to the service itself*. This pattern is about
    distribution, not about what makes the service good — and does not excuse the service from
-   the rest of the constitution. (Concretely: `authservice` still carries a real P5-adjacent
-   defect it inherited verbatim from the AureliusPromptus example — see §3a of the reference
-   architecture.)
+   the rest of the constitution. (Concretely: an extraction inherits its source's defects
+   along with its design — extracting a service is not the same as auditing it, and the
+   extraction's own deviation register is where that gets tracked.)
 
 ## Worked example
 
 `konradcinkusz/authservice` (the service: `publish-image.yml`, README §"Deploying your own
-instance") and `konradcinkusz/FSE.Club` (a consumer: `flyio-authservice.yml`,
+instance") and `<consumer>` (a consumer: `flyio-authservice.yml`,
 `flyio/authservice.fly.toml`, `docs/architecture/05-DECISIONS.md` for the full reasoning
 trail, including the publish/deploy coupling bug found and fixed mid-session).

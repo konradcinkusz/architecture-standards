@@ -27,15 +27,15 @@ whether this skill applies and to check your work afterwards.
 
 [`docs/architecture/00-REFERENCE-ARCHITECTURE.md`](https://github.com/konradcinkusz/architecture-standards/blob/main/docs/architecture/00-REFERENCE-ARCHITECTURE.md)
 in this repo is the one architectural constitution for the estate: 15 principles, each
-backed by a working example in copilot-scope or AureliusPromptus, plus a compliance
+backed by a working example in copilot-scope or the reference SaaS, plus a compliance
 checklist. It must not be re-derived from scratch in every session — an agent should
 read it, not reconstruct it from first principles each time.
 
 Two systems already broadly follow it, with known deviations catalogued:
 - `copilot-scope/docs/architecture/ARCHITECTURE_REVIEW.md`
-- `AureliusPromptus/docs/architecture/ARCHITECTURE_REVIEW.md`
+- `<saas>/docs/architecture/ARCHITECTURE_REVIEW.md`
 
-FSE predates the architecture and is being modernized toward it; its
+The legacy monorepo predates the architecture and is being modernized toward it; its
 `docs/architecture/` directory (`00-SECURITY-IMMEDIATE.md` … `07-STANDARDS-FEEDBACK.md`)
 is the worked example of what a RECOVER session produces.
 

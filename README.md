@@ -1,7 +1,28 @@
 # architecture-standards
 
-Canonical architecture reference for the estate (copilot-scope, AureliusPromptus,
-primates, FSE.CORE, FSE.Club, authservice, and future repos).
+A written architecture constitution for .NET Aspire services on Fly.io and Azure —
+fifteen principles plus seventeen operational guides, each one extracted from systems
+already running in production rather than written from first principles. It ships two
+ways: as documentation you read, and as installable agent plugins so a coding agent
+reads the standard instead of re-deriving it from whatever code it happens to see.
+
+**Start here:** [the constitution](docs/architecture/00-REFERENCE-ARCHITECTURE.md) for
+the principles, [the guide index](#operational-guides) below for the domain you are
+working in, or [`MARKETPLACE.md`](MARKETPLACE.md) to install it into Claude Code,
+Copilot or VS Code:
+
+```sh
+copilot plugin marketplace add konradcinkusz/architecture-standards
+copilot plugin install architecture-core@architecture-standards
+```
+
+**On the worked examples.** Rules here are repo-agnostic; the evidence behind them is
+cited at the end of each guide. Public sources — `konradcinkusz/copilot-scope` and
+`konradcinkusz/authservice` — are named and linkable. Private ones appear under stable
+placeholders (`<saas>`, `<consumer>`, `<legacy-monorepo>` and friends), so a citation
+still shows you the shape a rule came from without publishing the repository behind it.
+The legend is in
+[the constitution](docs/architecture/00-REFERENCE-ARCHITECTURE.md#how-worked-examples-are-cited).
 
 ## The constitution
 
@@ -116,9 +137,13 @@ with the constitution, then pull in the guides the work touches.
 ## Origin
 
 The blueprint was extracted from two systems that already follow it — `copilot-scope`
-and `AureliusPromptus` — and was originally kept inside `FSE.CORE/docs/architecture/`
+and the reference SaaS — and was originally kept inside `<origin-repo>/docs/architecture/`
 while that repo was being modernized against it. It moved here so it has one stable,
 neutral home instead of living inside the repo it was also being used to judge. The
 operational guides were extracted the same way: each generalizes something a repo in
 the estate already does (or demonstrably failed to do), with the worked example cited
 at the end of the guide.
+
+## License
+
+MIT — see [`LICENSE`](LICENSE).

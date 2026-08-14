@@ -6,9 +6,9 @@ browser families from one codebase. This guide fixes the patterns for all of tha
 the CI packaging and distribution pipeline.
 
 It is deliberately repo-agnostic. The worked example is
-`AureliusPromptus/src/AureliusPromptus.BrowserExtension/`, its packaging steps in the
-Fly workflow, `AureliusPromptus.ExtensionService`, and
-`AureliusPromptus/docs/BROWSER_EXTENSION_STORE_DEPLOYMENT.md`.
+`<saas>/src/<saas>.BrowserExtension/`, its packaging steps in the
+Fly workflow, `<saas>.ExtensionService`, and
+`<saas>/docs/BROWSER_EXTENSION_STORE_DEPLOYMENT.md`.
 
 **Contents**
 
@@ -190,9 +190,9 @@ honest "when it *does* make sense" list to keep the assessment credible.
 
 ---
 
-Worked example: `AureliusPromptus/src/AureliusPromptus.BrowserExtension/`
+Worked example: `<saas>/src/<saas>.BrowserExtension/`
 (`background.js`, `oauth-content.js`, `content.js`), the packaging steps in
-`AureliusPromptus/.github/workflows/flyio.yml`, `AureliusPromptus.ExtensionService`
+`<saas>/.github/workflows/flyio.yml`, `<saas>.ExtensionService`
 (versioned distribution), and
-`AureliusPromptus/docs/BROWSER_EXTENSION_STORE_DEPLOYMENT.md` +
+`<saas>/docs/BROWSER_EXTENSION_STORE_DEPLOYMENT.md` +
 `docs/MOBILE_EXTENSION_FEASIBILITY_STUDY.md`.

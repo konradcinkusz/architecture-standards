@@ -5,7 +5,7 @@
 How a repository's README announces its status at a glance: which badges to
 show, where they go, which badge services to use for what, and the rules that
 keep a badge row honest. Extracted from the badge block
-`AureliusPromptus.Web.Portal/README.md` has carried since the AureliusMundus
+`<saas>.Web.Portal/README.md` has carried since the <earlier-repo>
 days; adopted verbatim (owner/repo swapped) by `bayesian-inference`.
 
 ## Why badges at all
@@ -141,10 +141,10 @@ idiom, not part of this standard):
 
 ## Worked examples
 
-- `AureliusPromptus.Web.Portal/README.md` (AureliusPromptus) — the origin:
+- `<saas>.Web.Portal/README.md` (the reference SaaS) — the origin:
   full header row, Vercel deployment badge, and the complete footer block
   (Buy Me a Coffee, follow set, star history with theme-aware `<picture>`).
-  Its badge URLs query `konradcinkusz/AureliusMundus` because that is the
+  Its badge URLs query `<earlier-repo>` because that is the
   repo the README was born in — the reason rule 2 is written down.
 - `README.md` (bayesian-inference) — the first adoption of this guide:
   header row plus the GitHub-native CI badge for its `build.yml`, and the
