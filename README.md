@@ -1,7 +1,7 @@
 # architecture-standards
 
 Canonical architecture reference for the estate (copilot-scope, AureliusPromptus,
-primates, FSE.CORE, and future repos).
+primates, FSE.CORE, FSE.Club, authservice, and future repos).
 
 ## The constitution
 
@@ -82,6 +82,10 @@ with the constitution, then pull in the guides the work touches.
   carries before its first feature: hygiene files, secret scanning, one-command
   onboarding, operational script conventions, workflow lifecycle, and in-repo AI
   agent definitions.
+- [`docs/guides/OPEN-SOURCE-RELEASE.md`](docs/guides/OPEN-SOURCE-RELEASE.md) — the
+  additional bar a repo clears once, before it goes public: auditing git history for
+  secrets (not just HEAD), LICENSE, a README written for a stranger, the
+  registry-package-private-by-default gotcha, and repo metadata.
 - [`docs/guides/README-BADGES.md`](docs/guides/README-BADGES.md) — the README badge
   standard: the header metadata row and footer social block, which badge service is
   used for what, and the rules (every badge a titled link, no copy-paste drift,

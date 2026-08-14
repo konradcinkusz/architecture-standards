@@ -470,6 +470,7 @@ Reason about it per service, in the repository, in `flyio/INFRASTRUCTURE-ANALYSI
 | Deploy hangs, then fails on health checks | Process bound to `localhost`, or `internal_port` ≠ the port it binds |
 | Health checks fail only on first deploy | Migration or seeding blocks startup — move it after the listener, and raise `grace_period` |
 | `initdb: directory not empty` | `PGDATA` points at the mount root; `lost+found` lives there. Use a subdirectory |
+| Database never initializes against a plain `flyctl deploy`, no useful error | `[build] image` points at Fly's managed `postgres-flex`, which expects `fly postgres create`-style bootstrapping (cluster credentials, multi-machine setup) — not a bare deploy. Use a vanilla `postgres:<major>-alpine` image (§5) instead; it is what a plain `flyctl deploy` actually knows how to initialize |
 | Second database machine comes up empty | An app with a volume was scaled past 1. Deploy stateful apps `--ha=false` |
 | Every token rejected after a working deploy | Issuer's `Jwt__Authority` ≠ the URL validators fetch JWKS from; `iss` will not match |
 | Service-to-service call fails after an idle period | Caller points at `.internal` and the callee scaled to zero. Use the public URL or `.flycast` |

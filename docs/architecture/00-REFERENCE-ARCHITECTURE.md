@@ -233,6 +233,9 @@ OAuth callbacks and account linking, enumeration safety, deletion, versioned con
 is in [`docs/guides/IDENTITY-AND-ACCOUNTS.md`](../guides/IDENTITY-AND-ACCOUNTS.md).
 Where the system charges money, the billing counterpart is
 [`docs/guides/PAYMENTS-AND-MONETIZATION.md`](../guides/PAYMENTS-AND-MONETIZATION.md).
+The bar this principle implies for a repo's *history*, not just its current tree, before
+that repo is ever made public, is in
+[`docs/guides/OPEN-SOURCE-RELEASE.md`](../guides/OPEN-SOURCE-RELEASE.md).
 
 ### P6 — One container per service, built from a multi-stage Dockerfile
 
@@ -476,7 +479,9 @@ document that lists commands.
 system that no longer exists is worse than none. The hygiene that keeps a repository's
 claims true — and everything else a repo carries before its first feature — is in
 [`docs/guides/REPO-BASELINE.md`](../guides/REPO-BASELINE.md); the review method that
-audits it is in [`docs/guides/SECURITY-REVIEW.md`](../guides/SECURITY-REVIEW.md).
+audits it is in [`docs/guides/SECURITY-REVIEW.md`](../guides/SECURITY-REVIEW.md); the
+additional bar a repo clears once, before its first public release, is in
+[`docs/guides/OPEN-SOURCE-RELEASE.md`](../guides/OPEN-SOURCE-RELEASE.md).
 
 ### P15 — Observability is a build-time decision, not an afterthought
 
@@ -538,7 +543,7 @@ Any service claiming to follow this blueprint answers yes to all of these:
 ## 3a. Known open deviations
 
 A principle whose named violation stays open indefinitely reads as optional. These are
-the deviations this document calls out that are **still unfixed**, as of 2026-08-10.
+the deviations this document calls out that are **still unfixed**, as of 2026-08-14.
 
 | Repo | Deviation | Principle | Since |
 |---|---|---|---|
@@ -552,6 +557,8 @@ the deviations this document calls out that are **still unfixed**, as of 2026-08
 | AureliusPromptus | Rate-limiting policy copy-pasted into four services; the kernel has no `AddStandardRateLimiting()` | P2 | found 2026-08-14 |
 | AureliusPromptus | Committed Playwright config references a renamed app directory and a nonexistent test dir; no CI context executes E2E | P13 | found 2026-08-14 |
 | AureliusPromptus | E2E suite (447 tests, separate `AcceptanceTests` repo) never wired to CI; ~45% of tests are placeholders or guard-then-bail with no reachable assertion; duplicated across a retired frontend (`Web.NextJs`) and its live replacement (`Portal`) with no record of which was current | P13 | found in the 2026-08-14 audit that produced `docs/guides/E2E-ACCEPTANCE-TESTING.md`; remediation plan lives in the AcceptanceTests repo's own `E2E_Tests_analysis.md` |
+| `konradcinkusz/authservice` | Refresh tokens stored in plaintext (`RefreshToken.Token`, compared directly, never hashed) — carried forward unmodified from `AureliusPromptus.AuthService`, which `IDENTITY-AND-ACCOUNTS.md` §2 already names as the negative worked example ("do not copy that"). The guide's warning did not reach the extraction that happened the same day it was written. | P5 (adjacent — treat a refresh-token table like a credentials table); `IDENTITY-AND-ACCOUNTS.md` §2 | found 2026-08-14, in the extraction itself |
+| `konradcinkusz/FSE.Club` | One symmetric HS256 secret validates tokens across its `fseclub-authservice` instance and both of its own API services — `authservice`'s current signing mechanism has no asymmetric/JWKS option yet. Logged as a deliberate, revisit-if-authservice-changes decision in FSE.Club's own `rewrite/docs/architecture/05-DECISIONS.md`, not an oversight — recorded here too because an acknowledged deviation belongs in both places. | P5 | adopted 2026-08-14 |
 
 When one is fixed, delete the row. When a new one is accepted deliberately, add it with
 the reasoning — an acknowledged deviation is a decision; an unacknowledged one is drift.
@@ -626,3 +633,16 @@ moving target.
   create`, not `azd`, which survives only for local and greenfield use. The tracking
   table is scoped by logical agent environment, deliberately separate from
   `ASPNETCORE_ENVIRONMENT`. §11 and §12 updated to match.
+- *2026-08-14* — `konradcinkusz/authservice` (an extraction of `AureliusPromptus.AuthService`)
+  was adopted by `konradcinkusz/FSE.Club` as an identity provider — the estate's first
+  case of one system running its own independent instance of another system's extracted
+  service. New guide [`docs/guides/OPEN-SOURCE-RELEASE.md`](../guides/OPEN-SOURCE-RELEASE.md)
+  added and cross-referenced from P5 and P14, covering the history-audit and release
+  checklist neither principle stated on its own. A Postgres image gotcha (Fly's managed
+  `postgres-flex` failing against a plain `flyctl deploy`) added to
+  `FLY-IO-DEPLOYMENT.md`'s failure-mode table. §3a gained two rows: `authservice`
+  carrying forward the exact plaintext-refresh-token flaw `IDENTITY-AND-ACCOUNTS.md`
+  already warns against, and FSE.Club's symmetric signing key as a logged, deliberate
+  P5 deviation. The general pattern this raises — a service built for reuse *across*
+  systems, not just within one — is proposed but not yet merged, in
+  `docs/proposals/EXTRACT-SHARED-SERVICE-PATTERN.md`.
