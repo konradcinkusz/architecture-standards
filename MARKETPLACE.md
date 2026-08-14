@@ -61,8 +61,42 @@ once it is merged. To try a branch first, add the marketplace by absolute path
 (`claude plugin marketplace add /path/to/architecture-standards`) and
 `claude plugin marketplace update architecture-standards` after each rebuild.
 
+**A whole team, without anyone running a command** — commit this to a consuming repo's
+`.claude/settings.json`, and every clone gets the standards:
+
+```json
+{
+  "extraKnownMarketplaces": {
+    "architecture-standards": {
+      "source": { "source": "github", "repo": "konradcinkusz/architecture-standards" }
+    }
+  },
+  "enabledPlugins": {
+    "architecture-core@architecture-standards": true
+  }
+}
+```
+
+The key under `extraKnownMarketplaces` is the `name` from `marketplace.json`, which is
+what `@architecture-standards` refers to — not the repository name. The two happen to
+match here; they do not have to.
+
 **Any other agent** — attach the repo as a sibling checkout and point it at
 [`AGENTS.md`](AGENTS.md). No install step, no client support required.
+
+## Attaching versus installing
+
+Both work, and they are for different situations.
+
+| | Attach the repo to the session | Install the plugins |
+|---|---|---|
+| The agent sees | Every document in `docs/`, in full | Twenty skill descriptions; a standard loads only when its skill fires |
+| Good for | Working *on* the standards; a deep review where you want the whole corpus present | Working on *any other* repo, without a checkout of this one |
+| Costs | A repo in the workspace | ~155–990 tokens per plugin, per session |
+| Entry point | [`AGENTS.md`](AGENTS.md) | The skill descriptions |
+
+Attaching stays the right answer for editing the standards themselves. Installing is
+what makes them available in the twenty repos that should be obeying them.
 
 ## Where this can be served
 
