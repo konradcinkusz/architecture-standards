@@ -1,0 +1,7 @@
+# LaTeX build output from compiling docs/research/PAPER-TEMPLATE.tex in place —
+# only .tex sources are committed (see docs/research/00-RESEARCH-DOCUMENTATION.md)
+docs/research/*.aux
+docs/research/*.log
+docs/research/*.out
+docs/research/*.toc
+docs/research/*.pdf
