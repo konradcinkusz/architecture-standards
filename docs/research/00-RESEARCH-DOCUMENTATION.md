@@ -35,9 +35,11 @@ docs/research/
 ├── README.md          # index: one line per study, status, headline result
 ├── 01-SLUG.md         # studies, numbered in the order they were started
 ├── 02-SLUG.md
-└── artifacts/
-    ├── 01/            # per-study: scripts, raw outputs, data
-    └── 02/
+├── artifacts/
+│   ├── 01/            # per-study: scripts, raw outputs, data
+│   └── 02/
+└── papers/
+    └── 01-SLUG.tex    # LaTeX paper derived from the study (see below)
 ```
 
 - `README.md` is the index a visitor reads first: for each study, its
@@ -112,6 +114,46 @@ Every study document carries these sections, in this order (copy
    evidence (see rule 3). Conversely, a study's verified result should,
    where practical, be pinned as a regression test so the finding can't
    silently regress.
+
+## From study to paper (LaTeX)
+
+The markdown study is the working record; when a result needs to travel
+outside the repository — a university submission, a conference, a PDF to
+hand someone who won't read GitHub markdown — it graduates to a LaTeX
+paper. The paper is a *presentation* of a study, never a replacement for
+one, and the estate already writes its formal documents in LaTeX
+(`AureliusPromptus/docs/business_analysis.tex`,
+`pitch-deck-demium.tex`), whose shared preamble — 11pt A4 `article`, the
+house color palette, `titlesec` section styling, `fancyhdr`,
+`hyperref` — is the house look papers keep.
+
+- **Start from [`PAPER-TEMPLATE.tex`](PAPER-TEMPLATE.tex)** — the house
+  preamble plus a paper-shaped skeleton (title block, abstract,
+  Introduction with the RQs, Background, Method, Results, Discussion
+  covering threats and implications, Conclusion, a Reproducibility section,
+  `thebibliography`). Copy it to `docs/research/papers/NN-SLUG.tex`, keeping
+  the companion study's number and slug.
+- **A paper introduces no numbers of its own.** Every figure in the paper
+  is already in the companion study, traceable under the evidence rules
+  there. If writing the paper surfaces a number the study doesn't have, the
+  study gets updated (and re-verified) first.
+- **The paper states its status and pins its study.** The title block names
+  the companion study file and the commit it describes; while the study is
+  not `verified`, the paper carries a visible DRAFT marker (the template's
+  `\paperstatus` command drives both the title block and the running
+  header).
+- **PDFs are build output.** Only the `.tex` is committed; the repo's
+  `.gitignore` covers LaTeX intermediates (`*.aux`, `*.log`, `*.out`,
+  `*.toc`) and the generated PDF. Build with `pdflatex` run twice (for
+  cross-references):
+
+  ```bash
+  cd docs/research/papers && pdflatex NN-SLUG.tex && pdflatex NN-SLUG.tex
+  ```
+- **Self-contained single file.** References use `thebibliography`, not
+  BibTeX, so a paper travels as one file; the bibliography mirrors the
+  study's numbered reference list and always cites the repository itself
+  (study + artifacts) as an entry.
 
 ## Relationship to the rest of the standards
 

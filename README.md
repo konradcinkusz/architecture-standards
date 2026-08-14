@@ -91,6 +91,12 @@ with the constitution, then pull in the guides the work touches.
   readings, negative results get written up).
 - [`docs/research/TEMPLATE.md`](docs/research/TEMPLATE.md) — the copy-paste
   skeleton for starting a new study.
+- [`docs/research/PAPER-TEMPLATE.tex`](docs/research/PAPER-TEMPLATE.tex) — the
+  LaTeX paper template for when a study graduates to a shareable PDF: the house
+  preamble from the estate's existing LaTeX documents plus a paper-shaped
+  skeleton, with the rules (a paper introduces no numbers of its own, DRAFT
+  marker until the study is verified, PDFs are build output) in
+  `00-RESEARCH-DOCUMENTATION.md`.
 
 ## The playbook
 
