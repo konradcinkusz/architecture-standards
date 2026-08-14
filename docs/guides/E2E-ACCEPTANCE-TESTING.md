@@ -108,14 +108,32 @@ reasons," which is the honest number. A suite with no skip/trait mechanism in us
 the way AureliusPromptus's did, cannot distinguish a real test from a scaffold at the CI
 level even if every author knew the difference while writing it.
 
+**Once a test has a real assertion, that only proves it can pass — not that it can catch
+anything.** A test that asserts `response.Should().NotBeNull()` against an endpoint that
+never returns null passes today and will keep passing through almost any regression. The
+2026-standard way to check the difference is mutation testing: a tool deliberately
+introduces small faults into the application code (flips a `>` to `>=`, deletes a
+guard clause, inverts a boolean) and reruns the suite against each mutant — a test
+suite worth trusting kills the large majority of mutants; one that doesn't is asserting
+the wrong things, or not enough of them. `Stryker.NET` is the .NET tool for this (JS/TS:
+Stryker; Java: PIT; Rust: cargo-mutants). This is a heavier check than §9's
+checklist and doesn't need to gate every PR — run it after an assertion-discipline pass
+like this one, as the actual proof the pass worked, and periodically afterward as a
+suite-health signal rather than a per-commit gate.
+
 ## 3. Locators: pick a convention before the first component ships
 
-State it once, per system, and enforce it in review:
+State it once, per system, and enforce it in review. Playwright's own guidance — and the
+2026 consensus generally — ranks accessible locators above `data-testid`, not below it,
+because they double as an accessibility check and don't need any component change to
+exist; reach for `data-testid` as the deliberate fallback for the elements that have no
+reliable accessible name, not as the default for everything:
 
 | Preference | Example | Breaks when |
 |---|---|---|
-| **1st — `data-testid` or equivalent test hook** | `[data-testid="prompt-save-button"]` | Never, by design — it exists only for tests |
-| **2nd — accessible role + name** | `GetByRole("button", new(){Name="Save"})` | Copy changes; acceptable, often desirable to catch |
+| **1st — role + accessible name** | `GetByRole("button", new(){Name="Save"})` | Copy changes (often desirable to catch) or the element's ARIA role changes |
+| **2nd — label / placeholder / text** | `GetByLabel("Email")`, `GetByText("Upgrade to Premium")` | Copy changes |
+| **3rd — `data-testid`, for what the above can't reach** | `[data-testid="prompt-save-button"]` | Never, by design — but only covers what it was added for |
 | **Avoid — CSS class chains, DOM traversal** | `.card[tabindex='0'] .modal button.relative.rounded-full` | Any styling refactor, with no relation to behavior |
 
 AureliusPromptus's frontend has **zero** `data-testid` attributes anywhere in any of its
@@ -126,8 +144,22 @@ never enforced at the one point it's cheap to enforce: when the component is fir
 Retrofitting it later means finding every place a test already depends on a class name or
 DOM position and changing both sides at once — the cost compounds with every test written
 against the fragile selector in the meantime. If a system's tests will be written in a
-separate repo or by a separate team from the frontend, the `data-testid` convention needs
-to be a contract between them from day one, not a review comment discovered months in.
+separate repo or by a separate team from the frontend, whichever locator convention is
+chosen needs to be a contract between them from day one, not a review comment discovered
+months in. In this case the pragmatic starting point costs nothing: most of the suite's
+existing `GetByRole`/`ClickButtonAsync(text)` calls already follow rule 1 without anyone
+having decided to; the gap is the CSS-chain minority (§9), not a missing `data-testid`
+rollout.
+
+**Don't re-authenticate through the UI in every test.** Playwright's `storageState` saves
+a logged-in context's cookies/localStorage once and lets subsequent tests start from it
+directly — skipping the login form entirely. Beyond the obvious speed win, it removes the
+login flow itself as a source of unrelated flakiness: a suite where 300+ tests each drive
+a real registration or login form means a broken login page fails 300 tests with one root
+cause, and a slow-but-working login page makes every other test slower and more prone to
+timing out for reasons that have nothing to do with what that test is actually checking.
+Keep a handful of tests that exercise the real login/registration UI directly (that *is*
+the feature under test for those); have everything else start from saved state.
 
 ## 4. Waiting: web-first assertions only, and verify your framework agrees
 
@@ -278,10 +310,15 @@ A suite claiming to be a real regression net answers yes to all of these:
       swallowed assertion failures
 - [ ] Anything not yet implemented is `[Fact(Skip="reason")]` (or the framework
       equivalent), never a silently-passing placeholder
-- [ ] Locators use `data-testid` or accessible role+name; the convention was agreed
-      before the first component shipped, not retrofitted
+- [ ] Locators prefer role/accessible-name first, `data-testid` as the deliberate
+      fallback where no accessible name exists; the convention was agreed before the
+      first component shipped, not retrofitted
 - [ ] No fixed sleeps as the primary wait strategy; any custom assertion-wait helper has
       been read (not just trusted by its signature) to confirm it actually retries
+- [ ] Tests that don't specifically exercise login/registration start from a saved
+      `storageState` rather than driving the login form every time
+- [ ] Mutation testing (Stryker.NET or equivalent) has been run at least once after any
+      assertion-discipline pass, to confirm the real assertions actually catch broken code
 - [ ] Any locator built from a list/delimited string has been checked against the
       framework's actual matching semantics, not the semantics that seemed intuitive
 - [ ] Test data generation (independence) and test data teardown (cleanup) are both
@@ -302,8 +339,12 @@ A suite claiming to be a real regression net answers yes to all of these:
 Extracted 2026-08-14 from a full audit of `AureliusPromptus.AcceptanceTests` (447 tests,
 `AureliusPromptus.Web.NextJs.E2ETests` + `AureliusPromptus.Web.Portal.E2ETests`), cross-
 referenced against `AureliusPromptus`'s actual frontend orchestration (`AppHost.cs`) and
-CI configuration (`.github/workflows/pr-validation.yml`). The audit's full findings and
-the resulting repo-specific remediation plan live in that repo's own
+CI configuration (`.github/workflows/pr-validation.yml`), and checked the same day against
+current external practice (Playwright's own locator guidance, and 2026 industry writing on
+verifying AI-generated test suites, which independently converged on the same "tests that
+pass without asserting anything" failure mode this audit found) — §3's locator ordering,
+the `storageState` guidance, and §2's mutation-testing paragraph came from that pass. The
+audit's full findings and the resulting repo-specific remediation plan live in that repo's own
 `E2E_Tests_analysis.md`, per this estate's convention that per-system findings stay in the
 system's own repo (see [`PLAYBOOK.md`](../PLAYBOOK.md) — "Output conventions") while only
 the generalized rule moves here.
