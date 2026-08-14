@@ -8,8 +8,8 @@ service must get right *beyond* signing tokens: refresh rotation, external OAuth
 providers, enumeration safety, lockout, deletion, and legal consent.
 
 It is deliberately repo-agnostic. The worked example is
-`AureliusPromptus.AuthService` (`TokenService`, `ExternalAuthController`,
-`AuthController`, the cleanup services) and `AureliusPromptus/docs/OAUTH_SETUP.md`.
+`<saas>.AuthService` (`TokenService`, `ExternalAuthController`,
+`AuthController`, the cleanup services) and `<saas>/docs/OAUTH_SETUP.md`.
 
 **Contents**
 
@@ -185,8 +185,8 @@ decision is a legal input, so tell counsel which one you made
 
 ---
 
-Worked example: `AureliusPromptus.AuthService` — `Services/TokenService.cs`,
+Worked example: `<saas>.AuthService` — `Services/TokenService.cs`,
 `Controllers/ExternalAuthController.cs`, `Controllers/AuthController.cs`,
 `Services/UserCleanupService.cs`, `Services/InvitationService.cs`,
-`Services/ConsentSettings.cs` — and `AureliusPromptus/docs/OAUTH_SETUP.md`,
-`AureliusPromptus/docs/EMAIL_USE_CASES.md`.
+`Services/ConsentSettings.cs` — and `<saas>/docs/OAUTH_SETUP.md`,
+`<saas>/docs/EMAIL_USE_CASES.md`.

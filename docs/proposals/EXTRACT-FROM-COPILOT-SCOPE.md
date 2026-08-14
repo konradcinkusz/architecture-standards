@@ -14,11 +14,11 @@
 
 ## Why this exists
 
-The constitution was extracted from copilot-scope and AureliusPromptus, but the
+The constitution was extracted from copilot-scope and the reference SaaS, but the
 extraction was principle-shaped: it captured the *architecture* (Aspire, kernel,
 per-service DB, tag-driven CI). copilot-scope also solved a set of **operational**
 problems that are fully domain-independent and currently live nowhere in the standards —
-the same way the eleven operational guides were extracted from AureliusPromptus on
+the same way the eleven operational guides were extracted from the reference SaaS on
 2026-08-14. This proposal is the copilot-scope half of that sweep.
 
 Two of these also correct the constitution itself (noted inline): the P10 cloud-analyzer

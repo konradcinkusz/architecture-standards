@@ -7,9 +7,9 @@ test suite is a budget, not a trophy — every rule here exists to keep signal p
 high.
 
 It is deliberately repo-agnostic. Worked examples:
-`AureliusPromptus/docs/E2E_TEST_STRATEGY_AND_SCOPE.md`,
+`<saas>/docs/E2E_TEST_STRATEGY_AND_SCOPE.md`,
 `docs/test-automation-analysis.md`, `docs/MANUAL_TESTING_CHECKLIST_V2.md`, and the
-five `AureliusPromptus/tests/*` projects.
+five `<saas>/tests/*` projects.
 
 **Contents**
 
@@ -192,7 +192,7 @@ its config and track it as an issue instead.
 
 ---
 
-Worked examples: `AureliusPromptus/docs/E2E_TEST_STRATEGY_AND_SCOPE.md` (charter,
+Worked examples: `<saas>/docs/E2E_TEST_STRATEGY_AND_SCOPE.md` (charter,
 layers, refactor issue templates), `docs/test-automation-analysis.md` (matrix,
 infrastructure tiers, cost math), `docs/MANUAL_TESTING_CHECKLIST_V2.md` (the four
 situations, account matrix, rubric), `docs/MANUAL_TESTING_CHECKLIST.md` §cross-cutting

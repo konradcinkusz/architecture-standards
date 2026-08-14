@@ -10,7 +10,7 @@ fixes the delivery model; it is a fifth deployment shape alongside the Fly guide
 four.
 
 It is deliberately repo-agnostic. The worked example is
-`AureliusPromptus/.github/workflows/private-cloud-push.yml`,
+`<saas>/.github/workflows/private-cloud-push.yml`,
 `.github/private-cloud-clients/`, `infra/private-cloud/`, and
 `docs/PRIVATE_CLOUD_DEPLOYMENT.md`.
 
@@ -167,7 +167,7 @@ generic:
 
 ---
 
-Worked example: `AureliusPromptus/.github/workflows/private-cloud-push.yml`,
+Worked example: `<saas>/.github/workflows/private-cloud-push.yml`,
 `.github/private-cloud-clients/` (registry + template + README),
 `infra/private-cloud/` (subscription-scope main + generic modules), and
 `docs/PRIVATE_CLOUD_DEPLOYMENT.md` + `docs/business/IT_TECHNICAL_ONEPAGER.md` +

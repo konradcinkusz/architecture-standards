@@ -146,8 +146,8 @@ code. Two rules:
 
 ---
 
-Worked example: `AureliusPromptus.Web.Portal` (`app/api/config/`, `app/api/auth/*`,
+Worked example: `<saas>.Web.Portal` (`app/api/config/`, `app/api/auth/*`,
 `middleware.ts`, `hooks/use-premium-guard.ts`, `app/api/extension/download/`) and
-`AureliusPromptus.Web.AdminDashboard/app/api/proxy/[...path]/route.ts` (the candidate
+`<saas>.Web.AdminDashboard/app/api/proxy/[...path]/route.ts` (the candidate
 ladder). The missing web-kit package is the anti-example: see the four apps' duplicated
 `api/config` and cookie-banner components.

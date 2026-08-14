@@ -9,7 +9,7 @@ turn cloud failures into readable errors, and the Container Apps idioms. The uni
 rule: **auth is managed identity + RBAC everywhere; a key or password anywhere in the
 chain is a finding.**
 
-It is deliberately repo-agnostic. The worked example is `AureliusPromptus/infra/`, the
+It is deliberately repo-agnostic. The worked example is `<saas>/infra/`, the
 Azure jobs in its Fly workflow, and `docs/azd/AI_PERMISSION_MATRIX.md`.
 
 **Contents**
@@ -217,9 +217,9 @@ With azd/Aspire, per-service Go-templated manifests are the production topology
 
 ---
 
-Worked example: `AureliusPromptus/infra/` (`sql/`, `*-roles-sql/`, `network/`,
+Worked example: `<saas>/infra/` (`sql/`, `*-roles-sql/`, `network/`,
 `browser-extension-storage/`), the Azure jobs in
-`AureliusPromptus/.github/workflows/flyio.yml` (preflight, soft-delete restore, RBAC
-polling), `AureliusPromptus.AppHost/infra/*.tmpl.yaml` (manifest idioms),
-`AureliusPromptus/scripts/` (job recreate, RG resolution ladder), and
-`AureliusPromptus/docs/azd/AI_PERMISSION_MATRIX.md`.
+`<saas>/.github/workflows/flyio.yml` (preflight, soft-delete restore, RBAC
+polling), `<saas>.AppHost/infra/*.tmpl.yaml` (manifest idioms),
+`<saas>/scripts/` (job recreate, RG resolution ladder), and
+`<saas>/docs/azd/AI_PERMISSION_MATRIX.md`.

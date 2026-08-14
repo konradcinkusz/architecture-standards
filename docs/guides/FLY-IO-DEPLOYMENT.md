@@ -5,8 +5,8 @@ This guide is the operational half of those two principles: what a service must 
 deployable, what each `fly.toml` says and why, and what the workflow that ships it looks
 like.
 
-It is deliberately repo-agnostic. Worked examples live in `AureliusPromptus/flyio/` and
-`primates/flyio/`; the rules below are what those two have in common, plus the reasons —
+It is deliberately repo-agnostic. Worked examples live in `<saas>/flyio/` and
+`<second-app>/flyio/`; the rules below are what those two have in common, plus the reasons —
 because the reasons are the part that transfers.
 
 **Contents**
@@ -516,7 +516,7 @@ Per repository:
 
 ---
 
-Worked examples: `AureliusPromptus/flyio/` and `AureliusPromptus/.github/workflows/flyio.yml`
+Worked examples: `<saas>/flyio/` and `<saas>/.github/workflows/flyio.yml`
 (the larger estate, with PR environments and an ephemeral provisioner machine);
-`primates/flyio/` and `primates/.github/workflows/flyio.yml` (the smaller one, and the
+`<second-app>/flyio/` and `<second-app>/.github/workflows/flyio.yml` (the smaller one, and the
 closer read if you are starting from scratch).

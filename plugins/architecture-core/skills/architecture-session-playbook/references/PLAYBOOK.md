@@ -9,15 +9,15 @@ it against the reference architecture or **modernize** it toward that architectu
 
 [`docs/architecture/00-REFERENCE-ARCHITECTURE.md`](https://github.com/konradcinkusz/architecture-standards/blob/main/docs/architecture/00-REFERENCE-ARCHITECTURE.md)
 in this repo is the one architectural constitution for the estate: 15 principles, each
-backed by a working example in copilot-scope or AureliusPromptus, plus a compliance
+backed by a working example in copilot-scope or the reference SaaS, plus a compliance
 checklist. It must not be re-derived from scratch in every session — an agent should
 read it, not reconstruct it from first principles each time.
 
 Two systems already broadly follow it, with known deviations catalogued:
 - `copilot-scope/docs/architecture/ARCHITECTURE_REVIEW.md`
-- `AureliusPromptus/docs/architecture/ARCHITECTURE_REVIEW.md`
+- `<saas>/docs/architecture/ARCHITECTURE_REVIEW.md`
 
-FSE predates the architecture and is being modernized toward it; its
+The legacy monorepo predates the architecture and is being modernized toward it; its
 `docs/architecture/` directory (`00-SECURITY-IMMEDIATE.md` … `07-STANDARDS-FEEDBACK.md`)
 is the worked example of what a RECOVER session produces.
 
@@ -37,7 +37,7 @@ documented and must NOT be re-derived from scratch — read this first:
 
 Two systems that already broadly follow it, with known deviations catalogued:
   copilot-scope/docs/architecture/ARCHITECTURE_REVIEW.md
-  AureliusPromptus/docs/architecture/ARCHITECTURE_REVIEW.md
+  <saas>/docs/architecture/ARCHITECTURE_REVIEW.md
 
 ── Target for this session ──────────────────────────────────────────────
 Repo:     <REPO_NAME>
@@ -55,13 +55,13 @@ Mode (pick one, or let the agent recommend one after a first look):
                docs/architecture/: 01-CURRENT-STATE, 02-GAP-ANALYSIS,
                03-TARGET-ARCHITECTURE, 04-MIGRATION-PLAN, 05-DECISIONS —
                each measured against the 00-REFERENCE-ARCHITECTURE.md
-               checklist, not against copilot-scope/AureliusPromptus
+               checklist, not against copilot-scope / the reference SaaS
                directly.
   RECOVER    — repo does not build, or its dependencies/source are partly
                lost. Produce the MODERNIZE set plus 00-SECURITY-IMMEDIATE
                and a dedicated dependency analysis, and open the plan with
                an archaeology phase before any target design is fixed.
-               FSE is the worked example.
+               The legacy monorepo is the worked example.
 ──────────────────────────────────────────────────────────────────────────
 
 Docs only for now, no code changes, unless I say otherwise. Commit to a new
@@ -72,7 +72,7 @@ branch and push when done; don't open a PR unless I ask.
 
 - **Always:** the target repo + `architecture-standards` (this repo) — without the
   latter the agent has no reference point and will re-derive principles from
-  copilot-scope/AureliusPromptus instead of reading them.
+  copilot-scope / the reference SaaS instead of reading them.
 - **When the session will touch deployment:** point the agent at
   [`docs/guides/FLY-IO-DEPLOYMENT.md`](https://github.com/konradcinkusz/architecture-standards/blob/main/docs/guides/FLY-IO-DEPLOYMENT.md) as well. A
   MODERNIZE or RECOVER plan that reaches "deploy it" needs the operational rules, not
@@ -96,9 +96,9 @@ branch and push when done; don't open a PR unless I ask.
   environments (`PR-PREVIEW-ENVIRONMENTS`), customer-hosted delivery
   (`PRIVATE-CLOUD-DELIVERY`), and Azure beyond Foundry (`AZURE-OPERATIONS`) — all in
   [`docs/guides/`](https://github.com/konradcinkusz/architecture-standards/blob/main/docs/guides/). The README groups them.
-- **Optional — `copilot-scope` / `AureliusPromptus`:** attach only for MODERNIZE mode,
+- **Optional — `copilot-scope` / the reference SaaS:** attach only for MODERNIZE mode,
   when you want the agent to copy real code (e.g. `ServiceDefaults`, the `fly.toml`
-  pattern, or the Azure AI Foundry Bicep modules), the way it was done for the FSE
+  pattern, or the Azure AI Foundry Bicep modules), the way it was done for the legacy monorepo
   plan. For REVIEW alone they aren't needed — the whole pattern is already described in
   the blueprint and guides.
 
@@ -115,7 +115,7 @@ branch and push when done; don't open a PR unless I ask.
 
 MODERNIZE assumes a running system to move incrementally — the strangler-fig
 assumption. When the repo does not build, that assumption fails silently and the
-resulting plan reads well but cannot be started. FSE made this concrete: no
+resulting plan reads well but cannot be started. The legacy monorepo made this concrete: no
 `nuget.config` for six private packages, 19 namespaces imported from source that exists
 nowhere, and two out-of-support target frameworks. There was no "make a small change and
 verify it" entry point at all.
@@ -125,7 +125,7 @@ A RECOVER plan therefore begins with **archaeology, not design**:
 1. Reconstruct the schema from whatever survives. If a database is live, dump it — with
    no migrations it is the only truth and it will disagree with the ORM model. If the
    infrastructure is gone, the ORM's own model snapshots are usually a complete schema
-   description that nobody thinks to look at: FSE's `PrimatesContextModelSnapshot.cs`
+   description that nobody thinks to look at: the legacy monorepo's `<second-app>ContextModelSnapshot.cs`
    turned out to specify 42 entities, 23 of which exist in no surviving source file.
 2. Attempt package/source recovery (decompile what is still on the feed), time-boxed.
 3. Extract the API contract from whatever clients still run — a working frontend is an

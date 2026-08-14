@@ -23,6 +23,7 @@ Reference-architecture principles: P1-P15.
 
 ## What this standard covers
 
+- How worked examples are cited
 - The shape in one picture
 - Principles
 - Where the two repositories disagree, and who wins

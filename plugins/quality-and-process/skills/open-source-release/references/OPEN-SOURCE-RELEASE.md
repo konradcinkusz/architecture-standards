@@ -7,7 +7,7 @@ neither says what to check the one time a repo moves from private to public. Thi
 that gate: repo-agnostic, checklist-shaped, and ordered around the one part of it that isn't
 fixable after the fact.
 
-It is deliberately repo-agnostic. Worked examples are `FSE.Club` (a private repo staged
+It is deliberately repo-agnostic. Worked examples are `<consumer>` (a private repo staged
 for eventual public release, audited for secrets before anything else) and
 `konradcinkusz/authservice` (a clean extraction, verified rather than assumed clean).
 
@@ -40,9 +40,9 @@ before the scanner existed. A repo can have a perfectly clean diff against HEAD 
 carry a live credential in commit 4 of 200.
 
 - Before flipping visibility, scan full history (`git log -p`, or a history-aware tool), not
-  just the working tree. `FSE.Club`'s audit found plaintext Azure SQL credentials, Stripe and
-  SendGrid keys, and a live-mode Stripe secret key — none visible in a HEAD-only diff, all
-  reachable by walking history.
+  just the working tree. In the audit this guide came out of, the HEAD-only diff was clean
+  and history was not: database credentials, third-party service keys, and a payment
+  provider's live-mode secret key were all reachable by walking back through commits.
 - **Rotate first, clean history second** (REPO-BASELINE §2's rule, restated because it is the
   rule that actually matters here). Scrubbing history without rotating is theater — the
   credential was already public for the entire window between push and scrub.
@@ -50,7 +50,7 @@ carry a live credential in commit 4 of 200.
   git history — no forks, no clones anyone tracks — starting a **fresh repository from the
   current tree** costs only commit history. Rewriting history (`git filter-repo`/BFG) costs a
   force-push every downstream clone must also handle, and still leaves the fact of the leaked
-  commit in every clone that already exists. `FSE.Club` stages its rewrite in a `rewrite/`
+  commit in every clone that already exists. `<consumer>` stages its rewrite in a `rewrite/`
   subfolder for exactly this reason — the eventual extraction into a new repo starts with
   fresh history by construction, with nothing to scrub because nothing from the old history
   is ever in it.
@@ -126,7 +126,7 @@ gets found, by search and by future-you:
 
 ---
 
-Worked examples: `FSE.Club`'s `rewrite/docs/architecture/00-SECURITY-NOTE.md` (history-aware
+Worked examples: `<consumer>`'s `rewrite/docs/architecture/00-SECURITY-NOTE.md` (history-aware
 secret audit, fresh-repo extraction staged ahead of time) and `konradcinkusz/authservice`
 (MIT LICENSE present from the first commit, clean history verified rather than assumed, the
 GHCR-private-by-default gotcha found and documented in its own README, `docs/index.html` plus

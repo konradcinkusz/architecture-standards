@@ -6,7 +6,7 @@ conventions for operational scripts. None of this is glamorous; all of it was mo
 by a real failure in the estate — most sharply, live credentials committed in a tracked
 helper script that no pre-commit hook existed to catch.
 
-It is deliberately repo-agnostic. The worked example is `AureliusPromptus` — partly as
+It is deliberately repo-agnostic. The worked example is the reference SaaS — partly as
 a model (its setup script, runbook scripts, `.dockerignore`) and partly as the
 cautionary tale (its missing baseline).
 
@@ -159,9 +159,9 @@ system", which is strictly worse than no README. Two rules:
 
 ---
 
-Worked examples: `AureliusPromptus/setup.ps1` (onboarding), `AureliusPromptus/flyio/*.ps1`
+Worked examples: `<saas>/setup.ps1` (onboarding), `<saas>/flyio/*.ps1`
 (numbered runbook, `.last-image-tag`, legacy-alias teardown),
-`AureliusPromptus/scripts/` (self-sufficiency, script README),
+`<saas>/scripts/` (self-sufficiency, script README),
 `.github/workflows-archive/` (archive convention), `.claude/agents/` +
 `.github/agents/` (agent definitions) — and the absences catalogued in this guide's
 §1 table as the anti-example.
