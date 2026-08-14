@@ -1,0 +1,205 @@
+% ============================================================================
+% Research paper template (see 00-RESEARCH-DOCUMENTATION.md, "From study to
+% paper"). Copy to <repo>/docs/research/papers/NN-SLUG.tex and replace every
+% ALL-CAPS placeholder. The preamble is the estate's house LaTeX style,
+% extracted from AureliusPromptus/docs (business_analysis.tex,
+% pitch-deck-demium.tex) — keep it so papers from different repos look like
+% they come from the same shop.
+%
+% Build (PDFs are build output — never committed):
+%   pdflatex NN-SLUG.tex && pdflatex NN-SLUG.tex
+% ============================================================================
+\documentclass[11pt,a4paper]{article}
+
+% Package imports — the house set
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{geometry}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{graphicx}
+\usepackage{enumitem}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{parskip}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{tabularx}
+
+% Page geometry
+\geometry{
+    a4paper,
+    left=2.2cm,
+    right=2.2cm,
+    top=2.5cm,
+    bottom=2.5cm
+}
+
+% House colors
+\definecolor{primaryblue}{RGB}{41,128,185}
+\definecolor{darkblue}{RGB}{31,78,121}
+\definecolor{lightgray}{RGB}{236,240,241}
+\definecolor{darkgray}{RGB}{52,73,94}
+\definecolor{accentgreen}{RGB}{39,174,96}
+\definecolor{accentorange}{RGB}{230,126,34}
+\definecolor{accentred}{RGB}{231,76,60}
+
+% Section formatting — house style
+\titleformat{\section}
+    {\color{primaryblue}\Large\bfseries\sffamily}
+    {\thesection.}{0.5em}{}[\titlerule]
+
+\titleformat{\subsection}
+    {\color{darkblue}\large\bfseries\sffamily}
+    {\thesubsection}{0.5em}{}
+
+\titleformat{\subsubsection}
+    {\color{darkgray}\normalsize\bfseries\sffamily}
+    {\thesubsubsection}{0.5em}{}
+
+% Paper status: draft | verified — mirrors the study's status header.
+% While the companion study is not `verified`, this MUST say DRAFT.
+\newcommand{\paperstatus}{DRAFT}
+
+% Header/footer
+\pagestyle{fancy}
+\fancyhf{}
+\renewcommand{\headrulewidth}{0.4pt}
+\fancyhead[L]{\small\sffamily\color{darkgray} PROJECT-NAME --- SHORT-PAPER-TITLE}
+\fancyhead[R]{\small\sffamily\color{accentred} \paperstatus\ --- \today}
+\fancyfoot[C]{\thepage}
+
+% Hyperref setup
+\hypersetup{
+    colorlinks=true,
+    linkcolor=primaryblue,
+    urlcolor=primaryblue,
+    pdfauthor={AUTHOR-NAME},
+    pdftitle={PAPER-TITLE}
+}
+
+% House convenience commands
+\newcommand{\repopath}[1]{\colorbox{lightgray}{\texttt{#1}}}
+\newcommand{\finding}[1]{{\color{primaryblue}\textbf{#1}}}
+
+\begin{document}
+
+% ============================================================================
+% TITLE BLOCK — compact, paper-style (not the full-page title of the
+% business docs): title, authors, affiliation, status, date.
+% ============================================================================
+\thispagestyle{plain}
+\begin{center}
+    {\LARGE\bfseries\sffamily\color{darkblue} PAPER-TITLE}
+
+    \vspace{0.6cm}
+
+    {\large AUTHOR-NAME}
+
+    \vspace{0.2cm}
+
+    {\normalsize\color{darkgray} AFFILIATION-OR-REPO-URL}
+
+    \vspace{0.2cm}
+
+    {\normalsize\color{accentred}\sffamily \paperstatus\ --- \today\ ---
+     companion study: \texttt{docs/research/NN-SLUG.md} at commit \texttt{COMMIT}}
+\end{center}
+
+\vspace{0.4cm}
+
+% ----------------------------------------------------------------------------
+% Abstract: question, method, headline result. Written last, placed first —
+% same rule as the markdown study.
+% ----------------------------------------------------------------------------
+\begin{abstract}
+\noindent ABSTRACT-TEXT.
+\end{abstract}
+
+\vspace{0.4cm}
+
+% ============================================================================
+\section{Introduction}
+% The context and the research questions, numbered as in the study (RQ1,
+% RQ2, ...) so Results can answer them by name.
+
+INTRODUCTION-TEXT.
+
+\begin{itemize}[leftmargin=*]
+    \item \textbf{RQ1} --- FIRST-QUESTION.
+    \item \textbf{RQ2} --- SECOND-QUESTION.
+\end{itemize}
+
+\section{Background and related work}
+% What was already known: the repo's theory docs, prior studies, external
+% literature \cite{ref1}. Cite, don't re-teach.
+
+BACKGROUND-TEXT.
+
+\section{Method}
+% Precise enough for a skeptic to attack. Include how the instrument was
+% validated (the standard's rule 3) before its readings counted as evidence.
+
+METHOD-TEXT.
+
+\section{Results}
+% Findings tied to RQs, evidence inline. Every number in this section is
+% traceable to the companion study's tests, artifacts, or shown derivations
+% — a paper introduces no numbers of its own.
+
+RESULTS-TEXT.
+
+\begin{table}[h]
+\centering
+\begin{tabular}{@{}lrr@{}}
+\toprule
+\textbf{Quantity} & \textbf{Value} & \textbf{Evidence} \\
+\midrule
+EXAMPLE-ROW & 0.000000 & artifact / test / derivation \\
+\bottomrule
+\end{tabular}
+\caption{CAPTION-TEXT.}
+\end{table}
+
+\section{Discussion}
+
+\subsection{Threats to validity}
+% Stated by the author before a reviewer has to.
+
+THREATS-TEXT.
+
+\subsection{Implications}
+% What should change because of this.
+
+IMPLICATIONS-TEXT.
+
+\section{Conclusion}
+
+CONCLUSION-TEXT.
+
+\section*{Reproducibility}
+% Verbatim commands — same as the study's Reproduction section.
+
+Every number in this paper regenerates from the companion study's committed
+artifacts:
+
+\begin{quote}
+\repopath{REPRODUCTION-COMMAND}
+\end{quote}
+
+% ============================================================================
+% References — numbered and resolvable, mirroring the study's list.
+% thebibliography (no BibTeX) keeps the paper a single self-contained file.
+% ============================================================================
+\begin{thebibliography}{9}
+
+\bibitem{ref1}
+A.~Author --- \textit{Title}, Publisher, YEAR.
+
+\bibitem{ref2}
+REPO-NAME repository --- \texttt{docs/research/NN-SLUG.md} and its
+artifacts, \url{https://github.com/OWNER/REPO}.
+
+\end{thebibliography}
+
+\end{document}

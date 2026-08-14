@@ -1,0 +1,176 @@
+{
+  "$comment": "Hand-authored metadata layer for the documents under docs/. The docs themselves carry no front-matter and are never modified; this file supplies the machine-readable half (routing descriptions, plugin grouping, principle links) that agent tooling needs. scripts/build-marketplace.mjs reads this plus docs/ and generates plugins/, .github/plugin/marketplace.json, .claude-plugin/marketplace.json and .github/agents/. Edit this file, then re-run the generator; never edit generated output by hand.",
+  "marketplace": {
+    "name": "architecture-standards",
+    "version": "1.0.0",
+    "description": "The estate's architecture constitution and operational guides, packaged as installable agent plugins.",
+    "owner": {
+      "name": "Konrad Cinkusz",
+      "url": "https://github.com/konradcinkusz"
+    },
+    "repository": "https://github.com/konradcinkusz/architecture-standards",
+    "docsBaseUrl": "https://github.com/konradcinkusz/architecture-standards/blob/main/"
+  },
+  "plugins": [
+    {
+      "name": "architecture-core",
+      "version": "1.0.0",
+      "description": "The architectural constitution (P1-P15), the review/modernize/recover session playbook, and the repository baseline. Install this one first; the other plugins assume it.",
+      "keywords": ["architecture", "standards", "dotnet", "aspire", "review", "baseline"],
+      "agents": [
+        "architecture-review",
+        "architecture-modernize",
+        "architecture-recover"
+      ],
+      "skills": [
+        {
+          "name": "reference-architecture",
+          "source": "docs/architecture/00-REFERENCE-ARCHITECTURE.md",
+          "principles": ["P1-P15"],
+          "description": "Use when designing a new service or judging an existing repo against the estate's architecture. The 15 numbered principles (P1-P15) and the compliance checklist: Aspire AppHost as composition root, shared kernel not shared domain, service and database per bounded context, migrated persistence, environment configuration with platform secrets, one container per service, cost-shaped Fly.io topology, degrading optional dependencies, Program.cs as a manifest, interface-plus-registration extensibility, anti-corruption at the edge, tag-driven CI/CD, testing at the layer that holds the logic, in-repo documentation, and observability as a build-time decision. Read this before re-deriving any architectural rule."
+        },
+        {
+          "name": "architecture-session-playbook",
+          "source": "docs/PLAYBOOK.md",
+          "description": "Use when starting an architecture review or modernization of a repo, or when unsure which mode a repo needs. Chooses between REVIEW (already broadly compliant), MODERNIZE (predates the architecture but builds) and RECOVER (does not build, or source and dependencies are partly lost), states which documents each mode must produce, which guides to load for which domain, and why RECOVER begins with archaeology rather than design."
+        },
+        {
+          "name": "repo-baseline",
+          "source": "docs/guides/REPO-BASELINE.md",
+          "description": "Use when creating a new repository, or auditing an existing repo's hygiene and developer tooling. What every repo carries before its first feature: hygiene files, secret scanning in pre-commit and CI, one-command onboarding, operational script conventions, workflow lifecycle and archiving, in-repo AI agent definitions with allowlisted tools and repo-relative paths, and documentation staleness rules."
+        }
+      ]
+    },
+    {
+      "name": "deployment-and-platform",
+      "version": "1.0.0",
+      "description": "Getting services deployed and kept running: Fly.io, Azure AI Foundry, Azure operations, per-PR preview environments, and customer-hosted private-cloud delivery.",
+      "keywords": ["deployment", "fly-io", "azure", "bicep", "ci-cd", "preview-environments"],
+      "skills": [
+        {
+          "name": "fly-io-deployment",
+          "source": "docs/guides/FLY-IO-DEPLOYMENT.md",
+          "principles": ["P7", "P12"],
+          "description": "Use when making a service deployable to Fly.io, writing or reviewing a fly.toml, or building the deploy pipeline. Every fly.toml field annotated, the four service shapes (HTTP service, database, frontend, one-shot job), 6PN .internal and .flycast networking, scale-to-zero and when not to, volumes and state, configuration and secrets, the tag-driven pipeline with change detection, bootstrapping a new app, scaling and teardown, and cost."
+        },
+        {
+          "name": "azure-ai-foundry-agents",
+          "source": "docs/guides/AZURE-AI-FOUNDRY-AGENTS.md",
+          "description": "Use when provisioning persistent tool-using AI agents on Azure AI Foundry. The Hub/Project/Connection Bicep pattern, per-service managed identity and RBAC including the two-role gotcha where Azure AI Developer alone is not enough, agent-as-code provisioned by a run-and-exit job, azd versus az deployment in CI, GitHub Actions to Azure authentication, and which PR-environment resources are cheap. Getting this wrong looks like a healthy deploy until the first agent-creation call."
+        },
+        {
+          "name": "azure-operations",
+          "source": "docs/guides/AZURE-OPERATIONS.md",
+          "description": "Use when running .NET services on Azure beyond AI Foundry. Passwordless SQL end to end, provision-versus-deploy staleness, the permission matrix document, CI credential preflight and soft-delete recovery, storage without keys, model deployments and capacity, and Container Apps manifest idioms and job escape hatches. The unifying rule: managed identity plus RBAC everywhere, and a key or password anywhere in the chain is a finding."
+        },
+        {
+          "name": "pr-preview-environments",
+          "source": "docs/guides/PR-PREVIEW-ENVIRONMENTS.md",
+          "description": "Use when giving each pull request its own running environment. Naming as the isolation mechanism, classifying what is shared versus per-PR, the deploy workflow and sticky status comments, teardown that actually tears down, and cost posture. The two hard problems are deciding what is shared and guaranteeing teardown, not deployment itself."
+        },
+        {
+          "name": "private-cloud-delivery",
+          "source": "docs/guides/PRIVATE-CLOUD-DELIVERY.md",
+          "description": "Use when selling or shipping the SaaS as a self-hosted, customer-deployed edition. The vendor-pushes-images / customer-runs-everything responsibility split, the per-client registry, the vendor push-and-stop workflow, the IaC handed over, upgrades and rollback, the one-flag product switch, and the commercial artifacts. A fifth deployment shape alongside the Fly guide's four, with no fork and no vendor production access."
+        }
+      ]
+    },
+    {
+      "name": "services-and-clients",
+      "version": "1.0.0",
+      "description": "Recurring patterns inside services and the clients that call them: HTTP/API plumbing, identity, payments, Next.js frontends and BFFs, and browser extensions.",
+      "keywords": ["api", "identity", "oauth", "payments", "nextjs", "bff", "browser-extension"],
+      "skills": [
+        {
+          "name": "service-api-patterns",
+          "source": "docs/guides/SERVICE-API-PATTERNS.md",
+          "principles": ["P2", "P9"],
+          "description": "Use when building or reviewing an HTTP service's plumbing. Rate limiting, endpoint organization, validation, pagination and list queries, hardened cross-service HTTP calls, long-running work without a queue, background services versus migrations, seeded definitions, and the migration completion signal. Most are one extension method, which is why they belong in the shared kernel rather than copy-pasted per service."
+        },
+        {
+          "name": "identity-and-accounts",
+          "source": "docs/guides/IDENTITY-AND-ACCOUNTS.md",
+          "principles": ["P5"],
+          "description": "Use when building an identity service or handling the account lifecycle. Everything beyond signing tokens: claims enriched at issuance, refresh token rotation, external OAuth providers and callbacks, account linking, enumeration safety, lockout, transactional email, account deletion, and versioned legal consent."
+        },
+        {
+          "name": "payments-and-monetization",
+          "source": "docs/guides/PAYMENTS-AND-MONETIZATION.md",
+          "description": "Use when adding payments, subscriptions, quotas or metering to a service. Merchant-of-record versus payment gateway reasoning, mock-first integration, webhook discipline, the subscription lifecycle, quota and metering with deliberate fail-open, layered entitlement enforcement, the self-hosted tenant mode switch, and introducing paid tiers to an existing user base."
+        },
+        {
+          "name": "frontend-bff",
+          "source": "docs/guides/FRONTEND-BFF.md",
+          "principles": ["P2", "P6"],
+          "description": "Use when building a Next.js frontend or its backend-for-frontend. The browser talks only to its own origin: runtime configuration so one image serves every environment, HttpOnly cookie sessions instead of a token API, edge middleware that verifies rather than merely decodes, the catch-all proxy with a candidate ladder, entitlement UX, and the shared web kernel whose absence is the costliest finding in the worked example."
+        },
+        {
+          "name": "browser-extensions",
+          "source": "docs/guides/BROWSER-EXTENSIONS.md",
+          "description": "Use when building or shipping a browser extension as a fourth kind of client. Cross-browser MV3 baseline, web-to-extension session handoff, isolated worlds and the service worker, per-site adapters, packaging one source for N environments in CI, store submission, self-distribution with release channels, and why there is no mobile extension."
+        }
+      ]
+    },
+    {
+      "name": "quality-and-process",
+      "version": "1.0.0",
+      "description": "Proving the system works and keeping the repo presentable: LLM evaluation, test strategy, E2E acceptance suites, security review, open-source release, and README badges.",
+      "keywords": ["testing", "e2e", "playwright", "security", "evals", "llm", "open-source"],
+      "skills": [
+        {
+          "name": "ai-evals",
+          "source": "docs/guides/AI-EVALS.md",
+          "principles": ["P13"],
+          "description": "Use when testing an LLM-backed feature, prompt, tool loop or multi-step agent, where the same input can produce different outputs and a prompt or model change can regress behaviour with no code diff. The behaviour spec that precedes the prompt, scenario datasets including adversarial and degradation classes, deterministic assertions over OpenTelemetry traces, calibrated LLM-as-judge, CI gates with baselines, human-in-the-loop, and the production scoring loop that turns incidents into scenarios."
+        },
+        {
+          "name": "testing-strategy",
+          "source": "docs/guides/TESTING-STRATEGY.md",
+          "principles": ["P13"],
+          "description": "Use when deciding what to test, at which layer, and what runs when. The E2E charter, three layers with time budgets, the when-to-run matrix, test infrastructure tiers, mechanics and conventions, the per-test quality bar for merging, what only a human can test, auditing an existing suite, and how test configs rot. A test suite is a budget, not a trophy."
+        },
+        {
+          "name": "e2e-acceptance-testing",
+          "source": "docs/guides/E2E-ACCEPTANCE-TESTING.md",
+          "principles": ["P13"],
+          "description": "Use when writing, reviewing or auditing an end-to-end acceptance suite, especially one that was bulk-generated. The one rule that a test may not pass without checking anything, locator conventions chosen before the first component ships, web-first assertions only for waiting, independence and cleanup agreeing with parallelization, CI wiring as part of done, one canonical suite per live frontend, and the tells that an inherited suite was never fact-checked. A suite that reports green while testing nothing is worse than no suite, because it is trusted."
+        },
+        {
+          "name": "security-review",
+          "source": "docs/guides/SECURITY-REVIEW.md",
+          "principles": ["P5"],
+          "description": "Use when performing a security review or triaging findings before launch. The repeatable method with justified N/A, the finding format, prioritization and the readiness ledger, plus the recurring rule sets: tokens in browsers, cryptographically secure random values, user-supplied paths and names, output/errors/rendering, and authorization structure. An audit whose output format changes each time cannot show whether the system is getting safer."
+        },
+        {
+          "name": "open-source-release",
+          "source": "docs/guides/OPEN-SOURCE-RELEASE.md",
+          "principles": ["P5"],
+          "description": "Use when moving a repository from private to public. The one-time gate that ongoing hygiene rules do not cover, ordered around the history-aware secret audit that cannot be fixed after the fact, plus licensing, the stranger-facing surface, and repo description and topics."
+        },
+        {
+          "name": "readme-badges",
+          "source": "docs/guides/README-BADGES.md",
+          "description": "Use when writing or reviewing a README's badge block. The header metadata row and footer social block, the three badge families and which service is used for what, and the rules that keep a badge row honest: every badge a titled link, substitute owner/repo rather than copy-pasting URLs, and never badge what you do not have."
+        }
+      ]
+    },
+    {
+      "name": "research-standards",
+      "version": "1.0.0",
+      "description": "How a repository documents scientific research: the docs/research layout, the study document shape, the evidence rules, and the study and LaTeX paper templates as bundled assets.",
+      "keywords": ["research", "study", "evidence", "latex", "reproducibility"],
+      "skills": [
+        {
+          "name": "research-documentation",
+          "source": "docs/research/00-RESEARCH-DOCUMENTATION.md",
+          "principles": ["P14"],
+          "description": "Use when a repository produces measurements, benchmarks or experiments that need writing up as research rather than as a guide. What counts as research and what does not, the docs/research layout, the shape of a study document, the evidence rules (every number traceable, reproduction stated as a command, validate the instrument before trusting its readings, negative results get written up), and when a study graduates to a LaTeX paper. Bundled assets: the study template and the paper template.",
+          "assets": [
+            "docs/research/TEMPLATE.md",
+            "docs/research/PAPER-TEMPLATE.tex"
+          ]
+        }
+      ]
+    }
+  ]
+}
