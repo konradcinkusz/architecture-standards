@@ -427,6 +427,17 @@ per-job gating, bootstrapping, and the scale/destroy companions — is in
 
 The InMemory fallback in `AddDatabaseContext` exists partly so tests need no container.
 
+**A green E2E run is only evidence if the suite is verified and wired to CI — neither is
+optional.** A 2026-08-14 audit of `AureliusPromptus.AcceptanceTests` (447 Playwright
+tests) found roughly 45% were placeholders or guarded-away from ever asserting anything,
+the suite had never been wired into CI in either repo, and it duplicated itself across a
+retired frontend and its replacement with no record of which was current. None of this
+was visible from the test count or the folder structure — only from reading the test
+bodies. The operational rules this produced — the assertion discipline that makes a
+passing test mean something, the locator and waiting conventions, and why CI wiring is
+part of a suite's definition of done, not a follow-up — are in
+[`docs/guides/E2E-ACCEPTANCE-TESTING.md`](../guides/E2E-ACCEPTANCE-TESTING.md).
+
 ### P14 — Documentation lives in the repository and records reasoning, not just steps
 
 Both repositories keep decision records next to the code, and both are better for it:
@@ -512,6 +523,7 @@ the deviations this document calls out that are **still unfixed**, as of 2026-08
 | AureliusPromptus | `ServiceDefaults` carries 607 lines of seeded domain prompts plus a `QuotaConsumptionService` — 1,365 lines total against a stated ~700 ceiling | P2 | grew after the review |
 | AureliusPromptus | One HS256 secret distributed to six services and two frontends | P5 | as reviewed |
 | AureliusPromptus | `AuthService` does not call `AddServiceDefaults()` | P2a | as reviewed |
+| AureliusPromptus | E2E suite (447 tests, separate `AcceptanceTests` repo) never wired to CI; ~45% of tests are placeholders or guard-then-bail with no reachable assertion; duplicated across a retired frontend (`Web.NextJs`) and its live replacement (`Portal`) with no record of which was current | P13 | found in the 2026-08-14 audit that produced `docs/guides/E2E-ACCEPTANCE-TESTING.md`; remediation plan lives in the AcceptanceTests repo's own `E2E_Tests_analysis.md` |
 
 When one is fixed, delete the row. When a new one is accepted deliberately, add it with
 the reasoning — an acknowledged deviation is a decision; an unacknowledged one is drift.
@@ -562,3 +574,7 @@ moving target.
   [`docs/guides/AZURE-AI-FOUNDRY-AGENTS.md`](../guides/AZURE-AI-FOUNDRY-AGENTS.md) guide,
   covering how the Azure AI Foundry integration it lists as an optional dependency is
   actually provisioned (Bicep Hub/Project/Connection, per-service RBAC, agent-as-code).
+- *2026-08-14* — P13 cross-referenced to the new
+  [`docs/guides/E2E-ACCEPTANCE-TESTING.md`](../guides/E2E-ACCEPTANCE-TESTING.md) guide,
+  extracted from a full audit of AureliusPromptus's 447-test E2E suite; §3a gained a row
+  for the suite's CI-wiring and assertion-discipline gaps found by that audit.
