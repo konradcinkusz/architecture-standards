@@ -1,0 +1,20 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "deployment-and-platform",
+  "description": "Getting services deployed and kept running: Fly.io, Azure AI Foundry, Azure operations, per-PR preview environments, and customer-hosted private-cloud delivery.",
+  "version": "1.0.0",
+  "author": {
+    "name": "Konrad Cinkusz",
+    "url": "https://github.com/konradcinkusz"
+  },
+  "homepage": "https://github.com/konradcinkusz/architecture-standards",
+  "repository": "https://github.com/konradcinkusz/architecture-standards",
+  "keywords": [
+    "deployment",
+    "fly-io",
+    "azure",
+    "bicep",
+    "ci-cd",
+    "preview-environments"
+  ]
+}

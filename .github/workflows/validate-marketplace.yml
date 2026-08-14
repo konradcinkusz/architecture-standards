@@ -1,0 +1,30 @@
+name: validate-marketplace
+
+on:
+  push:
+    branches: ['**']
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    name: Generated tree and manifests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      # The whole point of generating the packaging layer: a change to a standard that
+      # is not accompanied by regenerated output fails here rather than shipping a
+      # skill that disagrees with the document it claims to carry.
+      - name: Generated tree is current
+        run: node scripts/build-marketplace.mjs --check
+
+      - name: Manifests and skill front-matter are valid
+        run: node scripts/validate-marketplace.mjs

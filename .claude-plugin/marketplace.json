@@ -1,0 +1,114 @@
+{
+  "name": "architecture-standards",
+  "metadata": {
+    "description": "The estate's architecture constitution and operational guides, packaged as installable agent plugins.",
+    "version": "1.0.0"
+  },
+  "owner": {
+    "name": "Konrad Cinkusz",
+    "url": "https://github.com/konradcinkusz"
+  },
+  "plugins": [
+    {
+      "name": "architecture-core",
+      "description": "The architectural constitution (P1-P15), the review/modernize/recover session playbook, and the repository baseline. Install this one first; the other plugins assume it.",
+      "version": "1.0.0",
+      "author": {
+        "name": "Konrad Cinkusz",
+        "url": "https://github.com/konradcinkusz"
+      },
+      "homepage": "https://github.com/konradcinkusz/architecture-standards",
+      "repository": "https://github.com/konradcinkusz/architecture-standards",
+      "keywords": [
+        "architecture",
+        "standards",
+        "dotnet",
+        "aspire",
+        "review",
+        "baseline"
+      ],
+      "source": "./plugins/architecture-core"
+    },
+    {
+      "name": "deployment-and-platform",
+      "description": "Getting services deployed and kept running: Fly.io, Azure AI Foundry, Azure operations, per-PR preview environments, and customer-hosted private-cloud delivery.",
+      "version": "1.0.0",
+      "author": {
+        "name": "Konrad Cinkusz",
+        "url": "https://github.com/konradcinkusz"
+      },
+      "homepage": "https://github.com/konradcinkusz/architecture-standards",
+      "repository": "https://github.com/konradcinkusz/architecture-standards",
+      "keywords": [
+        "deployment",
+        "fly-io",
+        "azure",
+        "bicep",
+        "ci-cd",
+        "preview-environments"
+      ],
+      "source": "./plugins/deployment-and-platform"
+    },
+    {
+      "name": "services-and-clients",
+      "description": "Recurring patterns inside services and the clients that call them: HTTP/API plumbing, identity, payments, Next.js frontends and BFFs, and browser extensions.",
+      "version": "1.0.0",
+      "author": {
+        "name": "Konrad Cinkusz",
+        "url": "https://github.com/konradcinkusz"
+      },
+      "homepage": "https://github.com/konradcinkusz/architecture-standards",
+      "repository": "https://github.com/konradcinkusz/architecture-standards",
+      "keywords": [
+        "api",
+        "identity",
+        "oauth",
+        "payments",
+        "nextjs",
+        "bff",
+        "browser-extension"
+      ],
+      "source": "./plugins/services-and-clients"
+    },
+    {
+      "name": "quality-and-process",
+      "description": "Proving the system works and keeping the repo presentable: LLM evaluation, test strategy, E2E acceptance suites, security review, open-source release, and README badges.",
+      "version": "1.0.0",
+      "author": {
+        "name": "Konrad Cinkusz",
+        "url": "https://github.com/konradcinkusz"
+      },
+      "homepage": "https://github.com/konradcinkusz/architecture-standards",
+      "repository": "https://github.com/konradcinkusz/architecture-standards",
+      "keywords": [
+        "testing",
+        "e2e",
+        "playwright",
+        "security",
+        "evals",
+        "llm",
+        "open-source"
+      ],
+      "source": "./plugins/quality-and-process"
+    },
+    {
+      "name": "research-standards",
+      "description": "How a repository documents scientific research: the docs/research layout, the study document shape, the evidence rules, and the study and LaTeX paper templates as bundled assets.",
+      "version": "1.0.0",
+      "author": {
+        "name": "Konrad Cinkusz",
+        "url": "https://github.com/konradcinkusz"
+      },
+      "homepage": "https://github.com/konradcinkusz/architecture-standards",
+      "repository": "https://github.com/konradcinkusz/architecture-standards",
+      "keywords": [
+        "research",
+        "study",
+        "evidence",
+        "latex",
+        "reproducibility"
+      ],
+      "source": "./plugins/research-standards"
+    }
+  ]
+}

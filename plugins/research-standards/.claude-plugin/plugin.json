@@ -1,0 +1,19 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "research-standards",
+  "description": "How a repository documents scientific research: the docs/research layout, the study document shape, the evidence rules, and the study and LaTeX paper templates as bundled assets.",
+  "version": "1.0.0",
+  "author": {
+    "name": "Konrad Cinkusz",
+    "url": "https://github.com/konradcinkusz"
+  },
+  "homepage": "https://github.com/konradcinkusz/architecture-standards",
+  "repository": "https://github.com/konradcinkusz/architecture-standards",
+  "keywords": [
+    "research",
+    "study",
+    "evidence",
+    "latex",
+    "reproducibility"
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "quality-and-process",
+  "description": "Proving the system works and keeping the repo presentable: LLM evaluation, test strategy, E2E acceptance suites, security review, open-source release, and README badges.",
+  "version": "1.0.0",
+  "author": {
+    "name": "Konrad Cinkusz",
+    "url": "https://github.com/konradcinkusz"
+  },
+  "homepage": "https://github.com/konradcinkusz/architecture-standards",
+  "repository": "https://github.com/konradcinkusz/architecture-standards",
+  "keywords": [
+    "testing",
+    "e2e",
+    "playwright",
+    "security",
+    "evals",
+    "llm",
+    "open-source"
+  ]
+}
