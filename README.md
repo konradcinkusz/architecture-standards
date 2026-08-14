@@ -64,6 +64,11 @@ with the constitution, then pull in the guides the work touches.
 - [`docs/guides/TESTING-STRATEGY.md`](docs/guides/TESTING-STRATEGY.md) — the strategy
   above P13: the E2E charter, three layers with budgets, the when-to-run matrix,
   the per-test quality bar, what only a human can test, and how test configs rot.
+- [`docs/guides/E2E-ACCEPTANCE-TESTING.md`](docs/guides/E2E-ACCEPTANCE-TESTING.md) — the
+  operational guide behind P13's E2E layer: what makes a passing test mean something
+  (assertion discipline, locator and waiting conventions), why CI wiring is part of a
+  suite's definition of done, and how to audit a suite you inherited — including the
+  tells that a bulk-generated suite was never fact-checked.
 - [`docs/guides/SECURITY-REVIEW.md`](docs/guides/SECURITY-REVIEW.md) — the repeatable
   review method (justified N/A, the finding format, the readiness ledger) plus the
   recurring rule sets: browser tokens, CSPRNG, path validation, rendering, and

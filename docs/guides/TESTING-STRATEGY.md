@@ -102,6 +102,11 @@ against the preview is its payoff.
 
 ## 6. The per-test quality bar
 
+The E2E-specific depth behind this bar — assertion discipline, locator and waiting
+conventions, and CI wiring as part of a suite's definition of done — is in
+[`E2E-ACCEPTANCE-TESTING.md`](E2E-ACCEPTANCE-TESTING.md); this section is the summary
+every tier shares.
+
 A test is merged only if:
 
 - Its name states **one business goal** ("user can publish a template"), and it
@@ -160,7 +165,9 @@ The audit questions that generalize verbatim:
 - What would the ideal minimal suite look like, designed from zero?
 
 Run the audit as issues: one parent "suite review" issue, one child per scope from a
-template, each capped at ~10 action items so it finishes.
+template, each capped at ~10 action items so it finishes. For an inherited (especially
+bulk-generated) E2E suite, the deeper audit procedure — including the tells that a
+suite was never fact-checked — is [`E2E-ACCEPTANCE-TESTING.md`](E2E-ACCEPTANCE-TESTING.md) §8.
 
 ## 9. Test configs rot
 

@@ -88,7 +88,8 @@ branch and push when done; don't open a PR unless I ask.
   quotas (`PAYMENTS-AND-MONETIZATION`), the identity service and OAuth
   (`IDENTITY-AND-ACCOUNTS`), recurring service plumbing (`SERVICE-API-PATTERNS`),
   Next.js frontends and BFFs (`FRONTEND-BFF`), browser extensions
-  (`BROWSER-EXTENSIONS`), test suites (`TESTING-STRATEGY`), security audits
+  (`BROWSER-EXTENSIONS`), test suites (`TESTING-STRATEGY`, `E2E-ACCEPTANCE-TESTING`),
+  security audits
   (`SECURITY-REVIEW`), repo setup and dev tooling (`REPO-BASELINE`), per-PR
   environments (`PR-PREVIEW-ENVIRONMENTS`), customer-hosted delivery
   (`PRIVATE-CLOUD-DELIVERY`), and Azure beyond Foundry (`AZURE-OPERATIONS`) — all in
