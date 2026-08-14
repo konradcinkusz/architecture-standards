@@ -19,9 +19,9 @@ implementation teaches, with AureliusPromptus-specific names replaced by placeho
 3. [Repository layout](#3-repository-layout)
 4. [Bicep: Hub, Project, Connection](#4-bicep-hub-project-connection)
 5. [RBAC: who needs what, and the gotchas](#5-rbac-who-needs-what-and-the-gotchas)
-6. [Agent-as-code: definitions and the bootstrapper](#6-agent-as-code-definitions-and-the-bootstrapper)
+6. [Agent-as-code: definitions and the provisioner](#6-agent-as-code-definitions-and-the-provisioner)
 7. [Managed identity per service](#7-managed-identity-per-service)
-8. [Provisioning with `azd`](#8-provisioning-with-azd)
+8. [Provisioning the infrastructure](#8-provisioning-the-infrastructure)
 9. [GitHub Actions → Azure authentication](#9-github-actions--azure-authentication)
 10. [Ephemeral / PR environments: what's cheap and what isn't](#10-ephemeral--pr-environments-whats-cheap-and-what-isnt)
 11. [Failure modes](#11-failure-modes)
@@ -50,16 +50,19 @@ agent as a Bicep resource.
 
 An agent is an Assistants-API object (id `asst_...`) with a name, a model, a system
 prompt ("instructions"), optional tools (code interpreter, function calling), and a
-temperature. It is **permanent** — created once, reused for every conversation, updated
-in place when its definition changes. A **thread** is per-conversation: created when a
-conversation starts, holds the message history, and is deleted when the conversation is
-deleted. Never expose the thread id to clients; keep it behind your own conversation
-identifier so the Foundry-specific ID never leaks into a URL or a client contract.
+temperature. It is **long-lived** — created once and reused for every conversation until
+its definition changes, at which point it is *replaced*: a new agent is created and the
+old one deleted, rather than mutated in place (§6). A **thread** is per-conversation:
+created when a conversation starts, holds the message history, and is deleted when the
+conversation is deleted. Never expose the thread id to clients; keep it behind your own
+conversation identifier so the Foundry-specific ID never leaks into a URL or a client
+contract.
 
-This shape — one long-lived agent, many short-lived threads — is what makes agents
-provisionable independently of deploys: redeploying the service does not mean
-recreating the agent, and an in-flight conversation keeps working against the agent
-version it started with even after a newer version is provisioned.
+This shape — one long-lived agent, many short-lived threads — is what decouples agent
+identity from the deploy cycle: redeploying the service does not recreate its agents,
+because provisioning is driven by the `version` field in each definition, not by the fact
+that a deploy happened. What it does *not* buy you is version overlap — replacement is a
+hard cut, and §6 explains the trade-off that was accepted to get there.
 
 ## 3. Repository layout
 
@@ -78,11 +81,13 @@ version it started with even after a newer version is provisioned.
 │  │  └─ <service>-identity.module.bicep  one user-assigned managed identity
 │  └─ <service>-roles-<resource>/         RBAC scoped to what that service touches
 │     └─ <service>-roles-<resource>.module.bicep
-├─ azure.yaml                             azd configuration
+├─ azure.yaml                             azd config — local/greenfield only (§8)
 ├─ <Service>/
 │  ├─ agents/
 │  │  └─ <slug>/definition.json           one agent definition per directory
-│  └─ <AgentBootstrapper-equivalent>      IHostedService: provisions/updates agents
+│  ├─ <AgentProvisioner-equivalent>       the provisioning logic; runs as a job (§6)
+│  └─ <AgentProvisioningOptions>          RunAsJob, SlugFilter, ModelOverride,
+│                                           ForceReprovision, EnvironmentOverride
 └─ docs/
    ├─ AZURE_AI_FOUNDRY_SETUP.md           setup narrative, zero-to-running
    ├─ GITHUB_ENVIRONMENTS_SETUP.md        which secrets/variables, per environment
@@ -193,7 +198,7 @@ resource roleAssignment 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
 }
 ```
 
-## 6. Agent-as-code: definitions and the bootstrapper
+## 6. Agent-as-code: definitions and the provisioner
 
 Each agent is one directory with one file:
 
@@ -211,22 +216,80 @@ Each agent is one directory with one file:
 }
 ```
 
-An `IHostedService` (call it an `AgentBootstrapper`) runs at application startup:
+### Run provisioning as a job, not at application startup
 
-1. Read every `agents/**/definition.json` shipped in the image.
-2. For each, compare `version` against a row in a small tracking table
-   (`slug`, `version`, `FoundryAgentId`, `IsActive`).
-3. If the version changed (or the row is absent), call the Foundry SDK to create or
-   update the agent, and persist the returned agent id.
-4. Mark the previous version's row inactive — **do not delete it**. Conversations
-   already bound to the old agent id keep working; only new conversations pick up the
-   new version.
+The provisioner ships **inside the service's own image**, but runs as a **dedicated
+run-and-exit job**, not as an `IHostedService` on the API's startup path. A boolean
+config flag (`AgentProvisioning__RunAsJob=true`) is enough: when it is set, the host
+builds, initialises its database, provisions, writes a completion line to stdout and
+returns before the middleware pipeline is ever configured.
 
-This turns "provision an agent" into a deploy-time, idempotent, versioned operation
-instead of a manual portal action or a one-off script — the same discipline P4 applies
-to database schema (migrate, never `EnsureCreated`) applied to agent identity. Ship the
-definition files in the container image (`CopyToOutputDirectory` in the `.csproj` or
-equivalent), so the bootstrapper needs nothing but the image to run.
+CI then runs that job as an **ephemeral machine in a separate app** — same image, same
+secrets, no HTTP service and no health checks, so the platform treats it as a one-off
+background workload rather than a web service that immediately looks dead. On Fly.io
+this is the ephemeral-machine pattern from
+[`FLY-IO-DEPLOYMENT.md`](FLY-IO-DEPLOYMENT.md); on Container Apps it is a Job.
+
+Why not the startup hosted service:
+
+- **A failed provision must fail the deploy.** Inside `StartAsync` the honest options are
+  to swallow the exception (the service starts with stale agents and a log line nobody
+  reads) or to throw (a provisioning problem now looks like an outage). A job has an exit
+  code, and CI can gate on it.
+- **Provisioning is not per-replica.** Scale the API to three machines and a startup
+  bootstrapper runs three times, racing itself over the same tracking table.
+- **It needs operator arguments.** Re-provisioning one agent, overriding a model, or
+  forcing a rebuild are things you want to run *without* redeploying the API.
+
+Keep the hosted service, if at all, as an explicitly-enabled **development-only
+fallback** so a laptop run can still get agents into a dev project.
+
+### What the job does
+
+1. Read every `agents/**/definition.json` shipped in the image. Ship them via
+   `CopyToOutputDirectory` (or equivalent) so the job needs nothing but the image; fail
+   loudly if the directory or the files are missing, rather than reporting success over
+   an empty set.
+2. Resolve the **logical agent environment** (`dev`, `prd`, …) — deliberately separate
+   from `ASPNETCORE_ENVIRONMENT`, which stays `Production` for runtime behaviour even in
+   a dev deployment.
+3. For each definition, compare `version` against the active row for that
+   **`slug` + `environment`** in a small tracking table:
+
+   | Column | Purpose |
+   |---|---|
+   | `Slug`, `DisplayName`, `Version` | straight from `definition.json` |
+   | `FoundryId` | the `asst_...` id returned by the SDK |
+   | `Model` | resolved model, after any override |
+   | `Environment` | logical environment this row belongs to |
+   | `IsActive` | exactly one active row per `slug`+`environment` |
+   | `DeployedAt` | when it was provisioned |
+   | `DefinitionJson` | the definition as provisioned, for audit |
+
+4. If the version matches and no force flag is set, **skip** — this is what makes the job
+   safe to run on every deploy.
+5. Otherwise **create a new agent** (named `<slug>-<environment>`, so one Foundry project
+   can hold several environments without collision), then **delete the old agent and mark
+   its row inactive**. Agents are replaced, never mutated in place.
+6. Finish with an **orphan-cleanup pass**: every inactive row whose Foundry agent still
+   exists gets deleted, treating a 404 as success. Log the ids it could not remove so
+   they can be deleted by hand.
+7. Verify at least one active agent exists for the environment before reporting success.
+   A job that provisioned nothing must not exit 0.
+
+**On deleting old agents.** The tempting rule is to deactivate the row and leave the
+agent alive, so conversations already bound to the old id keep working. Do not: without a
+deletion step, every version bump strands another agent in the project, and they
+accumulate invisibly until someone opens the portal. The cost of deleting is real —
+replacement is a hard cut, and an in-flight conversation pinned to the old id will start
+failing — so pair it with a client that resolves the active agent per request rather than
+caching an `asst_...` id across turns. If you genuinely need version overlap, buy it
+deliberately with a grace period (delete on the *next* run rather than this one), not by
+never deleting at all.
+
+This turns "provision an agent" into an idempotent, versioned, gated operation instead of
+a manual portal action or a one-off script — the same discipline P4 applies to database
+schema (migrate, never `EnsureCreated`), applied to agent identity.
 
 ## 7. Managed identity per service
 
@@ -250,7 +313,15 @@ role shared across services. This is what makes "what can `agenticservice` reach
 question answerable by reading two small files instead of auditing the whole
 subscription.
 
-## 8. Provisioning with `azd`
+## 8. Provisioning the infrastructure
+
+**`azd` to scaffold; `az deployment` to run it in CI.** These are two different jobs and
+conflating them is why `azd` tends to linger in repositories long after nothing calls it.
+
+`azd` earns its place at the start. For an Aspire-based system the AppHost project is the
+source of truth and `azd infra synth` materialises it into the `infra/` Bicep tree — the
+same composition that runs locally (§P1 of the reference architecture) also generates the
+cloud topology. It is also the fastest way to stand up a personal environment:
 
 ```yaml
 # azure.yaml
@@ -266,31 +337,47 @@ pipeline:
   provider: github
 ```
 
-For an Aspire-based system, the AppHost project is the source of truth and `azd infra
-synth` materializes it into the `infra/` Bicep tree — the same composition that runs
-locally (§P1 of the reference architecture) also generates the cloud topology.
-
 ```bash
 azd auth login
-azd init                 # one-time
-azd provision            # Bicep → resources (idempotent — safe to re-run)
-azd deploy                # build containers, push to ACR, deploy to Container Apps
+azd init                  # one-time
+azd provision             # Bicep → resources (idempotent — safe to re-run)
 azd up                    # provision + deploy
-azd env set <key> <value> # per-environment config
 azd down                  # tear down
 ```
 
-**Before the first `azd provision` in a fresh subscription**, register the AI Foundry
-resource provider or the deployment fails on the Hub/Project resource types:
+**In CI, deploy the synthesised Bicep directly.** Once `infra/` exists it is ordinary
+Bicep, and a pipeline that calls `az` needs no `azd` environment state, no `.azure/`
+directory, and no second definition of "which environment am I":
+
+```bash
+az deployment sub create \
+  --name "<system>-${GITHUB_RUN_ID}" \
+  --location "$AZURE_LOCATION" \
+  --template-file infra/main.bicep \
+  --parameters environmentName="$ENV_NAME" location="$AZURE_LOCATION"
+
+# read outputs back for the next job — endpoints, resource ids, the Foundry connection string
+az deployment sub show --name "<system>-${GITHUB_RUN_ID}" --query properties.outputs
+```
+
+This is what the worked example does: every active workflow uses `az deployment sub
+create` / `sub show`, and `azd` survives only in `azure.yaml` and an archived workflow
+directory. If your repository still carries `azd` CI steps, treat them as the thing to
+reconcile — either they are the real path or they are dead, and both are fine, but not at
+the same time.
+
+**Before the first deployment into a fresh subscription**, register the AI Foundry
+resource provider or it fails on the Hub/Project resource types:
 
 ```bash
 az provider register --namespace Microsoft.MachineLearningServices --wait
 ```
 
-Read the Foundry connection string from the Bicep outputs after provisioning
+Read the Foundry connection string from the deployment outputs
 (`https://<hub>.services.ai.azure.com/api/projects/<project>;<subscriptionId>;<resourceGroup>;<projectName>`,
 or the derived agents endpoint from §4) and forward it into the service's configuration
-as a secret — `AzureAIFoundry__ConnectionString` or equivalent — never hard-coded.
+as a secret — `AzureAIFoundry__ConnectionString` or equivalent — never hard-coded. The
+provisioning job of §6 needs the same value, so pass it to both.
 
 ## 9. GitHub Actions → Azure authentication
 
@@ -346,7 +433,8 @@ Because `uniqueString(resourceGroup().id)` derives every name from the resource 
 and the resource group is `rg-${environmentName}`, giving each PR its own
 `environmentName` gives it, for free, an entirely separate Azure footprint. That is
 also the trap: **"for free" in naming does not mean "for free" in cost.** Classify
-resources before wiring PR environments to `azd provision`, not after the first bill:
+resources before wiring PR environments to the provisioning pipeline, not after the first
+bill:
 
 | Cheap / safe to re-provision per PR | Expensive / needs a decision first |
 |---|---|
@@ -372,9 +460,13 @@ written down gets re-litigated every time someone notices the bill.
 |---|---|
 | Agent creation fails with an authorization error, deploy otherwise looks healthy | Consuming service's identity has "Azure AI Developer" on the Project but not "Cognitive Services OpenAI Contributor" on the OpenAI account — both are required |
 | Hub↔OpenAI connection works for chat completions but not for agent operations | Hub identity has "OpenAI User" only; assistants/write needs "OpenAI Contributor" too |
-| `azd provision` fails on first run in a fresh subscription | `Microsoft.MachineLearningServices` resource provider not registered |
+| Infrastructure deployment fails on its first run in a fresh subscription | `Microsoft.MachineLearningServices` resource provider not registered |
 | Role assignment fails with "already exists" on re-run | `name` on the `roleAssignments` resource used `guid()` with a random seed instead of a deterministic `guid(scope, principal, role)` |
-| Agent behaviour changes for existing conversations mid-deploy | Bootstrapper updated the agent in place instead of versioning; old threads now run against new instructions |
+| In-flight conversations start failing immediately after a version bump | The accepted consequence of replace-and-delete (§6), made worse by a client that cached an `asst_...` id instead of resolving the active agent per request |
+| The Foundry project slowly fills with unused agents | Provisioning deactivates tracking rows without deleting the agents behind them, and has no orphan-cleanup pass |
+| Provisioning reports success but no agent exists | The job ran against an empty or unreadable `agents/` directory — it must fail on finding no definitions, and verify an active row before exiting 0 |
+| Provisioning runs several times per deploy and races itself over the tracking table | Wired as a startup hosted service on a multi-replica API instead of a single run-and-exit job (§6) |
+| The provisioning job's logs are empty in CI even though it ran | The process exited before the platform's log forwarder flushed — write the completion line to stdout, flush it, and pause briefly before returning |
 | Every PR environment silently re-creates Azure OpenAI + model deployments | No shared-OpenAI parameter threaded through `infra/`; classification not decided up front |
 | Foundry SDK calls fail with a malformed endpoint | Used `discoveryUrl` directly instead of stripping `/discovery` and rebuilding the `/agents/v1.0/...` path |
 | GitHub Actions can authenticate to `dev` but not `prd` (or vice versa) | Environments share one App Registration/service principal instead of one per environment |
@@ -383,7 +475,7 @@ written down gets re-litigated every time someone notices the bill.
 
 Per environment (subscription/resource-group pair):
 
-- [ ] `Microsoft.MachineLearningServices` provider registered before first `azd provision`
+- [ ] `Microsoft.MachineLearningServices` provider registered before the first deployment
 - [ ] One Hub, one Project per environment; Project's `hubResourceId` set explicitly
 - [ ] OpenAI account referenced as `existing`, not duplicated per module
 - [ ] Hub and Project identities both hold OpenAI Contributor **and** OpenAI User on the OpenAI account
@@ -394,7 +486,11 @@ Per service that creates or runs agents:
 - [ ] Own user-assigned managed identity; no shared/service-principal-wide identity
 - [ ] Identity holds OpenAI Contributor on the OpenAI account **and** Azure AI Developer on the Project
 - [ ] Agent definitions live in-repo as versioned JSON, one file per agent
-- [ ] A startup hosted service provisions/updates agents idempotently by version, never deletes old versions
+- [ ] Agents provisioned by a run-and-exit job whose exit code gates the deploy, not by a startup hosted service on the API's path
+- [ ] Provisioning is idempotent by `version` and scoped by `slug` + logical agent environment, the latter separate from `ASPNETCORE_ENVIRONMENT`
+- [ ] Replacement deletes the superseded agent, and a cleanup pass removes orphans left by earlier runs
+- [ ] The job fails loudly when it finds no definitions or ends with no active agent for the environment
+- [ ] Clients resolve the active agent per request instead of caching an `asst_...` id across turns
 - [ ] Thread ids never reach the client; only an internal conversation id does
 
 Per repository:
@@ -408,5 +504,5 @@ Per repository:
 ---
 
 Worked example: `AureliusPromptus/infra/azure-ai-foundry/`,
-`AureliusPromptus/infra/*-identity/`, and
-`AureliusPromptus.AgenticService/agents/` + its agent bootstrapper hosted service.
+`AureliusPromptus/infra/*-identity/`, and `AureliusPromptus.AgenticService/agents/` +
+its `AgentProvisioner`, run as the `provision-agents` job in `.github/workflows/flyio.yml`.
