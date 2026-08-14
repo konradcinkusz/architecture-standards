@@ -61,6 +61,11 @@ with the constitution, then pull in the guides the work touches.
 
 **Quality and process**
 
+- [`docs/guides/AI-EVALS.md`](docs/guides/AI-EVALS.md) — evaluating LLM-backed
+  features and agents: the behaviour spec that precedes the prompt, scenario datasets
+  (including adversarial and degradation classes), deterministic assertions over OTel
+  traces, calibrated LLM-as-judge, CI gates with baselines, and the production scoring
+  loop that converts incidents into scenarios.
 - [`docs/guides/TESTING-STRATEGY.md`](docs/guides/TESTING-STRATEGY.md) — the strategy
   above P13: the E2E charter, three layers with budgets, the when-to-run matrix,
   the per-test quality bar, what only a human can test, and how test configs rot.
