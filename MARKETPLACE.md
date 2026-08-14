@@ -41,12 +41,25 @@ copilot plugin install architecture-core@architecture-standards
 Then browse with `@agentPlugins` in the Extensions view, or run **Chat: Plugins** from
 the Command Palette.
 
-**Claude Code**
+**Claude Code** — in a session:
 
-```sh
+```
 /plugin marketplace add konradcinkusz/architecture-standards
 /plugin install architecture-core@architecture-standards
 ```
+
+or from a shell, which is the same thing:
+
+```sh
+claude plugin marketplace add konradcinkusz/architecture-standards
+claude plugin install architecture-core@architecture-standards
+claude plugin details architecture-core     # skills, agents, token cost
+```
+
+Both read the repository's **default branch**, so a plugin change is only installable
+once it is merged. To try a branch first, add the marketplace by absolute path
+(`claude plugin marketplace add /path/to/architecture-standards`) and
+`claude plugin marketplace update architecture-standards` after each rebuild.
 
 **Any other agent** — attach the repo as a sibling checkout and point it at
 [`AGENTS.md`](AGENTS.md). No install step, no client support required.
@@ -75,6 +88,37 @@ installation, or an admin.
 Not covered: `copilot plugin marketplace add <org>/<repo>` is GitHub shorthand, so a
 marketplace hosted on Azure DevOps or GitLab is reachable from VS Code's setting (which
 accepts arbitrary git URLs) but not from that CLI command.
+
+## Cost
+
+Skills are loaded on demand, so a plugin's standing cost is only its skill descriptions.
+Measured with `claude plugin details`:
+
+| Plugin | Always-on |
+|---|---|
+| `architecture-core` | ~990 tokens |
+| `deployment-and-platform` | ~820 |
+| `quality-and-process` | ~850 |
+| `services-and-clients` | ~670 |
+| `research-standards` | ~155 |
+
+All five is ~3.5k tokens per session. Installing only the ones a repo actually needs is
+the reason the standards are split into five plugins rather than shipped as one.
+
+## Two clients, one tree
+
+The clients disagree on two details, so the generator emits both spellings:
+
+- **Plugin manifest** — Copilot and the Agent Plugins format read `plugin.json` at the
+  plugin root; Claude Code reads `.claude-plugin/plugin.json`. Both are written, and the
+  validator fails if they diverge.
+- **Agent filenames** — in `.github/agents/` Copilot requires the `.agent.md` extension;
+  inside a plugin, Claude Code derives the agent's name from the filename, so a
+  `.agent.md` suffix would surface it as `architecture-review.agent`. Plugins therefore
+  carry plain `.md`.
+
+Marketplace `source` paths are written as `./plugins/<name>`: Claude Code rejects a bare
+relative path, and Copilot resolves both spellings identically.
 
 ## Keeping it honest
 

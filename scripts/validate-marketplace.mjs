@@ -90,6 +90,8 @@ for (const entry of marketplace.plugins ?? []) {
 
   const dir = typeof entry.source === 'string' ? entry.source : null;
   if (!dir) continue; // a {source:"github"} object points elsewhere; nothing local to check
+  // Claude Code rejects a bare relative path; Copilot resolves both spellings the same.
+  if (!dir.startsWith('./')) fail(at, `source must start with "./" to satisfy Claude Code: ${dir}`);
   if (!existsSync(join(ROOT, dir))) {
     fail(at, `source directory does not exist: ${dir}`);
     continue;
@@ -111,6 +113,15 @@ for (const entry of marketplace.plugins ?? []) {
     fail(manifestPath, `version ${plugin.version} does not match marketplace entry ${entry.version}`);
   }
   if (!plugin.description) fail(manifestPath, 'missing description');
+
+  // Copilot reads plugin.json at the plugin root, Claude Code reads it from
+  // .claude-plugin/. Both must be present and identical.
+  const claudeManifest = `${dir}/.claude-plugin/plugin.json`;
+  if (!existsSync(join(ROOT, claudeManifest))) {
+    fail(at, `no .claude-plugin/plugin.json — Claude Code will not load ${dir}`);
+  } else if (read(claudeManifest) !== read(manifestPath)) {
+    fail(claudeManifest, 'differs from the root plugin.json');
+  }
 
   // ------------------------------------------------------------------------ skills
   const skillsDir = `${dir}/skills`;

@@ -27,7 +27,7 @@
         "review",
         "baseline"
       ],
-      "source": "plugins/architecture-core"
+      "source": "./plugins/architecture-core"
     },
     {
       "name": "deployment-and-platform",
@@ -47,7 +47,7 @@
         "ci-cd",
         "preview-environments"
       ],
-      "source": "plugins/deployment-and-platform"
+      "source": "./plugins/deployment-and-platform"
     },
     {
       "name": "services-and-clients",
@@ -68,7 +68,7 @@
         "bff",
         "browser-extension"
       ],
-      "source": "plugins/services-and-clients"
+      "source": "./plugins/services-and-clients"
     },
     {
       "name": "quality-and-process",
@@ -89,7 +89,7 @@
         "llm",
         "open-source"
       ],
-      "source": "plugins/quality-and-process"
+      "source": "./plugins/quality-and-process"
     },
     {
       "name": "research-standards",
@@ -108,7 +108,7 @@
         "latex",
         "reproducibility"
       ],
-      "source": "plugins/research-standards"
+      "source": "./plugins/research-standards"
     }
   ]
 }

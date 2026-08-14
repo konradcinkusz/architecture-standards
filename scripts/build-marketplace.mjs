@@ -253,14 +253,20 @@ function buildPlugin(plugin, catalog) {
     repository: catalog.marketplace.repository,
     keywords: plugin.keywords,
   };
-  emit(`plugins/${plugin.name}/plugin.json`, `${JSON.stringify(manifest, null, 2)}\n`);
+  const json = `${JSON.stringify(manifest, null, 2)}\n`;
+  // Agent Plugins 1.0.0 (Copilot CLI, VS Code) reads plugin.json at the plugin root;
+  // Claude Code reads .claude-plugin/plugin.json. Same manifest, two locations.
+  emit(`plugins/${plugin.name}/plugin.json`, json);
+  emit(`plugins/${plugin.name}/.claude-plugin/plugin.json`, json);
 
   for (const skill of plugin.skills) buildSkill(skill, plugin, catalog);
 
   for (const agent of plugin.agents ?? []) {
     const contents = readFileSync(join(ROOT, `catalog/agents/${agent}.agent.md`), 'utf8');
-    emit(`plugins/${plugin.name}/agents/${agent}.agent.md`, contents);
-    // Also surface the agent in-repo, where Copilot reads .github/agents/ directly.
+    // Inside a plugin, Claude Code derives the agent's name from the filename, so a
+    // `.agent.md` suffix would surface it as "architecture-review.agent".
+    emit(`plugins/${plugin.name}/agents/${agent}.md`, contents);
+    // In-repo, Copilot requires the .agent.md extension for custom agents.
     emit(`.github/agents/${agent}.agent.md`, contents);
   }
 }
@@ -275,7 +281,9 @@ function buildMarketplaceManifests(catalog) {
     homepage: marketplace.repository,
     repository: marketplace.repository,
     keywords: plugin.keywords,
-    source: `plugins/${plugin.name}`,
+    // Claude Code requires the leading "./"; Copilot resolves it identically to a bare
+    // relative path, so this one spelling satisfies both.
+    source: `./plugins/${plugin.name}`,
   }));
 
   const manifest = {
