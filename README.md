@@ -23,9 +23,9 @@ with the constitution, then pull in the guides the work touches.
   modes each rule exists to prevent.
 - [`docs/guides/AZURE-AI-FOUNDRY-AGENTS.md`](docs/guides/AZURE-AI-FOUNDRY-AGENTS.md) —
   provisioning Azure AI Foundry agents: the Hub/Project/Connection Bicep pattern,
-  per-service managed identity and RBAC (including the two-role gotcha), the
-  agent-as-code + startup-bootstrapper pattern, `azd`, GitHub Actions → Azure
-  authentication, and PR-environment cost classification.
+  per-service managed identity and RBAC (including the two-role gotcha), agent-as-code
+  provisioned by a run-and-exit job, `azd` versus `az deployment` in CI, GitHub Actions →
+  Azure authentication, and PR-environment cost classification.
 - [`docs/guides/AZURE-OPERATIONS.md`](docs/guides/AZURE-OPERATIONS.md) — the rest of
   Azure: passwordless SQL end to end, provision-vs-deploy staleness, the permission
   matrix document, CI credential preflight and soft-delete recovery, Container Apps

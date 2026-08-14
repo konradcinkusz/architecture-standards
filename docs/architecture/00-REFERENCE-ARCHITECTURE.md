@@ -335,8 +335,7 @@ present, with a working fallback:
 
 How the Azure AI Foundry side of that table gets provisioned in the first place — the
 Hub/Project/Connection Bicep, per-service managed identity and RBAC, and the
-agent-as-code + startup-bootstrapper pattern that turns a JSON file into a running
-agent — is in
+agent-as-code job that turns a JSON file into a running agent — is in
 [`docs/guides/AZURE-AI-FOUNDRY-AGENTS.md`](../guides/AZURE-AI-FOUNDRY-AGENTS.md). That
 guide is orthogonal to P7: the agents it describes can back a service running on Fly.io
 or on Azure Container Apps.
@@ -615,3 +614,15 @@ moving target.
   `AZURE-OPERATIONS`. Cross-references added from P2, P5, P7, P12, P13 and P14; P14
   given the stale-README corollary; three deviations recorded in §3a (committed
   credentials, copy-pasted rate limiting, rotted E2E config).
+- *2026-08-14* — [`docs/guides/AZURE-AI-FOUNDRY-AGENTS.md`](../guides/AZURE-AI-FOUNDRY-AGENTS.md)
+  re-verified line by line against AureliusPromptus and corrected where it had drifted.
+  The Bicep and RBAC sections held exactly; four things had not. Agent provisioning is a
+  run-and-exit job (`RunAsJob`) on an ephemeral machine, not the startup `IHostedService`
+  the guide taught — that path is now the implementation's own development-only fallback.
+  Superseded agents are deleted and orphans swept, reversing the guide's "never delete
+  old versions" rule, which had been stranding an agent per version bump; the in-flight
+  conversation cost that rule was protecting is now stated as an accepted consequence
+  with a per-request agent-resolution mitigation. CI provisions with `az deployment sub
+  create`, not `azd`, which survives only for local and greenfield use. The tracking
+  table is scoped by logical agent environment, deliberately separate from
+  `ASPNETCORE_ENVIRONMENT`. §11 and §12 updated to match.
