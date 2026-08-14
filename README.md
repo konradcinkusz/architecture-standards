@@ -77,6 +77,20 @@ with the constitution, then pull in the guides the work touches.
   carries before its first feature: hygiene files, secret scanning, one-command
   onboarding, operational script conventions, workflow lifecycle, and in-repo AI
   agent definitions.
+- [`docs/guides/README-BADGES.md`](docs/guides/README-BADGES.md) — the README badge
+  standard: the header metadata row and footer social block, which badge service is
+  used for what, and the rules (every badge a titled link, no copy-paste drift,
+  don't badge what you don't have) that keep a badge row honest.
+
+## Research standards
+
+- [`docs/research/00-RESEARCH-DOCUMENTATION.md`](docs/research/00-RESEARCH-DOCUMENTATION.md)
+  — how a repo documents scientific research: the `docs/research/` layout, the
+  study document shape, and the evidence rules (every number traceable,
+  reproduction as a command, validate the instrument before trusting its
+  readings, negative results get written up).
+- [`docs/research/TEMPLATE.md`](docs/research/TEMPLATE.md) — the copy-paste
+  skeleton for starting a new study.
 
 ## The playbook
 
