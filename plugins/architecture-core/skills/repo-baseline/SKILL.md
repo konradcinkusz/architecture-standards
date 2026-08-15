@@ -5,8 +5,9 @@ description: >-
   and developer tooling. What every repo carries before its first feature:
   hygiene files, secret scanning in pre-commit and CI, one-command onboarding,
   operational script conventions, workflow lifecycle and archiving, in-repo AI
-  agent definitions with allowlisted tools and repo-relative paths, and
-  documentation staleness rules.
+  agent definitions with allowlisted tools and repo-relative paths, declaring
+  architecture-standards adoption via `.claude/settings.json` rather than
+  relying on memory, and documentation staleness rules.
 ---
 
 # Repository baseline and developer tooling
@@ -23,6 +24,7 @@ whether this skill applies and to check your work afterwards.
 - Operational scripts
 - Workflow lifecycle
 - AI agent definitions live in the repo
+- Standards adoption is declared, not remembered
 - Documentation staleness
 
 ## Checklist
@@ -33,6 +35,7 @@ whether this skill applies and to check your work afterwards.
 - [ ] Runbook scripts numbered + delegating; hand-off token files with documented resolution order; self-sufficient scripts; scripts README with variable tiers; CI jobs mirrored locally; destroy lists carry legacy names
 - [ ] Retired workflows archived to `workflows-archive/`, never comment-disabled
 - [ ] AI agent definitions in-repo: allowlisted tools, example-bearing descriptions, committed memory policy, repo-relative paths
+- [ ] If this repo is meant to conform to `architecture-standards`: `.claude/settings.json` declares the marketplace and enables `architecture-core`
 - [ ] README claims verified in review; one named source of truth per environment variable
 
 ---

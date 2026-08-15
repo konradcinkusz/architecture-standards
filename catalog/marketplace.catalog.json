@@ -37,7 +37,7 @@
         {
           "name": "repo-baseline",
           "source": "docs/guides/REPO-BASELINE.md",
-          "description": "Use when creating a new repository, or auditing an existing repo's hygiene and developer tooling. What every repo carries before its first feature: hygiene files, secret scanning in pre-commit and CI, one-command onboarding, operational script conventions, workflow lifecycle and archiving, in-repo AI agent definitions with allowlisted tools and repo-relative paths, and documentation staleness rules."
+          "description": "Use when creating a new repository, or auditing an existing repo's hygiene and developer tooling. What every repo carries before its first feature: hygiene files, secret scanning in pre-commit and CI, one-command onboarding, operational script conventions, workflow lifecycle and archiving, in-repo AI agent definitions with allowlisted tools and repo-relative paths, declaring architecture-standards adoption via `.claude/settings.json` rather than relying on memory, and documentation staleness rules."
         }
       ]
     },

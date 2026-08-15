@@ -20,8 +20,9 @@ cautionary tale (its missing baseline).
 4. [Operational scripts](#4-operational-scripts)
 5. [Workflow lifecycle](#5-workflow-lifecycle)
 6. [AI agent definitions live in the repo](#6-ai-agent-definitions-live-in-the-repo)
-7. [Documentation staleness](#7-documentation-staleness)
-8. [Checklist](#8-checklist)
+7. [Standards adoption is declared, not remembered](#7-standards-adoption-is-declared-not-remembered)
+8. [Documentation staleness](#8-documentation-staleness)
+9. [Checklist](#9-checklist)
 
 ---
 
@@ -134,7 +135,37 @@ A skills/competency inventory derived from the infrastructure — each skill map
 the file that demonstrates it — doubles as an onboarding curriculum and a bus-factor
 audit; cheap to generate, worth keeping current.
 
-## 7. Documentation staleness
+## 7. Standards adoption is declared, not remembered
+
+A repo that is meant to conform to this constitution says so in a committed file, not
+in a teammate's memory. `.claude/settings.json` registers `architecture-standards` as
+a known plugin marketplace and enables `architecture-core`:
+
+```json
+{
+  "extraKnownMarketplaces": {
+    "architecture-standards": {
+      "source": { "source": "github", "repo": "konradcinkusz/architecture-standards" }
+    }
+  },
+  "enabledPlugins": {
+    "architecture-core@architecture-standards": true
+  }
+}
+```
+
+Full install instructions, and the attach-the-repo-versus-install-the-plugin
+trade-off, live in [`MARKETPLACE.md`](https://github.com/konradcinkusz/architecture-standards/blob/main/MARKETPLACE.md); this section exists so
+that declaration is part of the baseline rather than a step someone has to remember
+to run the day a repo starts being expected to follow the standard.
+
+Conditional, not universal: a repo that genuinely isn't meant to conform to this
+constitution — research-only, a spike, an archived project — doesn't need it. A repo
+the estate does expect to follow P1–P15 carries the declaration from the day that
+expectation exists. Same logic as §1, one layer up: a standard enforced only by
+someone remembering to attach the reference repo is not enforced.
+
+## 8. Documentation staleness
 
 **A stale README is a review finding, not a cosmetic issue.** The estate's worked
 example documented a different framework version, a dead technology choice and three
@@ -149,7 +180,7 @@ system", which is strictly worse than no README. Two rules:
   there, a variable present in the dev branch of the composition root and missing in
   the publish branch.
 
-## 8. Checklist
+## 9. Checklist
 
 - [ ] `CODEOWNERS`, dependency-update automation, `.editorconfig`, central package management, PR/issue templates, real `.gitattributes`, exclusion-based `.dockerignore`
 - [ ] Secret scanning pre-commit + CI; local scripts read secrets from gitignored `.env` with a committed example file; rotation before history-scrubbing
@@ -157,6 +188,7 @@ system", which is strictly worse than no README. Two rules:
 - [ ] Runbook scripts numbered + delegating; hand-off token files with documented resolution order; self-sufficient scripts; scripts README with variable tiers; CI jobs mirrored locally; destroy lists carry legacy names
 - [ ] Retired workflows archived to `workflows-archive/`, never comment-disabled
 - [ ] AI agent definitions in-repo: allowlisted tools, example-bearing descriptions, committed memory policy, repo-relative paths
+- [ ] If this repo is meant to conform to `architecture-standards`: `.claude/settings.json` declares the marketplace and enables `architecture-core`
 - [ ] README claims verified in review; one named source of truth per environment variable
 
 ---
@@ -165,5 +197,6 @@ Worked examples: `<saas>/setup.ps1` (onboarding), `<saas>/flyio/*.ps1`
 (numbered runbook, `.last-image-tag`, legacy-alias teardown),
 `<saas>/scripts/` (self-sufficiency, script README),
 `.github/workflows-archive/` (archive convention), `.claude/agents/` +
-`.github/agents/` (agent definitions) — and the absences catalogued in this guide's
-§1 table as the anti-example.
+`.github/agents/` (agent definitions), [`MARKETPLACE.md`](https://github.com/konradcinkusz/architecture-standards/blob/main/MARKETPLACE.md)
+(the `.claude/settings.json` snippet §7 requires) — and the absences catalogued in
+this guide's §1 table as the anti-example.
