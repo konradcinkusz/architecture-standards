@@ -6,7 +6,7 @@ description: >-
   generic fill-in prompt covering, in phases: the assessment (a playbook mode
   plus gap analysis against the compliance checklist), adopting the external
   authservice as the system's only identity provider, bringing the frontend to
-  a Blazor product surface under the frontend/BFF rules, comprehensive UI/UX
+  a Next.js product surface under the frontend/BFF rules, comprehensive UI/UX
   documentation with a ranked backlog, shipping every service to Fly.io, and
   an optional parallel Azure provisioning job. States what to attach, the
   read-only scope of the standards and authservice repos, and the definition
@@ -26,7 +26,7 @@ whether this skill applies and to check your work afterwards.
 - Fill-in reference
 - What to attach to the session
 - What a finished session leaves behind
-- A note on Blazor
+- A note on the frontend framework
 
 ## Why this exists
 

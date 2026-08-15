@@ -37,7 +37,7 @@
         {
           "name": "master-delivery-prompt",
           "source": "docs/MASTER-PROMPT.md",
-          "description": "Use when running a delivery session against an application repo — one that must end aligned to the standards AND live as a workable product. The generic fill-in prompt covering, in phases: the assessment (a playbook mode plus gap analysis against the compliance checklist), adopting the external authservice as the system's only identity provider, bringing the frontend to a Blazor product surface under the frontend/BFF rules, comprehensive UI/UX documentation with a ranked backlog, shipping every service to Fly.io, and an optional parallel Azure provisioning job. States what to attach, the read-only scope of the standards and authservice repos, and the definition of done."
+          "description": "Use when running a delivery session against an application repo — one that must end aligned to the standards AND live as a workable product. The generic fill-in prompt covering, in phases: the assessment (a playbook mode plus gap analysis against the compliance checklist), adopting the external authservice as the system's only identity provider, bringing the frontend to a Next.js product surface under the frontend/BFF rules, comprehensive UI/UX documentation with a ranked backlog, shipping every service to Fly.io, and an optional parallel Azure provisioning job. States what to attach, the read-only scope of the standards and authservice repos, and the definition of done."
         },
         {
           "name": "repo-baseline",
