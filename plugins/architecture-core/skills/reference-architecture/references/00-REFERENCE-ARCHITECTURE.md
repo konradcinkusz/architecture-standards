@@ -655,3 +655,15 @@ moving target.
   repos involved, one of them a deliberate, logged P5 exception. The general pattern this raises — a service built for reuse *across*
   systems, not just within one — is proposed but not yet merged, in
   `docs/proposals/EXTRACT-SHARED-SERVICE-PATTERN.md`.
+- *2026-08-15* — `IDENTITY-AND-ACCOUNTS.md` gained §10 "Key material", covering what P5
+  leaves out once asymmetric signing is no longer aspirational: how a keypair is produced,
+  handed over and rotated. Prompted by the first estate consumer to adopt an extracted
+  identity service as a verify-only downstream, and by two failures that surfaced doing it.
+  The first was a runbook that offered `openssl` and nothing else, which is not a command on
+  Windows and so fails at step one of onboarding — a generation instruction carries a
+  platform assumption, and repos should ship a script rather than a Unix one-liner. The
+  second is subtler and is now a checklist item: where the signing algorithm is *inferred*
+  from what was configured, a missing key selects the symmetric path and publishes a
+  syntactically valid, **empty** JWKS. Nothing reports unhealthy, the deploy goes green, and
+  every consumer rejects every token — so a deploy must assert the key set is non-empty.
+  Five failure-mode rows and five checklist items added with it.
