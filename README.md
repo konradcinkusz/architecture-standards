@@ -135,7 +135,7 @@ with the constitution, then pull in the guides the work touches.
   including the ready-to-use session prompt template and which repos to attach.
 - [`docs/MASTER-PROMPT.md`](docs/MASTER-PROMPT.md) — the generic delivery-session
   prompt: align one app repo to the standards and leave it live — gap analysis via a
-  playbook mode, `authservice` adopted as the only identity provider, a Blazor product
+  playbook mode, `authservice` adopted as the only identity provider, a Next.js product
   surface per the frontend/BFF guide, UI/UX documentation, deployment to Fly.io, and
   an optional parallel Azure provisioning job.
 

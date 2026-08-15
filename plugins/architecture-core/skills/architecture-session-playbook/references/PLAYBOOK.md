@@ -27,7 +27,7 @@ Copy this into a new session, fill in the target block, and attach the repos lis
 under "What to attach" below.
 
 This template is documentation-only. For a session that must also *ship* — adopt
-`authservice` as the identity provider, bring the frontend to the Blazor/BFF standard,
+`authservice` as the identity provider, bring the frontend to the Next.js/BFF standard,
 and leave the product live on Fly.io — use the delivery variant in
 [`MASTER-PROMPT.md`](https://github.com/konradcinkusz/architecture-standards/blob/main/docs/MASTER-PROMPT.md); its first phase is one of the modes below.
 
