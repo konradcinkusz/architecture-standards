@@ -1,9 +1,6 @@
 name: validate-marketplace
 
 on:
-  push:
-    branches: ['**']
-  pull_request:
   workflow_dispatch:
 
 permissions:
