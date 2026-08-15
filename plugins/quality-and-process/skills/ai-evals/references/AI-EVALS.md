@@ -12,10 +12,13 @@ LLM-as-judge), the CI gate, and the production scoring loop that feeds incidents
 into scenarios. The unifying rule: **an eval suite is to an agent what a migration is
 to a schema — the only sanctioned way to change it.**
 
-It is deliberately repo-agnostic. Worked examples: `copilot-scope` (the OTLP ingestion
-pipeline and the composite scoring engine — reliability, acceptance, friction, latency —
-this guide generalizes), `<saas>.AgenticService` (the step pipeline and
-per-phase degradation the scenarios exercise), and
+It is deliberately repo-agnostic. Worked examples: `agent-eval-bench` (the complete
+loop, end to end, for a reference "Absence Concierge" agent — spec, a 35-scenario
+dataset across all five classes, Layer 1 hard-blocking every pull request, and a Layer 2
+judge that is built and pinned but has not yet scored a live model), `copilot-scope`
+(the OTLP ingestion pipeline and the composite scoring engine — reliability, acceptance,
+friction, latency — this guide generalizes), `<saas>.AgenticService` (the step pipeline
+and per-phase degradation the scenarios exercise), and
 [`E2E-ACCEPTANCE-TESTING.md`](https://github.com/konradcinkusz/architecture-standards/blob/main/docs/guides/E2E-ACCEPTANCE-TESTING.md), whose assertion discipline
 transfers here almost verbatim — a green eval that checked nothing is *worse* than no
 eval, because it is trusted. Where a rule below is not yet demonstrated by a repo in the
@@ -245,13 +248,21 @@ Per agent or LLM-backed feature:
 
 ---
 
-Worked examples: `copilot-scope/src/CopilotScope.Collector/` (OTLP ingestion, the
+Worked examples: `agent-eval-bench` is the first full worked example of the complete
+loop — `docs/SPEC.md` precedes the agent, a 35-scenario dataset spans all five required
+classes, and Layer 1 hard-blocks constraints at 100% and gates behaviours against a
+recorded baseline on every pull request. Its Layer 2 judge is built, pinned and
+versioned, and its calibration protocol has run end to end — 45 labels across 21
+scenarios — but, as that repository's own `docs/DEVIATIONS.md` (D-9) and
+`docs/CALIBRATION.md` say without softening, the judge has never yet scored a live
+model, and its first calibration pass was an AI-disclosed rater rather than the human
+one this section names. So §5's calibration rule is demonstrated as a protocol, not yet
+satisfied by it, and §6's gating mechanics are demonstrated for Layer 1 in production CI
+and remain design for Layer 2 until a keyed run and human labels exist — this sentence
+is the §3a-style acknowledgement of that remaining gap, narrower than it was.
+`copilot-scope/src/CopilotScope.Collector/` (OTLP ingestion, the
 composite scoring engine and `IInsightAnalyzer` pipeline this guide's §7 generalizes),
 `<saas>.AgenticService/Services/Orchestration/` (the step pipeline and
 per-phase degradation §3's degradation class exercises), and
 [`E2E-ACCEPTANCE-TESTING.md`](https://github.com/konradcinkusz/architecture-standards/blob/main/docs/guides/E2E-ACCEPTANCE-TESTING.md) for the assertion discipline
-§4 inherits. The first full worked example of the complete loop — spec, scenario
-dataset, two-layer harness, CI gate — is under construction (the "Absence Concierge"
-reference agent); until it lands, §5's calibration rule and §6's gating mechanics are
-design, not demonstrated practice, and this sentence is the §3a-style acknowledgement
-of that.
+§4 inherits.

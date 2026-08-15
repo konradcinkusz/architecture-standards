@@ -27,6 +27,7 @@ Bundled templates: [`assets/TEMPLATE.md`](assets/TEMPLATE.md), [`assets/PAPER-TE
 - The shape of a study
 - The evidence rules
 - From study to paper (LaTeX)
+- Building the PDF in CI
 - Relationship to the rest of the standards
 - Worked example
 

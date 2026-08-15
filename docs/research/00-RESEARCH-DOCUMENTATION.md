@@ -155,6 +155,53 @@ house color palette, `titlesec` section styling, `fancyhdr`,
   study's numbered reference list and always cites the repository itself
   (study + artifacts) as an entry.
 
+## Building the PDF in CI
+
+The build command above is the manual, local recipe. A repository may also
+wire a GitHub Actions workflow that builds the same PDF on demand, so a
+reader gets a download link instead of a local LaTeX install. This is not a
+requirement of the standard — a repository following the rules above is
+compliant with nothing committed but the `.tex` — but where a workflow
+exists, it follows the shape below rather than reinventing one, because the
+estate already has two worked examples of this exact problem solved two
+different ways.
+
+**The pattern**: one `xu-cheng/latex-action@v4` step per `.tex` root file (no
+hand-rolled `apt install texlive` — the action's image already carries a full
+TeX Live), a rename step so the artifact is not left with the bare
+`NN-SLUG.pdf` name, and either an `actions/upload-artifact` step (a build
+artifact, downloaded from the run) or a two-job `build` then `release` split
+ending in `softprops/action-gh-release` (a release asset, attached to a tag)
+— whichever matches how the paper is meant to be consumed. `permissions:`
+stays `contents: read` for the artifact-only shape and rises to
+`contents: write` only in the job that actually creates a release, never at
+the workflow's top level.
+
+**Two triggers, chosen by what the paper is a presentation of:**
+
+- **Tag-driven**, when the paper is versioned alongside a release —
+  `copilot-scope/.github/workflows/build-research-pdf.yml` builds two papers
+  (`research/articles/*.tex`) on every `v*`/`V*` tag push, renames each to a
+  product-prefixed filename, and attaches both to the GitHub Release the tag
+  creates. Its own comments record a real incident worth repeating here: a
+  tag once pushed as `V1.0.8` matched neither pattern the workflow originally
+  declared, and that release shipped with no PDF attached — hence matching
+  both `v*` and `V*` explicitly, rather than assuming contributors will
+  always tag the same way.
+- **Manual only** (`workflow_dispatch`, no other trigger), when the document
+  has no release cadence of its own — a living overview, or anything rebuilt
+  whenever someone wants the current file rather than whenever something
+  ships. `agent-eval-bench/.github/workflows/build-overview-pdf.yml` is the
+  worked example: it renders a project-overview paper (not a research-study
+  paper under this standard — see "What counts as research" above) to a
+  downloadable run artifact, with no tag trigger and no release, because
+  nothing about that document is versioned by tag.
+
+A workflow's trigger says what kind of document it builds before a reader
+ever opens the `.tex` file: a workflow only a human can start is a document
+that only exists when someone asks for it; a workflow a tag starts is a
+document that ships with a release, and the release is incomplete without it.
+
 ## Relationship to the rest of the standards
 
 - The constitution's testing principles govern *whether the code works*;
