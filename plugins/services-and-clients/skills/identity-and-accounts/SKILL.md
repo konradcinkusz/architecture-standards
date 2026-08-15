@@ -27,6 +27,7 @@ Reference-architecture principles: P5.
 - Transactional email
 - Account deletion
 - Versioned legal consent
+- Key material
 
 ## Failure modes
 
@@ -42,6 +43,11 @@ Reference-architecture principles: P5.
 | "Deleted" user's files still downloadable | Blob cleanup missing from the reaper; cascade never reaches object storage |
 | Users never see updated terms | Version bumped in the document but not in configuration; `/me` never flags it |
 | Dead provider buttons in the UI | Frontend hardcodes providers instead of reading the discovery endpoint |
+| `openssl: command not found` on somebody's first day | Setup runbook assumes a Unix shell; no path given for the platform half the team is on |
+| PEM rejected as unreadable | Newlines arrived escaped as literal `\n` through an environment variable or secret store |
+| Every consumer rejects every token, but nothing is unhealthy | Key never reached the service; the algorithm was inferred as symmetric and the JWKS is a valid, empty key set |
+| Connection string breaks one rotation after it was fine | Generated password contained `+`, `/`, `=` or `;` and was never escaped |
+| A rotation signed everybody out | Retired public key dropped from the validation set immediately instead of after one token lifetime |
 
 ## Checklist
 
@@ -54,6 +60,11 @@ Reference-architecture principles: P5.
 - [ ] Email inventory documented incl. deliberate silences; attempt log + escalating cooldowns; no-op provider fallback
 - [ ] Soft delete + retention + reaper + admin restore; typed confirmation + password; blob cleanup explicit
 - [ ] Consent versions in config; immutable acceptance audit rows; cookie consent default-deny
+- [ ] Signing keys generated rather than invented; private half held only by the identity service; `kid` derived from the key
+- [ ] Rotation is rolling — retired public key stays in the validation set and the JWKS for one token lifetime
+- [ ] Key generation works on every platform contributors actually use, and each command is copy-pasteable on its own line
+- [ ] Local development keys are distinct from deployed ones
+- [ ] The deploy asserts the published key set is non-empty
 
 ---
 

@@ -22,8 +22,9 @@ It is deliberately repo-agnostic. The worked example is
 7. [Transactional email](#7-transactional-email)
 8. [Account deletion](#8-account-deletion)
 9. [Versioned legal consent](#9-versioned-legal-consent)
-10. [Failure modes](#10-failure-modes)
-11. [Checklist](#11-checklist)
+10. [Key material](#10-key-material)
+11. [Failure modes](#11-failure-modes)
+12. [Checklist](#12-checklist)
 
 ---
 
@@ -156,7 +157,75 @@ an HttpOnly cookie or in client storage changes the cookie disclosure — a stor
 decision is a legal input, so tell counsel which one you made
 ([`SECURITY-REVIEW.md`](https://github.com/konradcinkusz/architecture-standards/blob/main/docs/guides/SECURITY-REVIEW.md) fixes which one you may make).
 
-## 10. Failure modes
+## 10. Key material
+
+P5 fixes *who* holds the signing key. This is what it takes to produce one, hand it over,
+and replace it without a flag day.
+
+**Generated, never invented.** A human asked to make up a secret produces `changeme`, and
+`changeme` reaches production. Onboarding scripts should generate the value and write it
+where it belongs; the developer's job is to run the script, not to be creative.
+
+**Asymmetric keys: RSA 2048 minimum (or an EC equivalent), PKCS#8 PEM.** The private half
+belongs to the identity service and to nothing else — not to a consumer, not to a
+convenience library, not to CI beyond the step that sets it. The public half is published
+at the JWKS and is not a secret in any sense.
+
+**Derive the `kid` from the key, not from configuration.** An RFC 7638 thumbprint cannot
+collide with its predecessor's; a hand-set `kid` reused after a rotation makes the key set
+ambiguous at exactly the moment it matters.
+
+**Rotation is rolling.** Keep the retired *public* key in the validation set and in the
+JWKS while tokens signed by it are still alive; sign only with the new one; drop the old
+one once one token lifetime has passed. Nothing downstream changes at any point, because
+consumers pick the key by `kid`. A rotation that signs everybody out is a rotation nobody
+performs.
+
+**Local keys are not production keys.** A keypair generated on a laptop by a setup script
+is a development convenience, not a trust root. If the same file can be used in both
+places, it eventually will be.
+
+### The generation instruction is documentation with a platform assumption in it
+
+This is the part that gets skipped, and it fails at the worst possible moment — step one
+of somebody's first day.
+
+- **`openssl` is not a command on Windows.** A runbook that offers only
+  `openssl genpkey …` does not run for a contributor in PowerShell, and the error
+  (`not recognized as the name of a cmdlet`) gives them nothing to act on. Either give a
+  per-platform table, or — better — ship a generation script in the repository and
+  document *that*, so there is one instruction and the platform difference lives in code
+  that can be tested. Git for Windows bundles `openssl`; the platform runtime you already
+  depend on can almost certainly emit both a random secret and a PEM keypair without any
+  external tool. Know which of those you are telling people to use.
+- **A line meant to be copied must be copyable on its own.** Explanation appended after a
+  command becomes arguments to it. Put the prose on the line above, always.
+- **Say which format.** PKCS#8 (`BEGIN PRIVATE KEY`) and PKCS#1
+  (`BEGIN RSA PRIVATE KEY`) look interchangeable until an importer rejects one, and the
+  resulting parse error names neither.
+
+### Handing the value over
+
+- **A PEM does not fit in a `.env` file.** Multi-line values are exactly what dotenv
+  formats handle worst. Locally, mount the key as a *file* and configure a path; in
+  deployment, use the platform secret store, which does accept multi-line values.
+- **Expect escaped newlines anyway.** Values routed through environment variables and
+  secret stores routinely arrive with `\n` as two literal characters. Repair it once,
+  where the key is read, rather than in every deployment's shell quoting.
+- **Generated passwords should avoid punctuation.** Hex or alphanumeric, not raw base64:
+  `+`, `/`, `=` and `;` all mean something inside a connection string, a YAML scalar or a
+  shell argument, and the bug surfaces one rotation later in a component nobody was
+  touching.
+
+### An empty key set is not a healthy service
+
+Where the signing algorithm is *inferred* from what was configured, a missing key does not
+crash anything — it selects the symmetric path, and the JWKS then serves a syntactically
+valid document containing zero keys. Health checks pass, the deploy goes green, and every
+consumer rejects every token. **Assert the key set is non-empty as part of the deploy**,
+not as something you discover from a sign-in that mysteriously stopped working.
+
+## 11. Failure modes
 
 | Symptom | Cause |
 |---|---|
@@ -170,8 +239,13 @@ decision is a legal input, so tell counsel which one you made
 | "Deleted" user's files still downloadable | Blob cleanup missing from the reaper; cascade never reaches object storage |
 | Users never see updated terms | Version bumped in the document but not in configuration; `/me` never flags it |
 | Dead provider buttons in the UI | Frontend hardcodes providers instead of reading the discovery endpoint |
+| `openssl: command not found` on somebody's first day | Setup runbook assumes a Unix shell; no path given for the platform half the team is on |
+| PEM rejected as unreadable | Newlines arrived escaped as literal `\n` through an environment variable or secret store |
+| Every consumer rejects every token, but nothing is unhealthy | Key never reached the service; the algorithm was inferred as symmetric and the JWKS is a valid, empty key set |
+| Connection string breaks one rotation after it was fine | Generated password contained `+`, `/`, `=` or `;` and was never escaped |
+| A rotation signed everybody out | Retired public key dropped from the validation set immediately instead of after one token lifetime |
 
-## 11. Checklist
+## 12. Checklist
 
 - [ ] Authorization facts (tier, workspace roles) stamped into claims at issuance; no downstream callback
 - [ ] Refresh tokens: CSPRNG, single-use rotation, stored hashed, global revocation invoked from logout/reset/deletion
@@ -182,6 +256,11 @@ decision is a legal input, so tell counsel which one you made
 - [ ] Email inventory documented incl. deliberate silences; attempt log + escalating cooldowns; no-op provider fallback
 - [ ] Soft delete + retention + reaper + admin restore; typed confirmation + password; blob cleanup explicit
 - [ ] Consent versions in config; immutable acceptance audit rows; cookie consent default-deny
+- [ ] Signing keys generated rather than invented; private half held only by the identity service; `kid` derived from the key
+- [ ] Rotation is rolling — retired public key stays in the validation set and the JWKS for one token lifetime
+- [ ] Key generation works on every platform contributors actually use, and each command is copy-pasteable on its own line
+- [ ] Local development keys are distinct from deployed ones
+- [ ] The deploy asserts the published key set is non-empty
 
 ---
 
