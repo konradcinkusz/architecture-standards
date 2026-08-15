@@ -35,6 +35,11 @@
           "description": "Use when starting an architecture review or modernization of a repo, or when unsure which mode a repo needs. Chooses between REVIEW (already broadly compliant), MODERNIZE (predates the architecture but builds) and RECOVER (does not build, or source and dependencies are partly lost), states which documents each mode must produce, which guides to load for which domain, and why RECOVER begins with archaeology rather than design."
         },
         {
+          "name": "master-delivery-prompt",
+          "source": "docs/MASTER-PROMPT.md",
+          "description": "Use when running a delivery session against an application repo — one that must end aligned to the standards AND live as a workable product. The generic fill-in prompt covering, in phases: the assessment (a playbook mode plus gap analysis against the compliance checklist), adopting the external authservice as the system's only identity provider, bringing the frontend to a Blazor product surface under the frontend/BFF rules, comprehensive UI/UX documentation with a ranked backlog, shipping every service to Fly.io, and an optional parallel Azure provisioning job. States what to attach, the read-only scope of the standards and authservice repos, and the definition of done."
+        },
+        {
           "name": "repo-baseline",
           "source": "docs/guides/REPO-BASELINE.md",
           "description": "Use when creating a new repository, or auditing an existing repo's hygiene and developer tooling. What every repo carries before its first feature: hygiene files, secret scanning in pre-commit and CI, one-command onboarding, operational script conventions, workflow lifecycle and archiving, in-repo AI agent definitions with allowlisted tools and repo-relative paths, declaring architecture-standards adoption via `.claude/settings.json` rather than relying on memory, and documentation staleness rules."
