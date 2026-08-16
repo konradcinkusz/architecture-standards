@@ -1,0 +1,450 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>architecture-standards — an architecture constitution you can install</title>
+<meta name="description" content="Fifteen architectural principles and seventeen operational guides for .NET Aspire services on Fly.io and Azure, extracted from systems already in production and packaged as installable agent plugins for Claude Code, GitHub Copilot and VS Code.">
+<link rel="icon" href="assets/logo.svg" type="image/svg+xml">
+<meta property="og:type" content="website">
+<meta property="og:title" content="architecture-standards">
+<meta property="og:description" content="An architecture constitution for .NET Aspire services on Fly.io and Azure — read it as documentation, or install it as agent plugins.">
+<meta property="og:url" content="https://konradcinkusz.github.io/architecture-standards/">
+<style>
+  /* Light is the base palette; every token is redefined for dark below, so no colour
+     has its only definition inside a media query. */
+  :root {
+    --bg: #ffffff;
+    --surface: #f8fafc;
+    --surface-2: #f1f5f9;
+    --border: #e2e8f0;
+    --text: #0f172a;
+    --muted: #55637a;
+    --accent: #4f46e5;
+    --accent-soft: #eef2ff;
+    --key: #b45309;
+    --code-bg: #0f172a;
+    --code-text: #e2e8f0;
+    --shadow: 0 1px 2px rgba(15, 23, 42, .06), 0 8px 24px -12px rgba(15, 23, 42, .18);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0b1020;
+      --surface: #121a2e;
+      --surface-2: #172038;
+      --border: #253150;
+      --text: #e6edf3;
+      --muted: #9fb0c9;
+      --accent: #a5b4fc;
+      --accent-soft: #1b2444;
+      --key: #fbbf24;
+      --code-bg: #060a16;
+      --code-text: #dbe4f0;
+      --shadow: 0 1px 2px rgba(0, 0, 0, .4), 0 12px 32px -14px rgba(0, 0, 0, .7);
+    }
+  }
+
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font: 16px/1.65 ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 940px; margin: 0 auto; padding: 0 24px; }
+  a { color: var(--accent); text-decoration-thickness: 1px; text-underline-offset: 2px; }
+  a:hover { text-decoration-thickness: 2px; }
+  h1, h2, h3 { line-height: 1.25; letter-spacing: -.018em; margin: 0; }
+  code, pre { font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace; }
+
+  /* ---------------------------------------------------------------- hero */
+  header { padding: 64px 0 8px; text-align: center; }
+  header img { width: 96px; height: 96px; }
+  /* The name is one long unbreakable-looking token, so the floor has to be small
+     enough that a 390px phone does not scroll sideways to read the title. */
+  h1 { font-size: clamp(1.55rem, 7vw, 2.9rem); margin: 18px 0 0; overflow-wrap: break-word; }
+  .tagline {
+    font-size: clamp(1.02rem, 2.4vw, 1.18rem);
+    color: var(--muted);
+    max-width: 34em;
+    margin: 14px auto 0;
+    text-wrap: balance;
+  }
+  .cta { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; margin: 28px 0 0; }
+  .btn {
+    display: inline-block;
+    padding: 10px 20px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    font-weight: 600;
+    font-size: .94rem;
+    text-decoration: none;
+    color: var(--text);
+    background: var(--surface);
+    transition: transform .12s ease, border-color .12s ease;
+  }
+  .btn:hover { transform: translateY(-1px); border-color: var(--accent); }
+  .btn.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+  @media (prefers-color-scheme: dark) { .btn.primary { color: #0b1020; } }
+
+  /* --------------------------------------------------------------- stats */
+  /* Flex rather than grid: five tiles in a three-column grid leave an empty cell, and
+     with gap-as-divider that orphan renders as a stray grey block. Wrapping flex items
+     simply grow to fill the row instead. */
+  .stats {
+    display: flex;
+    flex-wrap: wrap;
+    margin: 48px 0 0;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  .stat { flex: 1 1 104px; padding: 18px 10px; text-align: center; border-left: 1px solid var(--border); }
+  .stat:first-child { border-left: 0; }
+  .stat b { display: block; font-size: 1.6rem; letter-spacing: -.03em; }
+  .stat span { font-size: .78rem; color: var(--muted); text-transform: uppercase; letter-spacing: .07em; }
+
+  /* ------------------------------------------------------------ sections */
+  section { padding: 56px 0 0; }
+  section > h2 {
+    font-size: 1.5rem;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 22px;
+  }
+  section p { color: var(--muted); max-width: 68ch; }
+  section p strong { color: var(--text); }
+
+  /* --------------------------------------------------------------- code */
+  .client { margin: 0 0 22px; }
+  .client h3 { font-size: .93rem; text-transform: uppercase; letter-spacing: .07em; color: var(--muted); margin-bottom: 8px; }
+  .code {
+    position: relative;
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  .code pre {
+    margin: 0;
+    padding: 16px 60px 16px 18px;
+    overflow-x: auto;
+    color: var(--code-text);
+    font-size: .875rem;
+    line-height: 1.7;
+  }
+  .code .prompt { color: #64748b; user-select: none; }
+  .copy {
+    position: absolute; top: 10px; right: 10px;
+    background: rgba(148, 163, 184, .16);
+    color: var(--code-text);
+    border: 0; border-radius: 6px;
+    padding: 5px 10px;
+    font: 600 .74rem/1 ui-sans-serif, system-ui, sans-serif;
+    cursor: pointer;
+  }
+  .copy:hover { background: rgba(148, 163, 184, .3); }
+
+  /* ------------------------------------------------------------- plugins */
+  /* min(px, 100%) rather than a bare px floor: below ~320px the floor would exceed the
+     available width and push the page into a horizontal scroll. */
+  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(268px, 100%), 1fr)); gap: 14px; }
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 18px 20px;
+    box-shadow: var(--shadow);
+  }
+  .card h3 { font-size: .95rem; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+  .card h3 .n { color: var(--accent); }
+  .card .meta { font-size: .76rem; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; margin: 6px 0 8px; }
+  .card p { font-size: .9rem; margin: 0; color: var(--muted); }
+  .card.first { border-color: var(--accent); }
+  .card.first .meta { color: var(--key); font-weight: 700; }
+
+  /* ---------------------------------------------------------------- docs */
+  .group { margin-bottom: 26px; }
+  .group h3 { font-size: .93rem; text-transform: uppercase; letter-spacing: .07em; color: var(--muted); margin-bottom: 10px; }
+  .group ul { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr)); gap: 2px 20px; }
+  .group li { padding: 5px 0; border-bottom: 1px solid var(--border); font-size: .93rem; }
+  .group li a { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: .86rem; text-decoration: none; }
+  .group li a:hover { text-decoration: underline; }
+  .group li em { display: block; font-style: normal; color: var(--muted); font-size: .84rem; }
+
+  .note {
+    background: var(--accent-soft);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    border-radius: 8px;
+    padding: 16px 20px;
+    margin-top: 8px;
+  }
+  .note p { margin: 0; }
+  .note p + p { margin-top: 10px; }
+
+  footer {
+    margin-top: 64px;
+    padding: 26px 0 48px;
+    border-top: 1px solid var(--border);
+    font-size: .88rem;
+    color: var(--muted);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px 20px;
+    justify-content: space-between;
+  }
+  footer a { color: var(--muted); }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <img src="assets/logo.svg" alt="" width="96" height="96">
+    <h1>architecture-standards</h1>
+    <p class="tagline">
+      An architecture constitution for .NET Aspire services on Fly.io and Azure —
+      fifteen principles and seventeen operational guides, every one extracted from
+      systems already running in production rather than written from first principles.
+    </p>
+    <div class="cta">
+      <a class="btn primary" href="https://github.com/konradcinkusz/architecture-standards/blob/main/docs/architecture/00-REFERENCE-ARCHITECTURE.md">Read the constitution</a>
+      <a class="btn" href="#install">Install the plugins</a>
+      <a class="btn" href="https://github.com/konradcinkusz/architecture-standards">GitHub</a>
+    </div>
+
+    <div class="stats">
+      <div class="stat"><b>15</b><span>Principles</span></div>
+      <div class="stat"><b>17</b><span>Guides</span></div>
+      <div class="stat"><b>5</b><span>Plugins</span></div>
+      <div class="stat"><b>21</b><span>Skills</span></div>
+      <div class="stat"><b>3</b><span>Agents</span></div>
+    </div>
+  </header>
+
+  <section id="what">
+    <h2>What this is</h2>
+    <p>
+      Most architecture documents are written once, from first principles, and then
+      quietly diverge from the systems they claim to govern. This one runs the other
+      way: every rule here generalises something a repository in the estate already
+      does — or demonstrably failed to do — and each guide cites the worked example it
+      came from.
+    </p>
+    <p>
+      It ships <strong>two ways</strong>. As documentation you read, and as installable
+      agent plugins, so a coding agent <em>has</em> the standard instead of re-deriving
+      it from whatever code it happens to see. The packaging follows
+      <a href="https://agent-plugins.org/">Agent Plugins 1.0.0</a>, the vendor-neutral
+      format behind GitHub Copilot, VS Code, Claude Code, Cursor and Codex, so one tree
+      serves every client.
+    </p>
+  </section>
+
+  <section id="install">
+    <h2>Install</h2>
+    <p>
+      Start with <code>architecture-core</code> — it carries the constitution, the
+      session playbook and the repository baseline, and the other plugins assume it.
+      Every client reads the repository's default branch.
+    </p>
+
+    <div class="client">
+      <h3>Claude Code</h3>
+      <div class="code">
+        <button class="copy" type="button">Copy</button>
+        <pre><code>/plugin marketplace add konradcinkusz/architecture-standards
+/plugin install architecture-core@architecture-standards</code></pre>
+      </div>
+    </div>
+
+    <div class="client">
+      <h3>GitHub Copilot CLI</h3>
+      <div class="code">
+        <button class="copy" type="button">Copy</button>
+        <pre><code>copilot plugin marketplace add konradcinkusz/architecture-standards
+copilot plugin install architecture-core@architecture-standards</code></pre>
+      </div>
+    </div>
+
+    <div class="client">
+      <h3>VS Code — settings.json</h3>
+      <div class="code">
+        <button class="copy" type="button">Copy</button>
+        <pre><code>{
+  "chat.plugins.marketplaces": [
+    "konradcinkusz/architecture-standards"
+  ]
+}</code></pre>
+      </div>
+    </div>
+
+    <div class="client">
+      <h3>A whole team, without anyone running a command</h3>
+      <div class="code">
+        <button class="copy" type="button">Copy</button>
+        <pre><code>{
+  "extraKnownMarketplaces": {
+    "architecture-standards": {
+      "source": { "source": "github", "repo": "konradcinkusz/architecture-standards" }
+    }
+  },
+  "enabledPlugins": {
+    "architecture-core@architecture-standards": true
+  }
+}</code></pre>
+      </div>
+      <p style="font-size:.9rem">
+        Commit that to a consuming repository's <code>.claude/settings.json</code> and
+        every clone gets the standards. Any other agent can skip the install entirely:
+        attach this repo as a sibling checkout and point it at
+        <a href="https://github.com/konradcinkusz/architecture-standards/blob/main/AGENTS.md">AGENTS.md</a>.
+      </p>
+    </div>
+  </section>
+
+  <section id="plugins">
+    <h2>The five plugins</h2>
+    <p>
+      Each skill is a short router — when it applies, its failure modes, its checklist —
+      with the full standard bundled underneath it in <code>references/</code>. Agents
+      load the reference only when the skill actually fires, so twenty-one standards
+      cost nothing until one is needed.
+    </p>
+    <div class="cards">
+      <div class="card first">
+        <h3><span class="n">architecture-core</span></h3>
+        <div class="meta">4 skills · 3 agents · install first</div>
+        <p>The constitution (P1–P15), the review / modernize / recover session playbook, the master delivery prompt, and the repository baseline.</p>
+      </div>
+      <div class="card">
+        <h3><span class="n">deployment-and-platform</span></h3>
+        <div class="meta">5 skills</div>
+        <p>Fly.io, Azure AI Foundry agents, Azure operations, per-PR preview environments, and customer-hosted private-cloud delivery.</p>
+      </div>
+      <div class="card">
+        <h3><span class="n">services-and-clients</span></h3>
+        <div class="meta">5 skills</div>
+        <p>HTTP and API plumbing, identity and accounts, payments and metering, Next.js frontends and BFFs, and browser extensions.</p>
+      </div>
+      <div class="card">
+        <h3><span class="n">quality-and-process</span></h3>
+        <div class="meta">6 skills</div>
+        <p>LLM evaluation, testing strategy, E2E acceptance suites, security review, open-source release, and README badges.</p>
+      </div>
+      <div class="card">
+        <h3><span class="n">research-standards</span></h3>
+        <div class="meta">1 skill · bundled templates</div>
+        <p>How a repository documents scientific research: the layout, the study shape, the evidence rules, plus the study and LaTeX paper templates.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="documents">
+    <h2>The documents</h2>
+
+    <div class="group">
+      <h3>The constitution</h3>
+      <ul>
+        <li><a href="https://github.com/konradcinkusz/architecture-standards/blob/main/docs/architecture/00-REFERENCE-ARCHITECTURE.md">00-REFERENCE-ARCHITECTURE.md</a><em>The 15-principle blueprint, each principle backed by a working example, plus a compliance checklist.</em></li>
+      </ul>
+    </div>
+
+    <div class="group">
+      <h3>Deployment and platform</h3>
+      <ul>
+        <li><a href="https://github.com/konradcinkusz/architecture-standards/blob/main/docs/guides/FLY-IO-DEPLOYMENT.md">FLY-IO-DEPLOYMENT.md</a><em>Every fly.toml field annotated, the tag-driven pipeline, the failure modes each rule prevents.</em></li>
+        <li><a href="https://github.com/konradcinkusz/architecture-standards/blob/main/docs/guides/AZURE-AI-FOUNDRY-AGENTS.md">AZURE-AI-FOUNDRY-AGENTS.md</a><em>Hub/Project/Connection Bicep, per-service managed identity and RBAC, agent-as-code.</em></li>
+        <li><a href="https://github.com/konradcinkusz/architecture-standards/blob/main/docs/guides/AZURE-OPERATIONS.md">AZURE-OPERATIONS.md</a><em>Passwordless SQL, provision-vs-deploy staleness, CI credential preflight, soft-delete recovery.</em></li>
+        <li><a href="https://github.com/konradcinkusz/architecture-standards/blob/main/docs/guides/PR-PREVIEW-ENVIRONMENTS.md">PR-PREVIEW-ENVIRONMENTS.md</a><em>Naming as isolation, shared-vs-per-PR classification, teardown that actually tears down.</em></li>
+        <li><a href="https://github.com/konradcinkusz/architecture-standards/blob/main/docs/guides/PRIVATE-CLOUD-DELIVERY.md">PRIVATE-CLOUD-DELIVERY.md</a><em>Selling the SaaS as self-hosted: the vendor/customer split and the one-flag product switch.</em></li>
+      </ul>
+    </div>
+
+    <div class="group">
+      <h3>Building services and clients</h3>
+      <ul>
+        <li><a href="https://github.com/konradcinkusz/architecture-standards/blob/main/docs/guides/SERVICE-API-PATTERNS.md">SERVICE-API-PATTERNS.md</a><em>Rate limiting, endpoint organization, validation, pagination, hardened cross-service HTTP.</em></li>
+        <li><a href="https://github.com/konradcinkusz/architecture-standards/blob/main/docs/guides/IDENTITY-AND-ACCOUNTS.md">IDENTITY-AND-ACCOUNTS.md</a><em>Refresh rotation, OAuth callbacks, account linking, enumeration safety, lockout, deletion.</em></li>
+        <li><a href="https://github.com/konradcinkusz/architecture-standards/blob/main/docs/guides/PAYMENTS-AND-MONETIZATION.md">PAYMENTS-AND-MONETIZATION.md</a><em>Merchant of record, mock-first integration, webhook discipline, quota with deliberate fail-open.</em></li>
+        <li><a href="https://github.com/konradcinkusz/architecture-standards/blob/main/docs/guides/FRONTEND-BFF.md">FRONTEND-BFF.md</a><em>Browser talks only to its own origin: runtime config, HttpOnly cookie sessions, the catch-all proxy.</em></li>
+        <li><a href="https://github.com/konradcinkusz/architecture-standards/blob/main/docs/guides/BROWSER-EXTENSIONS.md">BROWSER-EXTENSIONS.md</a><em>MV3 patterns, web-to-extension session handoff, per-site adapters, store submission.</em></li>
+      </ul>
+    </div>
+
+    <div class="group">
+      <h3>Quality and process</h3>
+      <ul>
+        <li><a href="https://github.com/konradcinkusz/architecture-standards/blob/main/docs/guides/AI-EVALS.md">AI-EVALS.md</a><em>Behaviour specs, scenario datasets, assertions over OTel traces, calibrated LLM-as-judge, CI gates.</em></li>
+        <li><a href="https://github.com/konradcinkusz/architecture-standards/blob/main/docs/guides/TESTING-STRATEGY.md">TESTING-STRATEGY.md</a><em>The E2E charter, three layers with budgets, the when-to-run matrix, what only a human can test.</em></li>
+        <li><a href="https://github.com/konradcinkusz/architecture-standards/blob/main/docs/guides/E2E-ACCEPTANCE-TESTING.md">E2E-ACCEPTANCE-TESTING.md</a><em>What makes a passing test mean something, and how to audit a suite you inherited.</em></li>
+        <li><a href="https://github.com/konradcinkusz/architecture-standards/blob/main/docs/guides/SECURITY-REVIEW.md">SECURITY-REVIEW.md</a><em>The repeatable review method plus the recurring rule sets: browser tokens, CSPRNG, path validation.</em></li>
+        <li><a href="https://github.com/konradcinkusz/architecture-standards/blob/main/docs/guides/REPO-BASELINE.md">REPO-BASELINE.md</a><em>What every repo carries before its first feature: hygiene files, secret scanning, one-command onboarding.</em></li>
+        <li><a href="https://github.com/konradcinkusz/architecture-standards/blob/main/docs/guides/OPEN-SOURCE-RELEASE.md">OPEN-SOURCE-RELEASE.md</a><em>The bar a repo clears once, before it goes public — starting with auditing history, not just HEAD.</em></li>
+        <li><a href="https://github.com/konradcinkusz/architecture-standards/blob/main/docs/guides/README-BADGES.md">README-BADGES.md</a><em>The badge standard: header row, footer block, and the rules that keep a badge row honest.</em></li>
+      </ul>
+    </div>
+
+    <div class="group">
+      <h3>Research and sessions</h3>
+      <ul>
+        <li><a href="https://github.com/konradcinkusz/architecture-standards/blob/main/docs/research/00-RESEARCH-DOCUMENTATION.md">00-RESEARCH-DOCUMENTATION.md</a><em>Evidence rules: every number traceable, reproduction as a command, negative results written up.</em></li>
+        <li><a href="https://github.com/konradcinkusz/architecture-standards/blob/main/docs/PLAYBOOK.md">PLAYBOOK.md</a><em>How to start a session that reviews a repo against this architecture, or modernizes it toward it.</em></li>
+        <li><a href="https://github.com/konradcinkusz/architecture-standards/blob/main/docs/MASTER-PROMPT.md">MASTER-PROMPT.md</a><em>The generic delivery-session prompt: align one app repo to the standards and leave it live.</em></li>
+      </ul>
+    </div>
+  </section>
+
+  <section id="examples">
+    <h2>On the worked examples</h2>
+    <div class="note">
+      <p>
+        The rules here are repo-agnostic; the evidence behind them is cited at the end of
+        each guide. Public sources —
+        <a href="https://github.com/konradcinkusz/copilot-scope">copilot-scope</a> and
+        <a href="https://github.com/konradcinkusz/authservice">authservice</a> — are named
+        and linkable.
+      </p>
+      <p>
+        Private ones appear under stable placeholders (<code>&lt;saas&gt;</code>,
+        <code>&lt;consumer&gt;</code>, <code>&lt;legacy-monorepo&gt;</code> and friends), so a
+        citation still shows you the shape a rule came from without publishing the
+        repository behind it.
+      </p>
+    </div>
+  </section>
+
+  <footer>
+    <span>MIT licensed · © Konrad Cinkusz</span>
+    <span>
+      <a href="https://github.com/konradcinkusz/architecture-standards">Repository</a> ·
+      <a href="https://github.com/konradcinkusz/architecture-standards/blob/main/MARKETPLACE.md">Marketplace</a> ·
+      <a href="https://github.com/konradcinkusz">@konradcinkusz</a>
+    </span>
+  </footer>
+
+</div>
+
+<script>
+  // Copy buttons. Progressive enhancement: without JS the snippets are still selectable,
+  // and without a secure context navigator.clipboard is simply absent, so the button
+  // reports the failure instead of silently doing nothing.
+  for (const button of document.querySelectorAll('.copy')) {
+    button.addEventListener('click', async () => {
+      const code = button.parentElement.querySelector('code').textContent;
+      try {
+        await navigator.clipboard.writeText(code);
+        button.textContent = 'Copied';
+      } catch {
+        button.textContent = 'Press ⌘C';
+      }
+      setTimeout(() => { button.textContent = 'Copy'; }, 1600);
+    });
+  }
+</script>
+</body>
+</html>

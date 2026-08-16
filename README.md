@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="docs/assets/logo.svg" alt="" width="88" height="88">
+</p>
+
 # architecture-standards
 
 A written architecture constitution for .NET Aspire services on Fly.io and Azure —
