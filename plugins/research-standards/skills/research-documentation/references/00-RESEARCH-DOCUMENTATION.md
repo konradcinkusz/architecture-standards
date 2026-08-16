@@ -157,6 +157,100 @@ house color palette, `titlesec` section styling, `fancyhdr`,
   study's numbered reference list and always cites the repository itself
   (study + artifacts) as an entry.
 
+## Presenting work as slides (Beamer)
+
+A paper is not the only shape work graduates into outside the repository —
+a talk needs slides. This is a sibling convention to "From study to paper"
+above, not a restatement of it: a deck is not necessarily derived from one
+study the way a paper is, so it carries no `\paperstatus`-style verified/draft
+marker of its own, and it introduces no evidence rules — a slide either
+restates something the repository's docs already establish, or it does not
+belong in the deck.
+
+- **Start from [`BEAMER-THEME.sty`](https://github.com/konradcinkusz/architecture-standards/blob/main/docs/research/BEAMER-THEME.sty)** — the house Beamer
+  theme (teal/purple/blue palette, triangle bullets, a `[standout]` frame
+  style for section breaks and closing slides), canonicalized here from its
+  origin,
+  [`DeepDiveInto_CSharp_Dictionaries_presentation`](https://github.com/konradcinkusz/DeepDiveInto_CSharp_Dictionaries_presentation).
+  Copy it into `docs/slides/` **as `beamerthememybeamer.sty`** — that exact
+  filename, not `BEAMER-THEME.sty` — because `\usetheme{mybeamer}` resolves
+  to a file named that way via kpathsea, regardless of what the file
+  internally calls itself.
+- **A deck lives at `docs/slides/<repo-slug>-slides.tex`**, a sibling to
+  `docs/research/papers/` for papers. `aspectratio=169`; title, author,
+  institute and a `\titlegraphic` linking back to the repository are the
+  only things a new deck must fill in — the theme supplies everything else.
+- **PDFs are build output here too.** Only the `.tex` and the copied-in
+  `.sty` are committed; nothing generated is. The build needs two passes
+  locally, same reason a paper does — the footline's
+  `\inserttotalframenumber` needs a prior run's `.aux` — but `latexmk`
+  (what `xu-cheng/latex-action` drives in CI, see below) reruns
+  automatically and needs no special handling for that.
+- **A known defect, fixed in this copy.** The origin file's `[standout]`
+  style sets `\setbeamercolor{normal text}{fg=white,...}` to make body text
+  readable against the dark background, but `\setbeamercolor` alone only
+  redefines a color for *future* lookups — it does not re-apply an
+  already-established `\normalcolor`. Left unpatched, `[standout]` frame
+  text renders in the pre-existing dark foreground, illegible against the
+  dark background. `BEAMER-THEME.sty` here carries a one-line
+  `\usebeamercolor*{normal text}` fix, with the reasoning recorded in the
+  file's own header comment — found and fixed while building the second
+  adopting deck, not merely inherited unread. Rule 5's reasoning applies
+  as much to a one-line theme bug as to a research finding: a surprising
+  result recorded beats one that dies in a chat log, however small.
+
+## Building the PDF in CI
+
+The build command above is the manual, local recipe. A repository may also
+wire a GitHub Actions workflow that builds the same PDF on demand, so a
+reader gets a download link instead of a local LaTeX install. This is not a
+requirement of the standard — a repository following the rules above is
+compliant with nothing committed but the `.tex` — but where a workflow
+exists, it follows the shape below rather than reinventing one, because the
+estate already has three worked examples of this exact problem, covering
+both a paper and a Beamer deck.
+
+**The pattern**: one `xu-cheng/latex-action@v4` step per `.tex` root file (no
+hand-rolled `apt install texlive` — the action's image already carries a full
+TeX Live), a rename step so the artifact is not left with the bare
+`NN-SLUG.pdf` name, and either an `actions/upload-artifact` step (a build
+artifact, downloaded from the run) or a two-job `build` then `release` split
+ending in `softprops/action-gh-release` (a release asset, attached to a tag)
+— whichever matches how the paper is meant to be consumed. `permissions:`
+stays `contents: read` for the artifact-only shape and rises to
+`contents: write` only in the job that actually creates a release, never at
+the workflow's top level.
+
+**Two triggers, chosen by what the paper is a presentation of:**
+
+- **Tag-driven**, when the paper is versioned alongside a release —
+  `copilot-scope/.github/workflows/build-research-pdf.yml` builds two papers
+  (`research/articles/*.tex`) on every `v*`/`V*` tag push, renames each to a
+  product-prefixed filename, and attaches both to the GitHub Release the tag
+  creates. Its own comments record a real incident worth repeating here: a
+  tag once pushed as `V1.0.8` matched neither pattern the workflow originally
+  declared, and that release shipped with no PDF attached — hence matching
+  both `v*` and `V*` explicitly, rather than assuming contributors will
+  always tag the same way.
+- **Manual only** (`workflow_dispatch`, no other trigger), when the document
+  has no release cadence of its own — a living overview, or anything rebuilt
+  whenever someone wants the current file rather than whenever something
+  ships. `agent-eval-bench/.github/workflows/build-overview-pdf.yml` is the
+  worked example: it renders a project-overview paper (not a research-study
+  paper under this standard — see "What counts as research" above) to a
+  downloadable run artifact, with no tag trigger and no release, because
+  nothing about that document is versioned by tag. The same repository's
+  `build-slides-pdf.yml` is the second manual-only example, one document
+  later: a Beamer deck (see "Presenting work as slides" above), in its own
+  workflow file rather than folded into the overview one, because a talk
+  deck and a project overview are different kinds of document for
+  different audiences — the next rule is exactly why that separation holds.
+
+A workflow's trigger says what kind of document it builds before a reader
+ever opens the `.tex` file: a workflow only a human can start is a document
+that only exists when someone asks for it; a workflow a tag starts is a
+document that ships with a release, and the release is incomplete without it.
+
 ## Relationship to the rest of the standards
 
 - The constitution's testing principles govern *whether the code works*;

@@ -18,7 +18,7 @@ whether this skill applies and to check your work afterwards.
 
 Reference-architecture principles: P14.
 
-Bundled templates: [`assets/TEMPLATE.md`](assets/TEMPLATE.md), [`assets/PAPER-TEMPLATE.tex`](assets/PAPER-TEMPLATE.tex).
+Bundled templates: [`assets/TEMPLATE.md`](assets/TEMPLATE.md), [`assets/PAPER-TEMPLATE.tex`](assets/PAPER-TEMPLATE.tex), [`assets/BEAMER-THEME.sty`](assets/BEAMER-THEME.sty).
 
 ## What this standard covers
 
@@ -27,6 +27,8 @@ Bundled templates: [`assets/TEMPLATE.md`](assets/TEMPLATE.md), [`assets/PAPER-TE
 - The shape of a study
 - The evidence rules
 - From study to paper (LaTeX)
+- Presenting work as slides (Beamer)
+- Building the PDF in CI
 - Relationship to the rest of the standards
 - Worked example
 
