@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-labelledby="title desc">
+  <title id="title">architecture-standards</title>
+  <desc id="desc">A masonry arch of five voussoirs on two piers and a stylobate, the keystone picked out in amber.</desc>
+  <!--
+    The mark: an arch, the load-bearing primitive of architecture, assembled from
+    discrete stones rather than drawn as one curve — each guide is its own stone.
+    The keystone is the accent because it is the piece that puts the structure in
+    compression: remove it and the rest is a pile of rocks, which is the same
+    claim the constitution makes about P1-P15.
+
+    Colours are declared twice: the attribute values are the light-theme palette
+    and survive anywhere CSS does not (GitHub's image proxy, LaTeX, a raster
+    export), while the stylesheet lightens them for dark backgrounds.
+  -->
+  <style>
+    .stone  { fill: #4F46E5; }
+    .key    { fill: #F59E0B; }
+    .plinth { fill: #64748B; }
+    @media (prefers-color-scheme: dark) {
+      .stone  { fill: #818CF8; }
+      .key    { fill: #FBBF24; }
+      .plinth { fill: #94A3B8; }
+    }
+  </style>
+
+  <g transform="translate(0 -2.5)">
+    <!-- Voussoirs, springing line at y=37, outer radius 26, inner 16.5 -->
+    <path class="stone" fill="#4F46E5" d="M6.01 36.27 A26 26 0 0 1 10.55 22.31 L18.39 27.68 A16.5 16.5 0 0 0 15.51 36.54 Z"/>
+    <path class="stone" fill="#4F46E5" d="M11.4 21.14 A26 26 0 0 1 23.28 12.51 L26.47 21.46 A16.5 16.5 0 0 0 18.93 26.93 Z"/>
+    <path class="key"   fill="#F59E0B" d="M24.66 12.06 A26 26 0 0 1 39.34 12.06 L36.66 21.17 A16.5 16.5 0 0 0 27.34 21.17 Z"/>
+    <path class="stone" fill="#4F46E5" d="M40.72 12.51 A26 26 0 0 1 52.6 21.14 L45.07 26.93 A16.5 16.5 0 0 0 37.53 21.46 Z"/>
+    <path class="stone" fill="#4F46E5" d="M53.45 22.31 A26 26 0 0 1 57.99 36.27 L48.49 36.54 A16.5 16.5 0 0 0 45.61 27.68 Z"/>
+
+    <!-- Piers, landing flush on the stylobate so the mark reads as one structure -->
+    <path class="stone" fill="#4F46E5" d="M6 38.6h9.5V52H6z"/>
+    <path class="stone" fill="#4F46E5" d="M48.5 38.6H58V52h-9.5z"/>
+
+    <!-- Stylobate -->
+    <path class="plinth" fill="#64748B" d="M3 52h58v6H3z"/>
+  </g>
+</svg>
