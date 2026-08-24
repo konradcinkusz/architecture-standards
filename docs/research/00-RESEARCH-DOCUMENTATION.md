@@ -243,6 +243,18 @@ the workflow's top level.
   workflow file rather than folded into the overview one, because a talk
   deck and a project overview are different kinds of document for
   different audiences — the next rule is exactly why that separation holds.
+  `-WUT-Thesis-Communicative-Agents-for-Software-Project-Management/.github/workflows/build-thesis-pdf.yml`
+  is a third manual-only example, and a different kind of document again: a
+  university thesis (`main.tex`, on the EiTI `eiti-thesis.cls` template) is
+  neither a research-study paper under this standard nor a project overview
+  — it's the institution's own long-form deliverable — but it still has no
+  tag or release cadence, so the same manual/artifact shape applies. It also
+  surfaces a wrinkle the other two examples don't hit: the thesis sources
+  render code listings with the `minted` package, which shells out to
+  Pygments, so its workflow additionally needs `latexmk_shell_escape: true`
+  and `extra_system_packages: py3-pygments` — a document with `minted`
+  listings needs both, or the build fails the moment it reaches the first
+  one.
 
 A workflow's trigger says what kind of document it builds before a reader
 ever opens the `.tex` file: a workflow only a human can start is a document
