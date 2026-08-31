@@ -1,0 +1,32 @@
+name: Packaging or generator bug
+description: The marketplace, a plugin, a skill, or the generator misbehaves.
+labels: []
+body:
+  - type: dropdown
+    id: surface
+    attributes:
+      label: Where
+      options:
+        - Installing from the marketplace
+        - A skill's content or routing description
+        - The generator (scripts/build-marketplace.mjs)
+        - The version gate (catalog/versions.lock.json)
+        - A custom agent
+    validations: { required: true }
+  - type: input
+    id: client
+    attributes:
+      label: Client and version
+      placeholder: Claude Code 2.x / Copilot CLI / VS Code
+  - type: textarea
+    id: repro
+    attributes:
+      label: What you ran, and what happened
+      description: Exact command and its output. Redact anything credential-shaped.
+      render: shell
+    validations: { required: true }
+  - type: textarea
+    id: expected
+    attributes:
+      label: What you expected instead
+    validations: { required: true }

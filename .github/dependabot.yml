@@ -1,0 +1,22 @@
+# Dependency update automation — REPO-BASELINE.md §1.
+#
+# Only one ecosystem is listed, and the omission is deliberate rather than an
+# oversight: this repository has no package manifest. The generator is plain Node
+# with zero third-party dependencies, which is why `npm` and `nuget` do not appear
+# here. GitHub Actions are the only pinned third-party code in the tree, so they are
+# the only thing there is to keep current.
+
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+      time: '06:00'
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: 'chore(ci)(deps)'
+    groups:
+      github-actions:
+        patterns: ['*']

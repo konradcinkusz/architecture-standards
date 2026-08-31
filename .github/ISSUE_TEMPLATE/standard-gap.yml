@@ -1,0 +1,38 @@
+name: Gap in a standard
+description: A rule that is missing, wrong, or no longer matches what the estate does.
+labels: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Guides here are extracted from systems already running. The most useful report
+        is one that names what a repository actually does, not what would be tidy.
+  - type: input
+    id: document
+    attributes:
+      label: Which document
+      placeholder: docs/guides/FLY-IO-DEPLOYMENT.md §3, or P7
+    validations: { required: true }
+  - type: dropdown
+    id: kind
+    attributes:
+      label: What kind of gap
+      options:
+        - Missing — the corpus says nothing about this
+        - Wrong — the rule contradicts what the estate actually does
+        - Stale — the rule was true once; the code it cites has moved
+        - Unclear — the rule is stated but not decidable in practice
+    validations: { required: true }
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Evidence
+      description: >
+        The repository and file that shows it. Public repos by name; private ones
+        under their placeholder (`<saas>`, `<consumer>`). A rule changed without a
+        worked example is the failure this corpus exists to prevent.
+    validations: { required: true }
+  - type: textarea
+    id: proposal
+    attributes:
+      label: What the rule should say

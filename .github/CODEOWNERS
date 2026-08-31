@@ -1,0 +1,16 @@
+# Every path in this repository is owned by its maintainer.
+#
+# REPO-BASELINE.md §1: the failure this prevents is a security-relevant path merged
+# without the right reviewer. In a single-maintainer repository that is a low bar —
+# but the file is also the machine-readable answer to "who reviews this", which is
+# what makes it worth committing before there is a second contributor rather than
+# after the first surprise merge.
+
+*                       @konradcinkusz
+
+# The generator and the catalog decide what every installed skill contains, so they
+# are called out separately: an unreviewed change here reaches every consumer of the
+# marketplace, not just a reader of one document.
+/scripts/               @konradcinkusz
+/catalog/               @konradcinkusz
+/.github/workflows/     @konradcinkusz
