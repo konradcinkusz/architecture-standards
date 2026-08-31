@@ -272,5 +272,6 @@ Worked example: `<saas>.AuthService` — `Controllers/PayProController.cs`,
 `Services/PayProMORService.cs`, `Services/QuotaService.cs`,
 `Services/SubscriptionExpirationService.cs`,
 `<saas>.ServiceDefaults/Services/QuotaConsumptionService.cs` (the thin
-client — noting that per P2 its namespace/home should be the kernel proper), and
+client — noting that per [P2](https://github.com/konradcinkusz/architecture-standards/blob/main/docs/architecture/00-REFERENCE-ARCHITECTURE.md#p2) its
+namespace/home should be the kernel proper), and
 `<saas>/docs/quota-plan.md` for the recorded transport decision.

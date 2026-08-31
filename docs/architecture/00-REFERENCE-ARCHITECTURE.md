@@ -77,6 +77,8 @@ flowchart TB
 
 ## 1. Principles
 
+<a name="p1"></a>
+
 ### P1 — The AppHost is the composition root, and it exists for development
 
 One Aspire `AppHost` project declares every resource the system needs — databases,
@@ -95,6 +97,8 @@ Two rules that both repositories learned the hard way:
   platform's own configuration (`fly.toml`, workflow env). The AppHost's `IsPublishMode`
   branch is a *manifest generator*, not a second runtime. Treating it as both is what
   produced the drift catalogued in the reference SaaS review §3.5.
+
+<a name="p2"></a>
 
 ### P2 — Shared code is a shared *kernel*, not a shared *domain*
 
@@ -156,9 +160,13 @@ signal — is in [`docs/guides/SERVICE-API-PATTERNS.md`](../guides/SERVICE-API-P
 its frontend counterpart (the shared web-kit workspace package) is in
 [`docs/guides/FRONTEND-BFF.md`](../guides/FRONTEND-BFF.md) §7.
 
+<a name="p2a"></a>
+
 **Corollary (P2a):** *every* service calls `AddServiceDefaults()`. The reference SaaS's
 AuthService does not, and it is precisely the service with no traces when its quota
 endpoint misbehaves. A service that opts out of the kernel opts out of being operable.
+
+<a name="p3"></a>
 
 ### P3 — Service per bounded context; database per service
 
@@ -178,6 +186,8 @@ aggregation, scoring, the insight pipeline, persistence and the REST API in one 
 because they share a hot in-memory aggregate and splitting them would mean shipping that
 aggregate over a wire on every batch. Bounded contexts are drawn around *data cohesion*,
 not around nouns.
+
+<a name="p4"></a>
 
 ### P4 — Persistence is provider-portable and its schema is migrated, never "ensured"
 
@@ -209,6 +219,8 @@ this way and pays for it with six Designer files of ~18,000 lines each, which me
 schema changes ship unreviewed because the diffs are unreadable.
 
 > `<saas>.AuthService/Extensions/MigrationBackgroundService.cs`
+
+<a name="p5"></a>
 
 ### P5 — Configuration through the environment; secrets through the platform
 
@@ -255,6 +267,8 @@ The bar this principle implies for a repo's *history*, not just its current tree
 that repo is ever made public, is in
 [`docs/guides/OPEN-SOURCE-RELEASE.md`](../guides/OPEN-SOURCE-RELEASE.md).
 
+<a name="p6"></a>
+
 ### P6 — One container per service, built from a multi-stage Dockerfile
 
 The contract every service container satisfies:
@@ -278,6 +292,8 @@ ENTRYPOINT ["dotnet", "<Service>.dll"]
   > `<saas>.Web.Portal/Dockerfile`
 - **Native dependencies are declared, not assumed** — e.g. `libfontconfig1` for QuestPDF
   in `<saas>.AgenticService/Dockerfile`.
+
+<a name="p7"></a>
 
 ### P7 — Fly.io is the deployment target, and the topology is cost-shaped
 
@@ -336,6 +352,8 @@ networking, volumes, and the failure modes each rule exists to prevent — is in
 customer-hosted shape — the vendor pushes images, the customer runs everything — is in
 [`docs/guides/PRIVATE-CLOUD-DELIVERY.md`](../guides/PRIVATE-CLOUD-DELIVERY.md).
 
+<a name="p8"></a>
+
 ### P8 — Optional dependencies degrade; they do not fail startup
 
 Every external integration is registered conditionally on its configuration being
@@ -364,6 +382,8 @@ or on Azure Container Apps.
 The test: `git clone && dotnet run` with zero cloud credentials must produce a working
 system with reduced features.
 
+<a name="p9"></a>
+
 ### P9 — Program.cs is a manifest; wiring lives in extension methods
 
 `Program.cs` reads as a list of capabilities, not as configuration code. Each block is one
@@ -387,6 +407,8 @@ Controllers / minimal-API endpoints    → transport only: bind, authorize, dele
 > chain-of-responsibility step pipeline (`ConversationValidationStep` →
 > `LanguageDetectionStep` → `PromptExtractionStep`).
 
+<a name="p10"></a>
+
 ### P10 — Extensibility through interface + registration, not inheritance
 
 A new algorithm, provider or step is a class implementing an interface and one DI line.
@@ -400,6 +422,8 @@ This is the pattern that replaces the "core library base class" idea entirely. A
 library in this estate exports *interfaces and extension methods*; it does not export
 things you inherit from.
 
+<a name="p11"></a>
+
 ### P11 — Anti-corruption at the edge
 
 External dialects are normalized into one internal model at the boundary, once. Nothing
@@ -412,6 +436,8 @@ downstream knows there was more than one dialect.
 The same rule applies to payment providers, mail providers, SMS providers and map
 providers: one internal abstraction, one adapter per vendor, no vendor type crossing the
 boundary.
+
+<a name="p12"></a>
 
 ### P12 — Tag-driven CI/CD with change detection and ordered deploy
 
@@ -449,6 +475,8 @@ The workflow in full — change detection against the previous tag, the build ma
 per-job gating, bootstrapping, and the scale/destroy companions — is in
 [`docs/guides/FLY-IO-DEPLOYMENT.md`](../guides/FLY-IO-DEPLOYMENT.md) §10–§12.
 
+<a name="p13"></a>
+
 ### P13 — Test at the layer that has the logic
 
 | Layer | Tooling | What it covers |
@@ -478,6 +506,8 @@ passing test mean something, the locator and waiting conventions, and why CI wir
 part of a suite's definition of done, not a follow-up — are in
 [`docs/guides/E2E-ACCEPTANCE-TESTING.md`](../guides/E2E-ACCEPTANCE-TESTING.md).
 
+<a name="p14"></a>
+
 ### P14 — Documentation lives in the repository and records reasoning, not just steps
 
 Both repositories keep decision records next to the code, and both are better for it:
@@ -500,6 +530,8 @@ claims true — and everything else a repo carries before its first feature — 
 audits it is in [`docs/guides/SECURITY-REVIEW.md`](../guides/SECURITY-REVIEW.md); the
 additional bar a repo clears once, before its first public release, is in
 [`docs/guides/OPEN-SOURCE-RELEASE.md`](../guides/OPEN-SOURCE-RELEASE.md).
+
+<a name="p15"></a>
 
 ### P15 — Observability is a build-time decision, not an afterthought
 

@@ -43,7 +43,8 @@ with the constitution, then pull in the guides the work touches.
 **Deployment and platform**
 
 - [`docs/guides/FLY-IO-DEPLOYMENT.md`](docs/guides/FLY-IO-DEPLOYMENT.md) — the
-  operational guide behind principles P7 and P12: how to make any app deployable to
+  operational guide behind principles [P7](docs/architecture/00-REFERENCE-ARCHITECTURE.md#p7)
+  and [P12](docs/architecture/00-REFERENCE-ARCHITECTURE.md#p12): how to make any app deployable to
   Fly.io, every `fly.toml` field annotated, the tag-driven pipeline, and the failure
   modes each rule exists to prevent.
 - [`docs/guides/AZURE-AI-FOUNDRY-AGENTS.md`](docs/guides/AZURE-AI-FOUNDRY-AGENTS.md) —
@@ -92,10 +93,12 @@ with the constitution, then pull in the guides the work touches.
   traces, calibrated LLM-as-judge, CI gates with baselines, and the production scoring
   loop that converts incidents into scenarios.
 - [`docs/guides/TESTING-STRATEGY.md`](docs/guides/TESTING-STRATEGY.md) — the strategy
-  above P13: the E2E charter, three layers with budgets, the when-to-run matrix,
+  above [P13](docs/architecture/00-REFERENCE-ARCHITECTURE.md#p13): the E2E charter, three
+  layers with budgets, the when-to-run matrix,
   the per-test quality bar, what only a human can test, and how test configs rot.
 - [`docs/guides/E2E-ACCEPTANCE-TESTING.md`](docs/guides/E2E-ACCEPTANCE-TESTING.md) — the
-  operational guide behind P13's E2E layer: what makes a passing test mean something
+  operational guide behind [P13](docs/architecture/00-REFERENCE-ARCHITECTURE.md#p13)'s E2E
+  layer: what makes a passing test mean something
   (assertion discipline, locator and waiting conventions), why CI wiring is part of a
   suite's definition of done, and how to audit a suite you inherited — including the
   tells that a bulk-generated suite was never fact-checked.

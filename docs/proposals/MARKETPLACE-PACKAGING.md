@@ -115,13 +115,15 @@ These were deliberately not taken. Each is a judgement call, not an oversight.
    them is straightforward and would make the standards repo pass its own baseline — but
    it is a separate change from packaging, and mixing the two would make both harder to
    review.
-3. **P1–P15 still have no stable anchors.** Making them individually addressable means
-   editing `00-REFERENCE-ARCHITECTURE.md`, which this change was scoped not to do. Until
-   then a skill can cite `P7` but cannot link to it. The dangling `P2a` reference at
-   `:551` is in the same bucket.
-4. **`docs/proposals/` remains unlinked from `README.md`**, so this document and the two
-   beside it are discoverable only by browsing. One `## Proposals` section in the README
-   would fix it.
+3. ~~**P1–P15 still have no stable anchors.**~~ **Resolved 2026-08-31.** Each principle
+   now carries an explicit `<a name="pN">` anchor, so a skill can link `P7` and not merely
+   cite it. One correction to this item as originally written: `P2a` was never a dangling
+   reference. It is *defined* at `00-REFERENCE-ARCHITECTURE.md` as a substantive corollary
+   to P2 — every service calls `AddServiceDefaults()` — and the `:551` line number had
+   already gone stale. What it lacked was a heading, and therefore an anchor; it now has
+   one (`#p2a`) on the same footing as the principles.
+4. ~~**`docs/proposals/` remains unlinked from `README.md`.**~~ **Resolved 2026-08-31.**
+   The README now carries a `## Proposals` section listing all four with their standings.
 5. **Versioning policy is not written down.** Every plugin is `1.0.0` today. What
    constitutes a breaking change to a *standard* — a new checklist item? a reversed
    rule? — needs deciding before the second version, not after.
