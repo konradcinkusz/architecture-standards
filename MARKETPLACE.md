@@ -154,6 +154,53 @@ The clients disagree on two details, so the generator emits both spellings:
 Marketplace `source` paths are written as `./plugins/<name>`: Claude Code rejects a bare
 relative path, and Copilot resolves both spellings identically.
 
+## Versioning
+
+Every plugin here is versioned, and the number is meant to answer one question for
+somebody who already installed it: **what does upgrading cost me?**
+
+| Bump | When | What it costs the consumer |
+|---|---|---|
+| **major** | A rule is **reversed or withdrawn** — guidance that said X now says not-X, or a requirement is gone | Work already done to the old rule has to be undone or redone. Re-audit the repos that followed it |
+| **minor** | Guidance is **added** — a new guide, a new section, a new checklist item, a new failure-mode row | Nothing you built is now wrong; there is simply more to be compliant with |
+| **patch** | What is required **does not change** — a clarification, a refreshed or re-pointed worked example, a corrected line number, formatting, link fixes | Nothing. Read it if you like |
+
+That answers the two cases this policy was written for. **A new checklist item is a
+minor**, not a major: a repo that passed yesterday is now incompletely compliant rather
+than wrongly built, and those are different bills. **A reversed rule is a major** even
+when the diff is one sentence, because the cost lands in the consumer's repository
+rather than in this one.
+
+The marketplace's own `version` in `catalog/marketplace.catalog.json` is separate, and
+tracks the *packaging* — the manifest shape, the set of plugins, how skills are laid out
+— not the standards inside it.
+
+### The number is set by hand, and the build refuses to let you forget it
+
+A plugin's version is hand-written in `catalog/marketplace.catalog.json`. It is
+deliberately **not** derived from the bundled documents, because the significance of an
+edit is not computable from its diff: only a person can say whether a rewritten paragraph
+reverses a rule, adds one, or just explains the same rule better. A tool that guessed
+would eventually publish a major as a patch, which is worse than not versioning at all.
+
+So the generator does not decide the number. It enforces that somebody decided:
+
+```sh
+node scripts/build-marketplace.mjs
+# Plugin content changed without a version bump:
+#   deployment-and-platform: content changed but version is still 1.0.0.
+#   Bump it in catalog/marketplace.catalog.json per MARKETPLACE.md "Versioning".
+```
+
+`catalog/versions.lock.json` records the content digest each version shipped. When a
+plugin's generated content differs from what its current version last shipped, the build
+fails until the version moves — in a plain run as well as under `--check`, so a
+regeneration cannot quietly launder the change into the lock. Bumping the version is what
+accepts the new content, and the lock then records the pair.
+
+Bumping with no content change is allowed and does nothing but re-release; the gate only
+ever fires in one direction.
+
 ## Keeping it honest
 
 The whole tree under `plugins/`, `.github/plugin/`, `.claude-plugin/` and
