@@ -70,7 +70,8 @@ Four rules, each learned the expensive way:
    callback paths: this parameter is otherwise an open redirect.
 4. **Advertise only configured providers.** A discovery endpoint (`GET /providers`)
    returns the providers whose credentials are actually present — the concrete
-   mechanism behind P8's "optional dependencies degrade". The UI renders buttons from
+   mechanism behind [P8](../architecture/00-REFERENCE-ARCHITECTURE.md#p8)'s "optional
+   dependencies degrade". The UI renders buttons from
    it instead of showing dead ones.
 
 Failures redirect back to the frontend with a machine-readable reason
