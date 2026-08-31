@@ -1,0 +1,60 @@
+name: CodeQL
+
+# ─────────────────────────────────────────────────────────────────────────────
+#  Static analysis. REPO-BASELINE.md §1: "Static analysis exists only when a human
+#  remembers to run it."
+#
+#  What there is to analyse. This repository ships documents, not a service — but it
+#  also ships scripts/build-marketplace.mjs, which reads every guide, writes 63 files
+#  across four directories, and decides what each installed skill contains. That
+#  script reaching a consumer's machine with a path-handling bug in it is a more
+#  interesting failure than anything in the prose, and it is exactly the surface
+#  CodeQL's JavaScript queries cover.
+#
+#  No autobuild step and no visibility guard: JavaScript needs no build, and this
+#  repository is public, so code scanning is available without Advanced Security.
+# ─────────────────────────────────────────────────────────────────────────────
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main, 'claude/**']
+  schedule:
+    # Mondays 04:00 UTC. Rule sets change under a codebase that has not.
+    - cron: '0 4 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: codeql-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  analyze:
+    name: Analyze JavaScript
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+      # Required for the analyse step to upload its SARIF results.
+      security-events: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: javascript-typescript
+          # security-and-quality over the default security-extended: the generator is
+          # small enough that the quality queries are affordable, and a correctness bug
+          # in it is as damaging as a security one — it is the thing that decides what
+          # every consumer of the marketplace actually installs.
+          queries: security-and-quality
+
+      - name: Analyze
+        uses: github/codeql-action/analyze@v3
+        with:
+          category: '/language:javascript-typescript'

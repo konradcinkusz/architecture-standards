@@ -1,0 +1,42 @@
+# gitleaks configuration — architecture-standards
+#
+# Runs in two places, deliberately:
+#   • pre-commit hook (scripts/hooks/pre-commit) — catches the mistake before it
+#     becomes history;
+#   • CI job (.github/workflows/secret-scan.yml)  — catches contributors without hooks.
+#
+# P5 makes the scanner mandatory: "a repository without one is assumed to contain
+# credentials until proven otherwise". REPO-BASELINE.md §2 explains why both halves
+# exist rather than either alone.
+#
+# If a secret ever does land here: ROTATE FIRST, clean history second. This repository
+# is public; a pushed commit is disclosed the moment it is pushed, and scrubbing
+# without rotating is theatre.
+
+title = "architecture-standards secret scanning"
+
+[extend]
+# The ~170 upstream provider rules (AWS, GitHub, Slack, Stripe, OpenAI, …).
+#
+# Unlike a service repository, this one adds no rules of its own, and the reason is
+# worth writing down rather than leaving as an apparent omission: this repository has
+# no secrets. It ships documents and a generator that reads only files in the tree —
+# there is no credential it is *supposed* to hold, so there is no variable whose shape
+# a bespoke rule could match. The upstream set is here to catch a credential that has
+# no business being in this repository at all, which is the only way one could arrive.
+#
+# The corollary is the rule for whoever adds the first one: a secret introduced here
+# gets its detection rule in the same commit, because a secret with no rule is a
+# secret nobody will notice leaving.
+useDefault = true
+
+[allowlist]
+description = "Paths that are documentation about credentials, not credentials"
+# The guides discuss key material at length — JWKS endpoints, signing keys, rotation
+# procedure, OAuth flows. They are prose about handling secrets and contain none.
+# Scoped to paths rather than to value regexes on purpose: allowlisting by pattern is
+# how a real credential eventually gets waved through by a rule written for a fake one.
+paths = [
+  '''docs/guides/IDENTITY-AND-ACCOUNTS\.md''',
+  '''docs/guides/SECURITY-REVIEW\.md''',
+]

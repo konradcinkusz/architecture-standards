@@ -109,12 +109,14 @@ These were deliberately not taken. Each is a judgement call, not an oversight.
    `blob/BRANCH/LICENSE` that currently resolves to nothing. If the repo stays internal,
    a licence is optional; if it ever goes public, `OPEN-SOURCE-RELEASE.md` is the gate
    and it says to have one from the first commit.
-2. **The baseline debt is untouched.** `REPO-BASELINE.md:26-42` mandates CODEOWNERS,
-   `.editorconfig`, `.gitattributes`, PR and issue templates, dependency automation,
-   secret scanning in pre-commit *and* CI, and SAST. This repo has none of them. Adding
-   them is straightforward and would make the standards repo pass its own baseline — but
-   it is a separate change from packaging, and mixing the two would make both harder to
-   review.
+2. ~~**The baseline debt is untouched.**~~ **Resolved 2026-08-31**, as the separate
+   change this item asked for. CODEOWNERS, `.editorconfig`, `.gitattributes`, PR and
+   issue templates, dependency automation, secret scanning in pre-commit *and* CI, and
+   SAST are all in place; the items that genuinely do not apply to a documents-and-
+   generator repository are recorded as N/A with their reasons in
+   [`docs/BASELINE-COMPLIANCE.md`](../BASELINE-COMPLIANCE.md) rather than dropped. One
+   piece is not a file and remains open there: making the generator check *required*
+   is branch protection, and needs an owner with admin rights.
 3. ~~**P1–P15 still have no stable anchors.**~~ **Resolved 2026-08-31.** Each principle
    now carries an explicit `<a name="pN">` anchor, so a skill can link `P7` and not merely
    cite it. One correction to this item as originally written: `P2a` was never a dangling

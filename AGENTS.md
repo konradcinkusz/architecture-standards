@@ -56,6 +56,19 @@ node scripts/build-marketplace.mjs --check     # what CI runs; fails if stale
 CI runs `--check` on every push and pull request. A change to a document that is not
 accompanied by regenerated output fails the build — that is the point of it.
 
+Two further rules apply to any change here, both enforced rather than remembered:
+
+- **A content change needs a version decision.** The build refuses a plugin whose
+  content moved while its version stood still. What each level means — and why the
+  number is set by hand rather than derived — is in
+  [`MARKETPLACE.md`](MARKETPLACE.md#versioning).
+- **Committing runs a secret scan.** `./scripts/setup.sh` installs the hook; it refuses
+  to commit when no scanner is available, which is deliberate rather than a bug.
+
+How this repository measures against the baseline it publishes — including the items
+that are genuinely N/A, with the reasons, and the one thing still open — is worked
+through in [`docs/BASELINE-COMPLIANCE.md`](docs/BASELINE-COMPLIANCE.md).
+
 ### House conventions for the documents themselves
 
 - Guides are repo-agnostic: rules plus the reasons, with worked examples cited at the
