@@ -143,6 +143,27 @@ with the constitution, then pull in the guides the work touches.
   surface per the frontend/BFF guide, UI/UX documentation, deployment to Fly.io, and
   an optional parallel Azure provisioning job.
 
+## Proposals
+
+A proposal is a *candidate*, not a standard: something the estate does that the guides
+do not yet describe, written up for the maintainer to accept, defer, or reject. Until it
+is accepted it stays in `docs/proposals/` with no catalog entry, which is what keeps it
+out of the packaged skills — an installed skill that confidently prescribes an unbuilt
+pattern is worse than no skill.
+
+- [`docs/proposals/MARKETPLACE-PACKAGING.md`](docs/proposals/MARKETPLACE-PACKAGING.md) —
+  why the packaging layer has the shape it does. **Implemented**; the decisions it left
+  to the maintainer are recorded in its closing section.
+- [`docs/proposals/EXTRACT-FROM-COPILOT-SCOPE.md`](docs/proposals/EXTRACT-FROM-COPILOT-SCOPE.md)
+  — five generic patterns `copilot-scope` solved that no guide covers, ranked, plus two
+  corrections to the constitution itself. **Awaiting verdicts.**
+- [`docs/proposals/EXTRACT-SHARED-SERVICE-PATTERN.md`](docs/proposals/EXTRACT-SHARED-SERVICE-PATTERN.md)
+  — one codebase, N independent instances, for a service a second system wants to run
+  rather than call. **Awaiting a verdict**; one data point so far.
+- [`docs/proposals/AGENT-IDENTITY-AND-DELEGATION.md`](docs/proposals/AGENT-IDENTITY-AND-DELEGATION.md)
+  — what credential an agent carries into a first-party API, and whose authority it
+  spends. **Proposal**, with a written promotion test waiting on `authservice` ADR 0004.
+
 ## Origin
 
 The blueprint was extracted from two systems that already follow it — `copilot-scope`
