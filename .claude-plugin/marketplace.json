@@ -52,7 +52,7 @@
     {
       "name": "services-and-clients",
       "description": "Recurring patterns inside services and the clients that call them: HTTP/API plumbing, identity, payments, Next.js frontends and BFFs, and browser extensions.",
-      "version": "1.2.0",
+      "version": "1.3.0",
       "author": {
         "name": "Konrad Cinkusz",
         "url": "https://github.com/konradcinkusz"

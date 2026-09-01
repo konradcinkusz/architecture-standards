@@ -176,6 +176,44 @@ written down as weaker so nobody mistakes the wording for a guarantee.
 > idempotency key available on the integration target, that spec specifies reporting the
 > uncertainty rather than resolving it, and labels itself the weaker answer.
 
+### N plugins, one screen: the report contract
+
+[P10](../architecture/00-REFERENCE-ARCHITECTURE.md#p10) gets you an interface and a DI
+registration, and that is the cheap half. What makes "a new algorithm is one class and one
+line" actually true is the layer above it — and without that layer, every new
+implementation still costs UI work, which is the thing the interface was supposed to buy.
+
+Three parts, and all three are needed:
+
+**A normalized output contract.** Every implementation returns the *same* shape: a name, a
+status, an optional headline number, structured rows, human-readable findings. Not each
+its own type. The shape is what lets one renderer display all of them, so the contract —
+not the interface — is what a new implementation plugs into.
+
+**A generic renderer over that shape.** Written once, against the contract. If adding an
+implementation means touching the view, the contract was not general enough and the next
+implementation will cost the same again.
+
+**A fail-soft pipeline.** One implementation throwing must not take out the others: catch
+per implementation, convert the failure into a well-formed report carrying the error
+message, and carry on. A pipeline that propagates is a pipeline where the newest, least
+trusted plugin can blank the whole screen.
+
+**Make "nothing to report" a first-class status, not an error.** This is the part most
+often collapsed, and it is the one that decides whether the screen can be read. An analyzer
+with insufficient input has *not* failed — and if the only statuses are success and error,
+it must claim one of them: report a misleading zero, or raise an error that sends somebody
+looking for a bug that is not there. A distinct `no-data` status lets the renderer say
+"not enough input yet", which is both true and actionable.
+
+The same shape applies anywhere N contributors must land on one surface: validators,
+compliance checks, security-scan rules, report sections, health sub-checks.
+
+> `copilot-scope` — `Quality/Insights.cs`: the `InsightReport` record (`Name`, `Algorithm`,
+> `Status`, `Score?`, `Metrics`, `Findings`) with `"ok" | "no-data"` stated on the field;
+> `InsightPipeline.Analyze` catching per analyzer and substituting a `no-data` report
+> carrying the exception message; and a dashboard that renders the shape generically.
+
 ## 6. Long-running work without a queue
 
 The in-process pattern, for estates that have not yet earned a broker (per the
