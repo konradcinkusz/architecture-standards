@@ -32,7 +32,7 @@
     {
       "name": "deployment-and-platform",
       "description": "Getting services deployed and kept running: Fly.io, Azure AI Foundry, Azure operations, per-PR preview environments, and customer-hosted private-cloud delivery.",
-      "version": "1.1.0",
+      "version": "1.2.0",
       "author": {
         "name": "Konrad Cinkusz",
         "url": "https://github.com/konradcinkusz"
