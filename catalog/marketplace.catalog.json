@@ -57,7 +57,7 @@
     },
     {
       "name": "deployment-and-platform",
-      "version": "1.1.0",
+      "version": "1.2.0",
       "description": "Getting services deployed and kept running: Fly.io, Azure AI Foundry, Azure operations, per-PR preview environments, and customer-hosted private-cloud delivery.",
       "keywords": [
         "deployment",
@@ -106,6 +106,14 @@
             "P7"
           ],
           "description": "Use when a service in one system is about to be reused by a second, unrelated system in the estate: publishing it as a pinned image, running one independent instance per consumer with its own database and signing key, and keeping the publish pipeline free of deployment secrets. Not for delivering a whole product to a paying customer - that is private-cloud-delivery."
+        },
+        {
+          "name": "metrics-exposition",
+          "source": "docs/guides/METRICS-EXPOSITION.md",
+          "principles": [
+            "P15"
+          ],
+          "description": "Use when adding or reviewing a /metrics endpoint, choosing metric labels, or diagnosing a monitoring system that is growing without bound: which labels are cardinality decisions, capping high-cardinality views, exporting the fact that you truncated, and provisioning dashboards from the repository."
         }
       ]
     },

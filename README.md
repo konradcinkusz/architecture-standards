@@ -59,6 +59,10 @@ with the constitution, then pull in the guides the work touches.
 - [`docs/guides/PR-PREVIEW-ENVIRONMENTS.md`](docs/guides/PR-PREVIEW-ENVIRONMENTS.md) —
   ephemeral per-PR environments: naming as isolation, shared-vs-per-PR classification,
   sticky status comments, and teardown that actually tears down.
+- [`docs/guides/METRICS-EXPOSITION.md`](docs/guides/METRICS-EXPOSITION.md) — keeping a
+  `/metrics` endpoint from taking down the monitoring that watches it: every label as a
+  cardinality decision, high-cardinality views opt-in and capped, and an exporter that
+  emits its own truncation so a capped view cannot pass for a complete one.
 - [`docs/guides/SHARED-SERVICE-REUSE.md`](docs/guides/SHARED-SERVICE-REUSE.md) — when a
   second, unrelated system in the estate wants to run a service the first one built: one
   codebase and N independent instances, a pinned-image artifact dependency instead of a source
