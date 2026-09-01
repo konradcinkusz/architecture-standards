@@ -57,7 +57,7 @@
     },
     {
       "name": "deployment-and-platform",
-      "version": "1.0.0",
+      "version": "1.1.0",
       "description": "Getting services deployed and kept running: Fly.io, Azure AI Foundry, Azure operations, per-PR preview environments, and customer-hosted private-cloud delivery.",
       "keywords": [
         "deployment",
@@ -96,6 +96,16 @@
           "name": "private-cloud-delivery",
           "source": "docs/guides/PRIVATE-CLOUD-DELIVERY.md",
           "description": "Use when selling or shipping the SaaS as a self-hosted, customer-deployed edition. The vendor-pushes-images / customer-runs-everything responsibility split, the per-client registry, the vendor push-and-stop workflow, the IaC handed over, upgrades and rollback, the one-flag product switch, and the commercial artifacts. A fifth deployment shape alongside the Fly guide's four, with no fork and no vendor production access."
+        },
+        {
+          "name": "shared-service-reuse",
+          "source": "docs/guides/SHARED-SERVICE-REUSE.md",
+          "principles": [
+            "P2",
+            "P3",
+            "P7"
+          ],
+          "description": "Use when a service in one system is about to be reused by a second, unrelated system in the estate: publishing it as a pinned image, running one independent instance per consumer with its own database and signing key, and keeping the publish pipeline free of deployment secrets. Not for delivering a whole product to a paying customer - that is private-cloud-delivery."
         }
       ]
     },

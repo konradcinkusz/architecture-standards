@@ -59,6 +59,10 @@ with the constitution, then pull in the guides the work touches.
 - [`docs/guides/PR-PREVIEW-ENVIRONMENTS.md`](docs/guides/PR-PREVIEW-ENVIRONMENTS.md) —
   ephemeral per-PR environments: naming as isolation, shared-vs-per-PR classification,
   sticky status comments, and teardown that actually tears down.
+- [`docs/guides/SHARED-SERVICE-REUSE.md`](docs/guides/SHARED-SERVICE-REUSE.md) — when a
+  second, unrelated system in the estate wants to run a service the first one built: one
+  codebase and N independent instances, a pinned-image artifact dependency instead of a source
+  one, and a publish pipeline that cannot be gated by deployment secrets.
 - [`docs/guides/PRIVATE-CLOUD-DELIVERY.md`](docs/guides/PRIVATE-CLOUD-DELIVERY.md) —
   selling the SaaS as self-hosted: the vendor-pushes-images / customer-runs-everything
   split, the per-client registry, the IaC you hand over, and the one-flag product
@@ -163,7 +167,7 @@ pattern is worse than no skill.
   call for are being written.
 - [`docs/proposals/EXTRACT-SHARED-SERVICE-PATTERN.md`](docs/proposals/EXTRACT-SHARED-SERVICE-PATTERN.md)
   — one codebase, N independent instances, for a service a second system wants to run
-  rather than call. **Awaiting a verdict**; one data point so far.
+  rather than call. **Promoted** (2026-09-01) to `SHARED-SERVICE-REUSE.md`.
 - [`docs/proposals/AGENT-IDENTITY-AND-DELEGATION.md`](docs/proposals/AGENT-IDENTITY-AND-DELEGATION.md)
   — what credential an agent carries into a first-party API, and whose authority it
   spends. **Proposal**, with a written promotion test waiting on `authservice` ADR 0004.
