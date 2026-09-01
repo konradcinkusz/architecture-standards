@@ -2,7 +2,7 @@
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "services-and-clients",
   "description": "Recurring patterns inside services and the clients that call them: HTTP/API plumbing, identity, payments, Next.js frontends and BFFs, and browser extensions.",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "author": {
     "name": "Konrad Cinkusz",
     "url": "https://github.com/konradcinkusz"
