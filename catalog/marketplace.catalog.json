@@ -258,8 +258,8 @@
     },
     {
       "name": "research-standards",
-      "version": "1.0.0",
-      "description": "How a repository documents scientific research: the docs/research layout, the study document shape, the evidence rules, and the study and LaTeX paper templates as bundled assets.",
+      "version": "1.1.0",
+      "description": "How a repository documents scientific research, and how any document in the estate is authored so it compiles to PDF: the docs/research layout, the study document shape, the evidence rules, the house LaTeX and Beamer style, diagrams, language editions, the CI build, and the templates as bundled assets.",
       "keywords": [
         "research",
         "study",
@@ -274,7 +274,7 @@
           "principles": [
             "P14"
           ],
-          "description": "Use when a repository produces measurements, benchmarks or experiments that need writing up as research rather than as a guide. What counts as research and what does not, the docs/research layout, the shape of a study document, the evidence rules (every number traceable, reproduction stated as a command, validate the instrument before trusting its readings, negative results get written up), and when a study graduates to a LaTeX paper. Bundled assets: the study template and the paper template.",
+          "description": "Use when a repository produces measurements, benchmarks or experiments that need writing up as research rather than as a guide, or when any document in it has to be authored in LaTeX and compiled to PDF. What counts as research and what does not, the docs/research layout, the shape of a study document, the evidence rules (every number traceable, reproduction stated as a command, validate the instrument before trusting its readings, negative results get written up), when a study graduates to a LaTeX paper or a Beamer deck, how a non-study document borrows the house style without claiming to be research, how Mermaid diagrams reach a PDF from a single source, how a second language edition is published, and the shape of the GitHub Actions workflow that builds any of them. Bundled assets: the study template, the paper template and the Beamer theme.",
           "assets": [
             "docs/research/TEMPLATE.md",
             "docs/research/PAPER-TEMPLATE.tex",
