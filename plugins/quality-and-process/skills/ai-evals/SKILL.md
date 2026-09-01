@@ -28,6 +28,7 @@ Reference-architecture principles: P13.
 - Gates
 - Production scoring closes the loop
 - Human-in-the-loop
+- Prove the suite can fail
 
 ## Failure modes
 
@@ -43,6 +44,10 @@ Reference-architecture principles: P13.
 | Eval suite abandoned within a quarter | No budget split: full judge matrix on every PR priced the suite out of the loop |
 | Confirmation bypass found by a user, not a page | Constraint checks run offline only; no post-hoc verification over production traces |
 | "It works" defended from one good transcript | No baseline recorded; anecdote standing in for a pass-rate diff |
+| A new write tool ships with no constraint on it, suite still green | Write-classification inferred from a name prefix instead of a normative table, so the unnamed tool was silently classified a read (§4) |
+| A fixture edit lands unreviewed, and a scenario now measures something else | Per-scenario worlds copied wholesale instead of a base plus a delta, so the change is spread across near-identical files rather than visible in one (§3) |
+| A suite reports 100% for a year and has never been shown able to fail | No mutation pass: real assertions prove they can pass, never that they can catch (§9) |
+| A mutation variant "caught" by a harness crash | The pass counted an error as a catch, so the rate measures the harness's ability to throw (§9) |
 
 ## Checklist
 
@@ -50,14 +55,17 @@ Per agent or LLM-backed feature:
 
 - [ ] Behaviour spec in-repo, versioned with the agent definition: behaviours, hard constraints, success criteria, out-of-scope — with negatives stated
 - [ ] Scenario dataset as data, covering happy / ambiguity / denied / adversarial (both injection paths) / degradation classes
+- [ ] Fixtures are a named base world plus a per-scenario delta, rebuilt from scratch each run — never mutated in place, never one full world copied per scenario
 - [ ] Agent loop instrumented per OTel GenAI conventions; confirmations are trace events
 - [ ] Layer 1 asserts over traces: right calls, right arguments, ordering, absence, termination — no guard-then-bail, no swallowed failures, unimplemented = `Skip`
+- [ ] Write-classification pinned as a normative per-tool table in the spec and derived from it by the harness — never from a naming convention
 - [ ] Layer 2: rubric-anchored per-criterion judge that sees the trace; judge model + prompt pinned and versioned; calibration against human labels recorded before scores gate
 - [ ] Gates per §6: constraints hard-block at 100%; behaviour vs baseline; judge thresholds; prompts and definitions included in change detection
 - [ ] Nightly matrix with baseline diffs; PR output is a diff, not a dashboard
 - [ ] Production sessions scored on the shared trace schema; worst sessions read on a cadence; low scorers converted to scenarios; constraint checks run post-hoc with paging
 - [ ] Human review sampled and scheduled; findings become scenarios and rubric fixes
 - [ ] Every production incident has a scenario before it has a fix
+- [ ] Deliberately broken agent variants exist and the constraint layer catches every one; a surviving variant is filed as a missing scenario, and a harness crash never counts as a catch
 
 ---
 
