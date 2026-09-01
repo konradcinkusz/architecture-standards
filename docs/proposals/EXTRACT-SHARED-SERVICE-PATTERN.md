@@ -25,6 +25,25 @@ dependency of the first system, but run its **own independent copy**.
 proposal is one layer up: how a service that is already good gets *extracted and consumed* by
 siblings, without becoming a shared runtime dependency between them.
 
+## Verdict — promoted 2026-09-01
+
+**Accepted and promoted** to [`docs/guides/SHARED-SERVICE-REUSE.md`](../guides/SHARED-SERVICE-REUSE.md) (#35).
+
+Promoted on the test that mattered: is the pattern generic? All six outline points below are
+domain-neutral — nothing in them is about identity, and point 6 is already parameterised as
+"whatever domain the shared service covers". Only the worked example is `authservice`, which is
+how every guide in this corpus is built: repo-agnostic rules, evidence cited from the estate.
+
+The confidence note below still stands and travels with the guide rather than being dropped on
+promotion. What tipped it was that the estate already *mandates* the pattern —
+`docs/MASTER-PROMPT.md` step 2 makes adopting the shared identity service part of every
+delivery session — so leaving it undocumented meant requiring a discipline nobody had written
+down, which is the failure the corpus opens by naming. Rule 3 was re-verified against
+`authservice`'s `publish-image.yml` before promotion: one job, `packages: write`, the automatic
+`GITHUB_TOKEN` as its only credential.
+
+---
+
 ## The pattern
 
 **One codebase, N independent instances — never one shared runtime.** Each consumer
