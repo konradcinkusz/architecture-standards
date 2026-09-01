@@ -159,7 +159,8 @@ pattern is worse than no skill.
   to the maintainer are recorded in its closing section.
 - [`docs/proposals/EXTRACT-FROM-COPILOT-SCOPE.md`](docs/proposals/EXTRACT-FROM-COPILOT-SCOPE.md)
   — five generic patterns `copilot-scope` solved that no guide covers, ranked, plus two
-  corrections to the constitution itself. **Awaiting verdicts.**
+  corrections to the constitution itself. **All accepted** (2026-08-31); the guides they
+  call for are being written.
 - [`docs/proposals/EXTRACT-SHARED-SERVICE-PATTERN.md`](docs/proposals/EXTRACT-SHARED-SERVICE-PATTERN.md)
   — one codebase, N independent instances, for a service a second system wants to run
   rather than call. **Awaiting a verdict**; one data point so far.

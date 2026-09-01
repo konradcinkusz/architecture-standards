@@ -27,9 +27,42 @@ a persistence variant copilot-scope legitimately uses.
 
 ---
 
+## Verdicts — 2026-08-31
+
+All five ranked candidates are **accepted**, and the six "worth a paragraph each" items
+with them. Nothing below is rejected that was not already in the rejected list.
+
+| # | Candidate | Verdict | Tracked in |
+|---|---|---|---|
+| 1 | Prometheus exposition discipline → `METRICS-EXPOSITION.md` | **Accept** | #46 |
+| 2 | Write-behind snapshot persistence → `STATE-SNAPSHOT-PERSISTENCE.md` | **Accept** | #47 |
+| 3 | Demo-data discipline → `DEMO-DATA-AND-SEEDING.md` | **Accept** | #48 |
+| 4 | Metric ethics / anti-Goodhart → `METRIC-ETHICS.md` | **Accept** (short guide) | #49 |
+| 5 | Pluggable report contract → section in `SERVICE-API-PATTERNS.md` | **Accept** | #50 |
+| — | The six "worth a paragraph each" items | **Accept**, batched | #51 |
+
+The two constitution corrections this document raises — P10's worked example describing a
+mechanism that no longer exists, and P4's prohibition reading wider than its own extraction
+source — are **not** waiting on these guides. They are defects in a published document, and
+they are fixed in #34.
+
+**What acceptance does not mean.** A verdict is a decision to write, not the writing. Every
+guide above is an *extraction*: the house rule is that it generalizes something a repository
+already does, with the worked example cited. Each candidate's evidence is a set of file and
+line citations into `copilot-scope` recorded on 2026-08-14, and #34 exists precisely because
+two citations from that same sweep had already gone stale by the time anyone checked. So each
+issue above carries the same precondition: attach the repository and re-verify the citations
+against current code before writing a word. A guide asserting what nobody re-read is the
+failure this corpus exists to prevent, and it would be a bad one to commit in the corpus that
+prevents it.
+
+---
+
 ## Ranked candidates
 
 ### 1. Prometheus exposition discipline — NEW GUIDE `METRICS-EXPOSITION.md`
+
+**Verdict: accepted 2026-08-31.** Tracked in #46.
 
 **Where:** `src/CopilotScope.Collector/Api/PrometheusExporter.cs` — `PerSession` off by
 default with a documented reason (`:12-29`), `MaxSessionSeries`/`MaxErrorTypes` caps, a
@@ -59,6 +92,8 @@ provisioned datasource + dashboard JSON live in-repo beside the exporter.
 
 ### 2. Write-behind snapshot persistence — NEW GUIDE `STATE-SNAPSHOT-PERSISTENCE.md` (+ P4 amendment)
 
+**Verdict: accepted 2026-08-31.** Tracked in #47.
+
 **Where:** `src/CopilotScope.Collector/Persistence/PersistenceWriter.cs` — the whole
 contract in one doc-comment (`:6-13`): dirty-flag on ingest, flush ≤1 s, schema bootstrap
 + rehydrate on start, degrade to in-memory without blocking ingest. `MarkDirty` under lock
@@ -85,6 +120,8 @@ inconsistent. This guide + a one-line P4 amendment resolves it.
 ---
 
 ### 3. Demo-data discipline — NEW GUIDE `DEMO-DATA-AND-SEEDING.md`
+
+**Verdict: accepted 2026-08-31.** Tracked in #48.
 
 **Where:** `Program.cs:221-261` — `/api/admin/seed` seeds everything under a `seed-`
 prefix, reset clears **only** that prefix in memory *and* Postgres, with explicit
@@ -113,6 +150,8 @@ to use which.
 
 ### 4. Metric ethics / anti-Goodhart — SHORT NEW GUIDE `METRIC-ETHICS.md`
 
+**Verdict: accepted 2026-08-31.** Tracked in #49.
+
 **Where:** `README.md:57-76` §"How not to use CopilotScope" — not for performance reviews
 (enforced by a deliberate **absence of a per-developer view in the architecture**, not
 just policy), acceptance paired with edit-survival as a counter-metric, confidence
@@ -139,6 +178,8 @@ person.
 
 ### 5. Pluggable report contract — SECTION in `SERVICE-API-PATTERNS.md` (+ P10 fix)
 
+**Verdict: accepted 2026-08-31.** Tracked in #50.
+
 **Where:** `Quality/Insights.cs:14-20` — `InsightReport(Name, Algorithm, Status, Score?,
 Metrics, Findings)`, a universal result shape the dashboard renders generically
 (`Home.razor:462-481`). `InsightPipeline` is fail-soft: an analyzer exception becomes a
@@ -161,6 +202,8 @@ realigning).
 ---
 
 ## Worth a paragraph each (not a full guide)
+
+**Verdict: accepted 2026-08-31**, as one batch. Tracked in #51.
 
 - **Fire-and-forget forwarding** (`Forwarding/OtlpForwarder.cs`) — bounded channel with an
   explicit drop-oldest policy, relay raw bytes not re-serialized, enable-by-config-presence,
