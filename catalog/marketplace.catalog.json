@@ -111,7 +111,7 @@
     },
     {
       "name": "services-and-clients",
-      "version": "1.0.0",
+      "version": "1.1.0",
       "description": "Recurring patterns inside services and the clients that call them: HTTP/API plumbing, identity, payments, Next.js frontends and BFFs, and browser extensions.",
       "keywords": [
         "api",
