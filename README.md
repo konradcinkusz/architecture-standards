@@ -154,6 +154,14 @@ with the constitution, then pull in the guides the work touches.
   skeleton, with the rules (a paper introduces no numbers of its own, DRAFT
   marker until the study is verified, PDFs are build output) in
   `00-RESEARCH-DOCUMENTATION.md`.
+- [`docs/research/BEAMER-THEME.sty`](docs/research/BEAMER-THEME.sty) — the house
+  Beamer theme for when work graduates into a talk rather than a paper.
+- The same document also carries everything else needed to author a document
+  that compiles to PDF: how a non-study document borrows the house style
+  without claiming to be research, how Mermaid diagrams reach a PDF from a
+  single source instead of being redrawn in TikZ, how a second language edition
+  is published, and the shape of the GitHub Actions workflow that builds any of
+  them.
 
 ## The playbook
 
