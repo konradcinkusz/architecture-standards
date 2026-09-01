@@ -191,8 +191,17 @@ Rules that keep it honest:
   bump with a re-baseline, exactly like an agent version bump.
 - **Calibrated against humans, or discarded.** A sample of judged runs gets human
   labels; agreement is measured and recorded before the judge's scores gate anything.
-  Where judge and human disagree systematically, fix the rubric, not the human. *(Not
-  yet demonstrated in the estate — stated here so the gap is a decision, not drift.)*
+  Where judge and human disagree systematically, fix the rubric, not the human. The
+  protocol is demonstrated — `agent-eval-bench`'s `docs/CALIBRATION.md`, with a stated
+  gate and the κ arithmetic — and the rule is not yet *satisfied* anywhere, which is a
+  different claim and the honest one.
+- **A non-human first rater is a rehearsal, not a calibration.** Where the first pass
+  is done by a model, say so in the label set, and count what it is worth: it exercises
+  the protocol end to end and it finds rubric defects cheaply — the pass in
+  `agent-eval-bench` surfaced three before any judge had scored anything. What it
+  cannot do is discharge this rule, whose wording is *against humans*. A judge
+  calibrated against a judge has measured its own agreement with itself, and the
+  number will look reassuring.
 - Judge scores **threshold and trend**; they do not hard-block at 100% the way
   constraints do. A judge regression is a finding to read, sometimes a rubric bug —
   treat a sudden jump in either direction with the suspicion a too-green test suite
@@ -333,13 +342,13 @@ loop — `docs/SPEC.md` precedes the agent, a 35-scenario dataset spans all five
 classes, and Layer 1 hard-blocks constraints at 100% and gates behaviours against a
 recorded baseline on every pull request. Its Layer 2 judge is built, pinned and
 versioned, and its calibration protocol has run end to end — 45 labels across 21
-scenarios — but, as that repository's own `docs/DEVIATIONS.md` (D-9) and
-`docs/CALIBRATION.md` say without softening, the judge has never yet scored a live
-model, and its first calibration pass was an AI-disclosed rater rather than the human
-one this section names. So §5's calibration rule is demonstrated as a protocol, not yet
-satisfied by it, and §6's gating mechanics are demonstrated for Layer 1 in production CI
-and remain design for Layer 2 until a keyed run and human labels exist — this sentence
-is the §3a-style acknowledgement of that remaining gap, narrower than it was.
+scenarios — but, as that repository's own `docs/DEVIATIONS.md` (D-9) says without
+softening, the judge has never yet scored a live model. Its first calibration pass was
+an AI-disclosed rater, which [§5](#5-layer-2-llm-as-judge) now says what to make of
+rather than leaving to this paragraph. §6's gating mechanics are demonstrated for
+Layer 1 in production CI and remain design for Layer 2 until a keyed run and human
+labels exist — this sentence is the §3a-style acknowledgement of that remaining gap,
+narrower than it was.
 `copilot-scope/src/CopilotScope.Collector/` (OTLP ingestion, the
 composite scoring engine and `IInsightAnalyzer` pipeline this guide's §7 generalizes),
 `<saas>.AgenticService/Services/Orchestration/` (the step pipeline and
