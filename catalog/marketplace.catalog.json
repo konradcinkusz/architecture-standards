@@ -180,7 +180,7 @@
     },
     {
       "name": "quality-and-process",
-      "version": "1.2.0",
+      "version": "1.3.0",
       "description": "Proving the system works and keeping the repo presentable: LLM evaluation, test strategy, E2E acceptance suites, security review, open-source release, and README badges.",
       "keywords": [
         "testing",
@@ -245,6 +245,14 @@
             "P13"
           ],
           "description": "Use when building or reviewing demo/seed data for a product with a dashboard, or a reset that must not touch real records: a reserved id namespace enforced server-side, reset by prefix across every store, seeding through the running API rather than the database, deterministic idempotent generation, a second generator that speaks the real ingest protocol, and personas so the data demonstrates something."
+        },
+        {
+          "name": "metric-ethics",
+          "source": "docs/guides/METRIC-ETHICS.md",
+          "principles": [
+            "P14"
+          ],
+          "description": "Use when a product will publish numbers that score work - quality scores, productivity dashboards, SLAs, agent evaluations: anti-goals enforced by architecture rather than prose, a counter-metric blended into every pressurable metric, confidence carried with every score, human-state heuristics kept outside the composite, and the artifact rather than the person as the unit of evaluation."
         }
       ]
     },
