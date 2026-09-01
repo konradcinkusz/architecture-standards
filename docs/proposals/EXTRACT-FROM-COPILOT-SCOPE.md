@@ -25,6 +25,14 @@ Two of these also correct the constitution itself (noted inline): the P10 cloud-
 example describes a mechanism that no longer exists in the code, and P4 appears to forbid
 a persistence variant copilot-scope legitimately uses.
 
+> **Both fixed, 2026-09-01** (#34), against the code rather than against this document —
+> and one of the two was described imprecisely here. P4 does not *forbid* the jsonb
+> snapshot: the collector has no Entity Framework at all, so the migrate-never-ensure rule
+> never reached it. The defect was that the rule never said what it governed, which let a
+> reader take a hand-written `CREATE TABLE IF NOT EXISTS` for a P4 violation on the strength
+> of a method name. P10's defect was as described and worse than stated: the sentence was
+> simply false against `Program.cs:23-27`.
+
 ---
 
 ## Verdicts — 2026-08-31
@@ -117,6 +125,12 @@ re-queue, ghost-delete, rehydrate cap) are uncovered.
 (jsonb snapshot)" in one column and "MigrateAsync always" in the next — internally
 inconsistent. This guide + a one-line P4 amendment resolves it.
 
+> **Fixed 2026-09-01** (#34). The amendment states P4's scope — the rule governs an
+> ORM-managed relational schema — so the snapshot store reads as outside it rather than as
+> a tolerated exception, and the §2 row now says the two were never in conflict. P4 points
+> forward to this guide for the rules the snapshot pattern does carry, so #47 must land the
+> guide the constitution now cites.
+
 ---
 
 ### 3. Demo-data discipline — NEW GUIDE `DEMO-DATA-AND-SEEDING.md`
@@ -198,6 +212,12 @@ statuses, and fail-soft are uncovered.
 `IInsightAnalyzer` — but the cloud judge is now a **separate service** (`JudgeAgent`), not
 a conditional registration. The constitution's example needs updating (or the code
 realigning).
+
+> **Fixed 2026-09-01** (#34), by updating the example: `Program.cs:23-27` registers five
+> local analyzers unconditionally and `src/CopilotScope.JudgeAgent/` is its own service, so
+> no conditional cloud registration exists to describe. P10 now carries why, which is the
+> part worth keeping — an interface is the right seam for a new algorithm and the wrong one
+> for a new dependency.
 
 ---
 
