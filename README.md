@@ -118,6 +118,10 @@ with the constitution, then pull in the guides the work touches.
   (assertion discipline, locator and waiting conventions), why CI wiring is part of a
   suite's definition of done, and how to audit a suite you inherited — including the
   tells that a bulk-generated suite was never fact-checked.
+- [`docs/guides/METRIC-ETHICS.md`](docs/guides/METRIC-ETHICS.md) — measuring work without
+  measuring people: anti-goals the architecture enforces rather than merely states, a
+  counter-metric blended into every pressurable metric, confidence carried beside every
+  score, and the artifact rather than the person as the unit of evaluation.
 - [`docs/guides/SECURITY-REVIEW.md`](docs/guides/SECURITY-REVIEW.md) — the repeatable
   review method (justified N/A, the finding format, the readiness ledger) plus the
   recurring rule sets: browser tokens, CSPRNG, path validation, rendering, and
