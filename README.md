@@ -78,6 +78,10 @@ with the constitution, then pull in the guides the work touches.
   recurring in-service patterns: rate limiting, endpoint organization, validation,
   pagination, hardened cross-service HTTP, queue-less background jobs, and the
   migration completion signal.
+- [`docs/guides/STATE-SNAPSHOT-PERSISTENCE.md`](docs/guides/STATE-SNAPSHOT-PERSISTENCE.md)
+  — durability for a hot in-memory aggregate without a write per mutation: mark dirty and
+  flush on a timer, one JSON row per aggregate, bounded rehydrate, and the deletions that
+  must reach the table or come back as ghosts.
 - [`docs/guides/IDENTITY-AND-ACCOUNTS.md`](docs/guides/IDENTITY-AND-ACCOUNTS.md) —
   the identity service beyond token signing: refresh rotation, OAuth callbacks and
   account linking, enumeration safety, lockout, deletion, versioned legal consent.

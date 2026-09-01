@@ -119,7 +119,7 @@
     },
     {
       "name": "services-and-clients",
-      "version": "1.1.0",
+      "version": "1.2.0",
       "description": "Recurring patterns inside services and the clients that call them: HTTP/API plumbing, identity, payments, Next.js frontends and BFFs, and browser extensions.",
       "keywords": [
         "api",
@@ -166,6 +166,15 @@
           "name": "browser-extensions",
           "source": "docs/guides/BROWSER-EXTENSIONS.md",
           "description": "Use when building or shipping a browser extension as a fourth kind of client. Cross-browser MV3 baseline, web-to-extension session handoff, isolated worlds and the service worker, per-site adapters, packaging one source for N environments in CI, store submission, self-distribution with release channels, and why there is no mobile extension."
+        },
+        {
+          "name": "state-snapshot-persistence",
+          "source": "docs/guides/STATE-SNAPSHOT-PERSISTENCE.md",
+          "principles": [
+            "P4",
+            "P8"
+          ],
+          "description": "Use when a service holds a hot in-memory aggregate that must survive restart without a write on every mutation: dirty-set plus timed flush, a one-table JSON snapshot with idempotent DDL, bounded rehydrate, degrade-to-memory when the database is down, and deleting merged entries so they do not return as ghosts. Not for data where losing the last flush interval is losing a transaction - that is P4's ORM-managed schema."
         }
       ]
     },
