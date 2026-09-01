@@ -240,6 +240,29 @@ rather than aborting the run; cheap requests route to a single call and skip the
 pipeline entirely. Partial output with a note beats an all-or-nothing failure after
 eight model calls.
 
+### Fire-and-forget relay: upstream loss beats hot-path backpressure
+
+When a service relays data onward — mirroring telemetry to a vendor backend, echoing events
+to an analytics sink — the relay must not be able to slow the thing it is relaying from.
+
+**Queue onto a bounded channel and drop under sustained backpressure**, oldest first. The
+counter-intuitive part is the one worth writing down: *losing upstream data is the correct
+outcome*. An unbounded queue trades a memory leak for the same eventual loss, and blocking
+the hot path lets a third party's bad afternoon become your outage.
+
+Three details that travel with it:
+
+- **Relay the raw bytes**, not a re-serialised object. Re-encoding means your model of the
+  payload has to stay exact, and a field you did not model is a field you silently drop.
+- **Enable by configuration presence.** The relay is on when an endpoint is configured and
+  off otherwise — no separate boolean to contradict it.
+- **Retry a bounded number of times, then drop deliberately**, and log the drop. An
+  unbounded retry is the backpressure you just designed out, wearing a different hat.
+
+> `copilot-scope` — `Forwarding/OtlpForwarder.cs`: a 1,000-item channel with
+> `BoundedChannelFullMode.DropOldest`, `Enabled => !string.IsNullOrWhiteSpace(Endpoint)`,
+> and raw `byte[]` payloads passed straight through.
+
 ## 7. Background services vs migrations
 
 P4 runs migrations in a hosted service after Kestrel starts. Corollary: **every other
@@ -291,6 +314,7 @@ Solved-once shapes; reach for these before inventing:
 - [ ] Service-to-service clients: no auto-redirect, 3xx → 502 + log, bearer forwarded, timeouts by criticality, handler timeouts explicit
 - [ ] Writes: a refused connection and a timeout reported differently; no retry of an indeterminate write, ever; a client-supplied idempotency key where the callee supports one, and the weaker fallback labelled as weaker where it does not
 - [ ] 202 jobs: own scope, inputs captured, catch-all → Failed, progress message; caveats and the queue trigger written down
+- [ ] Relays queue onto a bounded channel with an explicit drop policy, pass raw bytes, enable by config presence, and drop deliberately after a bounded retry
 - [ ] Background services await the migration completion signal
 - [ ] Seeded definitions: insert-if-missing by slug, never overwrite
 - [ ] Product mechanics above reused, not reinvented

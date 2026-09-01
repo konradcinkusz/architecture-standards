@@ -142,7 +142,29 @@ generic:
   customer-hosted delivery the customer is usually the data controller and the vendor
   a processor at most — counsel needs to know that flip).
 
-## 9. Failure modes
+## 9. A fifth shape: public registry, one-command run
+
+The four shapes above assume a commercial relationship. There is a fifth with none: images
+published to a **public** registry, and a compose file anybody can curl and run. No
+per-client registry, no responsibility split, no SOW — the delivery artifact is a URL.
+
+Use it for the open-source edition, the evaluation path, or the demo somebody runs before
+they talk to you. Its whole value is that the first step is not a conversation.
+
+Three gotchas, each of which has cost somebody a release:
+
+- **Tag case.** A `V1.2.0` tag and a `v1.2.0` tag are different refs, and a workflow keyed
+  on one silently ignores the other. Pick one and make the trigger reject the other rather
+  than skipping quietly.
+- **A registry package is private by default on first push.** The first release "succeeds"
+  and nobody outside can pull it. Verify anonymously from outside the workflow, once, per
+  package — not by trusting the green tick.
+- **`fail-fast: false` in a publish matrix means partial publication.** Half the images ship
+  and the compose file references all of them, so the artifact is broken in a way each
+  individual job reports as success. Either fail the matrix, or gate the compose file's
+  release on every image landing.
+
+## 10. Failure modes
 
 | Symptom | Cause |
 |---|---|
@@ -154,7 +176,7 @@ generic:
 | Enterprise features half-enabled | `TenantMode` implemented per-service instead of at token issuance |
 | Secrets in the client JSON | Sensitivity split violated; only DNS-shaped values belong in the committed file |
 
-## 10. Checklist
+## 11. Checklist
 
 - [ ] Responsibility split written; share/do-not-share lists explicit
 - [ ] Per-client committed JSON (non-sensitive only) + same-named GitHub Environment (secrets); `_template.json`; validating workflow whose errors are runbooks

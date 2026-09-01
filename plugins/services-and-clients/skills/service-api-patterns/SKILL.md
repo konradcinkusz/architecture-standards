@@ -39,6 +39,7 @@ Reference-architecture principles: P2, P9.
 - [ ] Service-to-service clients: no auto-redirect, 3xx → 502 + log, bearer forwarded, timeouts by criticality, handler timeouts explicit
 - [ ] Writes: a refused connection and a timeout reported differently; no retry of an indeterminate write, ever; a client-supplied idempotency key where the callee supports one, and the weaker fallback labelled as weaker where it does not
 - [ ] 202 jobs: own scope, inputs captured, catch-all → Failed, progress message; caveats and the queue trigger written down
+- [ ] Relays queue onto a bounded channel with an explicit drop policy, pass raw bytes, enable by config presence, and drop deliberately after a bounded retry
 - [ ] Background services await the migration completion signal
 - [ ] Seeded definitions: insert-if-missing by slug, never overwrite
 - [ ] Product mechanics above reused, not reinvented
