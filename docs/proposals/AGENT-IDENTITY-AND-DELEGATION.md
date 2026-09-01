@@ -167,3 +167,30 @@ The **diagnostic half** cites `konradcinkusz/authservice` at the state recorded 
 `docs/architecture/DEVIATIONS.md` (row 5, dated 2026-08-25).
 
 The **prescriptive half** has no worked example, in this estate or elsewhere in the corpus.
+
+---
+
+## Re-assessment — 2026-09-01
+
+Checked against `konradcinkusz/authservice` at `6ef6cf4`, one week after this proposal was
+written. **All four promotion conditions are unmet, and none is close.** The proposal stays
+here, out of `docs/guides/` and out of the catalog.
+
+| # | Condition | State |
+|---|---|---|
+| 1 | `authservice` has shipped ADR 0004 steps 1–3, and something authenticates as an agent against a real API | **No.** `docs/decisions/0004-agent-to-agent-authorization.md` still reads `**Status:** Proposed`, dated 2026-08-25 and unchanged. `src/` contains no delegation, token-exchange, actor-token or on-behalf-of code — the search returns nothing, so this is absent rather than partial |
+| 2 | At least one delegation chain has run in production | **No**, and it cannot be otherwise while condition 1 holds: nothing is built, so nothing has run |
+| 3 | Row 5 — one audience for every token — is fixed | **No.** Still exactly as this document's own coverage note describes it: a token per callee is "what *per-service JWT* implies and the estate does not currently do" |
+| 4 | Failure modes collected from that deployment rather than invented | **No.** There is no deployment to collect them from, which is the condition that matters most — the house guide shape wants a `\| Symptom \| Cause \|` table, and inventing its rows is the failure this corpus exists to prevent |
+
+**Why this is written down rather than left as a silent non-event.** A promotion test whose
+result is never recorded decays into the same ambient state as an undecided proposal: nobody
+can tell whether it was checked and failed, or simply never checked. The dates are the point —
+proposed 2026-08-25, tested 2026-09-01, unmoved.
+
+The conditions are unchanged; nothing here is being renegotiated because the answer came back
+no. The next check-back is triggered by `authservice`, not by the calendar: when ADR 0004
+leaves `Proposed` and steps 1–3 ship. Until then the diagnostic half of this document remains
+accurate and useful on its own — what the estate does today, and where it stops working once a
+caller is autonomous — and the prescriptive half stays a proposal, because an installed skill
+that confidently prescribes an unbuilt pattern is worse than no skill.
