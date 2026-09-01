@@ -104,6 +104,10 @@ with the constitution, then pull in the guides the work touches.
   (including adversarial and degradation classes), deterministic assertions over OTel
   traces, calibrated LLM-as-judge, CI gates with baselines, and the production scoring
   loop that converts incidents into scenarios.
+- [`docs/guides/DEMO-DATA-AND-SEEDING.md`](docs/guides/DEMO-DATA-AND-SEEDING.md) — demo
+  data that is safe to create and safe to remove: a reserved namespace enforced at the
+  receiver, reset across every store it was written to, seeding through the running system
+  rather than around it, and personas so the dashboard shows something worth looking at.
 - [`docs/guides/TESTING-STRATEGY.md`](docs/guides/TESTING-STRATEGY.md) — the strategy
   above [P13](docs/architecture/00-REFERENCE-ARCHITECTURE.md#p13): the E2E charter, three
   layers with budgets, the when-to-run matrix,

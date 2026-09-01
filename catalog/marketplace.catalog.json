@@ -180,7 +180,7 @@
     },
     {
       "name": "quality-and-process",
-      "version": "1.1.0",
+      "version": "1.2.0",
       "description": "Proving the system works and keeping the repo presentable: LLM evaluation, test strategy, E2E acceptance suites, security review, open-source release, and README badges.",
       "keywords": [
         "testing",
@@ -236,6 +236,15 @@
           "name": "readme-badges",
           "source": "docs/guides/README-BADGES.md",
           "description": "Use when writing or reviewing a README's badge block. The header metadata row and footer social block, the three badge families and which service is used for what, and the rules that keep a badge row honest: every badge a titled link, substitute owner/repo rather than copy-pasting URLs, and never badge what you do not have."
+        },
+        {
+          "name": "demo-data-and-seeding",
+          "source": "docs/guides/DEMO-DATA-AND-SEEDING.md",
+          "principles": [
+            "P5",
+            "P13"
+          ],
+          "description": "Use when building or reviewing demo/seed data for a product with a dashboard, or a reset that must not touch real records: a reserved id namespace enforced server-side, reset by prefix across every store, seeding through the running API rather than the database, deterministic idempotent generation, a second generator that speaks the real ingest protocol, and personas so the data demonstrates something."
         }
       ]
     },
