@@ -107,6 +107,59 @@ Conventions extracted from the runbook directory that ops actually used:
 - Bulk history/cleanup scripts (e.g. deleting Actions runs) paginate correctly and
   treat individual failures as skips, not aborts.
 
+## 4a. Scripts that onboard the *product's* user
+
+§3 onboards a developer into this repository. A product whose users must configure
+something on their own machine — an agent, an extension, a client that emits telemetry —
+needs the same treatment aimed at a different person, and the differences are what make it
+its own item.
+
+- **The script is where the vendor's dialect gets documented.** Third-party configuration
+  is under-specified and inconsistent, and the script is the only artifact that has to be
+  exactly right. Where a variable is required by one client and ignored by another, set it
+  anyway and say so in a comment — a variable that does nothing today is one the next
+  version may read, and an unexplained one gets deleted by somebody tidying up.
+- **`--disable` must clean up after *older versions of itself*.** Users run the enable
+  script more than once, across versions. If v2 sets three variables and v1 set four, v2's
+  disable path must still remove the fourth or it leaves a machine half-configured in a way
+  nothing detects.
+- **End with a real-traffic smoke test.** "Configuration written" is not the claim worth
+  making; "a request from your machine arrived" is. Anything less leaves the user to
+  discover the failure later, without the context they have right now.
+
+## 4b. A dependency budget, declared in public
+
+Adopting a dependency is a decision, and the estate should be able to see it. Publish
+per-project dependency counts in the README's project table: a number that goes up in a
+diff is a question somebody can ask, and a table nobody updates is visibly stale.
+
+The paired rule is when to **hand-roll instead**. Write your own implementation when the
+protocol subset you need is small, stable and versioned, *and* the library's dependency
+cost is high — a decoder for four message types is a day of work and a permanent
+independence from somebody else's release cadence. Design it forward-compatible: skip
+unknown fields rather than failing on them, so a producer's new field is not your outage.
+
+Outside those conditions, take the library. This is a narrow exemption, not an invitation.
+
+## 4c. Research artifacts live in the repository
+
+Where a product implements algorithms whose correctness is arguable — scoring, ranking,
+inference, anything with a threshold somebody chose — the reasoning belongs in the
+repository beside the code, not in a paper nobody can find.
+
+- **A reference notebook per implemented algorithm**, so a number on a dashboard can be
+  traced to the arithmetic that produced it.
+- **Proposals carry three mandatory fields**: implementation status, the acceptance
+  criterion, and the code entry point. A proposal without an entry point is a document that
+  cannot be checked against the thing it describes.
+- **One numbering scheme shared** across the README, the proposals and the papers, so the
+  three cannot drift into disagreeing about which algorithm is which.
+- **PDFs are built in CI and versioned with the release**, never committed. A checked-in
+  PDF is a copy that disagrees with its source the first time the source changes.
+
+See [`docs/research/00-RESEARCH-DOCUMENTATION.md`](https://github.com/konradcinkusz/architecture-standards/blob/main/docs/research/00-RESEARCH-DOCUMENTATION.md)
+for the full standard; this item is the baseline's pointer to it.
+
 ## 5. Workflow lifecycle
 
 **Archive, don't delete — and don't comment out.** A retired workflow moves to
@@ -185,6 +238,9 @@ system", which is strictly worse than no README. Two rules:
 - [ ] `CODEOWNERS`, dependency-update automation, `.editorconfig`, central package management, PR/issue templates, real `.gitattributes`, exclusion-based `.dockerignore`
 - [ ] Secret scanning pre-commit + CI; local scripts read secrets from gitignored `.env` with a committed example file; rotation before history-scrubbing
 - [ ] One-command interactive setup: prerequisites, secret store init, generated mandatory secret, labeled optional integrations; error-text-keyed troubleshooting table; secret-flow documented
+- [ ] Where the product's own users configure something: an enable/disable script that documents the vendor's dialect, cleans up after older versions of itself, and ends with a real-traffic smoke test
+- [ ] Per-project dependency counts published; hand-rolling justified only by a small, stable, versioned protocol subset against a high dependency cost, and written forward-compatible
+- [ ] Algorithms whose correctness is arguable carry an in-repo reference notebook, proposals with impl status / acceptance criterion / code entry point, shared numbering, and PDFs built in CI rather than committed
 - [ ] Runbook scripts numbered + delegating; hand-off token files with documented resolution order; self-sufficient scripts; scripts README with variable tiers; CI jobs mirrored locally; destroy lists carry legacy names
 - [ ] Retired workflows archived to `workflows-archive/`, never comment-disabled
 - [ ] AI agent definitions in-repo: allowlisted tools, example-bearing descriptions, committed memory policy, repo-relative paths

@@ -395,6 +395,16 @@ or on Azure Container Apps.
 The test: `git clone && dotnet run` with zero cloud credentials must produce a working
 system with reduced features.
 
+**Degradation must be visible, not merely correct.** A health endpoint that returns the
+state of every optional integration — and a startup banner printing the same list — turns
+"which features are live in this deployment?" into one request instead of an inspection of
+configuration. A service can degrade perfectly and still waste an afternoon, if the only
+way to discover what degraded is to read the config that was not set.
+
+> `copilot-scope/src/CopilotScope.Collector/Program.cs` — `/api/health` returns
+> `persistence`, `forwarding` and `prometheus` alongside `status`, and the startup log
+> prints the same set.
+
 <a name="p9"></a>
 
 ### P9 — Program.cs is a manifest; wiring lives in extension methods
@@ -600,6 +610,7 @@ Any service claiming to follow this blueprint answers yes to all of these:
 - [ ] Exactly one service holds a signing key; all others validate against its JWKS endpoint
 - [ ] The shared kernel holds no entity, DTO, enum, seed dataset, pricing constant or user-facing string — asserted by an architecture test and a CI size check
 - [ ] Every optional integration has a working no-op or fallback
+- [ ] The health endpoint reports the state of every optional integration, and the startup banner prints the same list
 - [ ] Multi-stage Dockerfile; runtime image major version equals the TFM major version; listens on `:8080`; non-root where the base image allows
 - [ ] One `fly.toml`; `min_machines_running = 1` if another service calls it in-request
 - [ ] Outbound `HttpClient`s carry the standard resilience handler with explicit timeouts
