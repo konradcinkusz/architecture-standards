@@ -100,15 +100,21 @@ repo) and into `architecture-core` (where they install with the plugin). Their t
 lists are read-plus-edit, per `REPO-BASELINE.md` §6's rule that a tool allowlist is a
 safety boundary rather than a convention.
 
-## Still open — maintainer decisions
+## Maintainer decisions — one still open
 
-These were deliberately not taken. Each is a judgement call, not an oversight.
+These were deliberately not taken when the packaging layer landed. Each was a judgement
+call rather than an oversight, and five of the six have since been made. They are struck
+through rather than deleted: what a decision was *weighed against* is the part that
+transfers, and a list that only shows the survivors reads as though the answers were
+obvious.
 
-1. **No `LICENSE` was added.** Choosing a licence is the owner's call, and
-   `README-BADGES.md:82` already specifies a licence badge pointing at
-   `blob/BRANCH/LICENSE` that currently resolves to nothing. If the repo stays internal,
-   a licence is optional; if it ever goes public, `OPEN-SOURCE-RELEASE.md` is the gate
-   and it says to have one from the first commit.
+**Only item 6 is still open.**
+
+1. ~~**No `LICENSE` was added.**~~ **Resolved.** The repository went public with an
+   MIT `LICENSE` (`d7ccbe2`), which is what `OPEN-SOURCE-RELEASE.md` gates on, and the
+   README links it. The reasoning stands as written for the next repository to face the
+   same choice: the licence badge `README-BADGES.md:82` specifies points at
+   `blob/BRANCH/LICENSE`, and it resolves to nothing until the file exists.
 2. ~~**The baseline debt is untouched.**~~ **Resolved 2026-08-31**, as the separate
    change this item asked for. CODEOWNERS, `.editorconfig`, `.gitattributes`, PR and
    issue templates, dependency automation, secret scanning in pre-commit *and* CI, and
@@ -126,9 +132,14 @@ These were deliberately not taken. Each is a judgement call, not an oversight.
    one (`#p2a`) on the same footing as the principles.
 4. ~~**`docs/proposals/` remains unlinked from `README.md`.**~~ **Resolved 2026-08-31.**
    The README now carries a `## Proposals` section listing all four with their standings.
-5. **Versioning policy is not written down.** Every plugin is `1.0.0` today. What
-   constitutes a breaking change to a *standard* — a new checklist item? a reversed
-   rule? — needs deciding before the second version, not after.
+5. ~~**Versioning policy is not written down.**~~ **Resolved 2026-08-31**, and this
+   item's own deadline turned out to be the right one: it was decided *before* the
+   second version rather than after. [`MARKETPLACE.md` §Versioning](../../MARKETPLACE.md#versioning)
+   draws the line the item asked for — major reverses or withdraws a rule, minor adds
+   guidance, patch changes nothing a reader must act on — and #32 made it mechanical
+   rather than remembered: the build refuses a plugin whose content moved while its
+   version stood still, in `--check` as well as a plain run, so regenerating cannot
+   launder an unbumped change. Nothing is at `1.0.0` any more.
 6. **No MCP server.** Serving the corpus over MCP would let an agent search across all
    twenty standards rather than loading one skill at a time. It is the only option in
    this space that needs hosting and auth, so it is worth doing only if search across

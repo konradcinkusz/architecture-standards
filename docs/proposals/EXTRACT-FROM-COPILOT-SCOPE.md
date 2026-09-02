@@ -25,11 +25,68 @@ Two of these also correct the constitution itself (noted inline): the P10 cloud-
 example describes a mechanism that no longer exists in the code, and P4 appears to forbid
 a persistence variant copilot-scope legitimately uses.
 
+> **Both fixed, 2026-09-01** (#34), against the code rather than against this document —
+> and one of the two was described imprecisely here. P4 does not *forbid* the jsonb
+> snapshot: the collector has no Entity Framework at all, so the migrate-never-ensure rule
+> never reached it. The defect was that the rule never said what it governed, which let a
+> reader take a hand-written `CREATE TABLE IF NOT EXISTS` for a P4 violation on the strength
+> of a method name. P10's defect was as described and worse than stated: the sentence was
+> simply false against `Program.cs:23-27`.
+
+---
+
+## Verdicts — 2026-08-31, all shipped 2026-09-01
+
+All five ranked candidates were **accepted**, and the six "worth a paragraph each"
+items with them. Nothing below is rejected that was not already in the rejected list.
+
+**Every one of them has since landed**, which is what this column now says. A proposal
+whose accepted items all shipped, still reading "accepted, tracked in #NN", asks the
+next reader to open six closed issues to find out whether anything happened — and the
+honest answer is available here for the cost of a column.
+
+| # | Candidate | Verdict | Landed in |
+|---|---|---|---|
+| 1 | Prometheus exposition discipline → `METRICS-EXPOSITION.md` | **Accept** | #46 → [PR #58](https://github.com/konradcinkusz/architecture-standards/pull/58) |
+| 2 | Write-behind snapshot persistence → `STATE-SNAPSHOT-PERSISTENCE.md` | **Accept** | #47 → [PR #59](https://github.com/konradcinkusz/architecture-standards/pull/59) |
+| 3 | Demo-data discipline → `DEMO-DATA-AND-SEEDING.md` | **Accept** | #48 → [PR #60](https://github.com/konradcinkusz/architecture-standards/pull/60) |
+| 4 | Metric ethics / anti-Goodhart → `METRIC-ETHICS.md` | **Accept** (short guide) | #49 → [PR #61](https://github.com/konradcinkusz/architecture-standards/pull/61) |
+| 5 | Pluggable report contract → section in `SERVICE-API-PATTERNS.md` | **Accept** | #50 → [PR #62](https://github.com/konradcinkusz/architecture-standards/pull/62) |
+| — | The six "worth a paragraph each" items | **Accept**, batched | #51 → [PR #63](https://github.com/konradcinkusz/architecture-standards/pull/63) |
+
+**Five of the six changed on the way**, because every cited line range was re-verified
+against `copilot-scope` at `3d780df` rather than trusted from this document — which is
+dated 2026-08-14, and which the "Corrections" section below already showed could go
+stale. The corrections are recorded in each candidate's own section; the short version
+is that P10's worked example described a mechanism that no longer exists, P4's
+prohibition was a scope defect rather than a permission one, the demo-data prefix rule
+is enforced server-side with whole-batch refusal, the anti-Goodhart counter-metric is
+blended into the same component rather than merely reported beside it, and the
+fire-and-forget relay differs from the sketch here. Writing any of them from this
+document's summary would have produced a guide asserting something nobody checked.
+
+The two constitution corrections this document raises — P10's worked example describing a
+mechanism that no longer exists, and P4's prohibition reading wider than its own extraction
+source — are **not** waiting on these guides. They are defects in a published document, and
+they are fixed in #34.
+
+**What acceptance does not mean.** A verdict is a decision to write, not the writing. Every
+guide above is an *extraction*: the house rule is that it generalizes something a repository
+already does, with the worked example cited. Each candidate's evidence is a set of file and
+line citations into `copilot-scope` recorded on 2026-08-14, and #34 exists precisely because
+two citations from that same sweep had already gone stale by the time anyone checked. So each
+issue above carries the same precondition: attach the repository and re-verify the citations
+against current code before writing a word. A guide asserting what nobody re-read is the
+failure this corpus exists to prevent, and it would be a bad one to commit in the corpus that
+prevents it.
+
 ---
 
 ## Ranked candidates
 
 ### 1. Prometheus exposition discipline — NEW GUIDE `METRICS-EXPOSITION.md`
+
+**Verdict: accepted 2026-08-31. Landed 2026-09-01** — #46, [PR #58](https://github.com/konradcinkusz/architecture-standards/pull/58), as `docs/guides/METRICS-EXPOSITION.md`.
 
 **Where:** `src/CopilotScope.Collector/Api/PrometheusExporter.cs` — `PerSession` off by
 default with a documented reason (`:12-29`), `MaxSessionSeries`/`MaxErrorTypes` caps, a
@@ -59,6 +116,8 @@ provisioned datasource + dashboard JSON live in-repo beside the exporter.
 
 ### 2. Write-behind snapshot persistence — NEW GUIDE `STATE-SNAPSHOT-PERSISTENCE.md` (+ P4 amendment)
 
+**Verdict: accepted 2026-08-31. Landed 2026-09-01** — #47, [PR #59](https://github.com/konradcinkusz/architecture-standards/pull/59), as `docs/guides/STATE-SNAPSHOT-PERSISTENCE.md`, with the P4 amendment.
+
 **Where:** `src/CopilotScope.Collector/Persistence/PersistenceWriter.cs` — the whole
 contract in one doc-comment (`:6-13`): dirty-flag on ingest, flush ≤1 s, schema bootstrap
 + rehydrate on start, degrade to in-memory without blocking ingest. `MarkDirty` under lock
@@ -82,9 +141,17 @@ re-queue, ghost-delete, rehydrate cap) are uncovered.
 (jsonb snapshot)" in one column and "MigrateAsync always" in the next — internally
 inconsistent. This guide + a one-line P4 amendment resolves it.
 
+> **Fixed 2026-09-01** (#34). The amendment states P4's scope — the rule governs an
+> ORM-managed relational schema — so the snapshot store reads as outside it rather than as
+> a tolerated exception, and the §2 row now says the two were never in conflict. P4 points
+> forward to this guide for the rules the snapshot pattern does carry, so #47 must land the
+> guide the constitution now cites.
+
 ---
 
 ### 3. Demo-data discipline — NEW GUIDE `DEMO-DATA-AND-SEEDING.md`
+
+**Verdict: accepted 2026-08-31. Landed 2026-09-01** — #48, [PR #60](https://github.com/konradcinkusz/architecture-standards/pull/60), as `docs/guides/DEMO-DATA-AND-SEEDING.md`.
 
 **Where:** `Program.cs:221-261` — `/api/admin/seed` seeds everything under a `seed-`
 prefix, reset clears **only** that prefix in memory *and* Postgres, with explicit
@@ -113,6 +180,8 @@ to use which.
 
 ### 4. Metric ethics / anti-Goodhart — SHORT NEW GUIDE `METRIC-ETHICS.md`
 
+**Verdict: accepted 2026-08-31. Landed 2026-09-01** — #49, [PR #61](https://github.com/konradcinkusz/architecture-standards/pull/61), as `docs/guides/METRIC-ETHICS.md`.
+
 **Where:** `README.md:57-76` §"How not to use CopilotScope" — not for performance reviews
 (enforced by a deliberate **absence of a per-developer view in the architecture**, not
 just policy), acceptance paired with edit-survival as a counter-metric, confidence
@@ -139,6 +208,8 @@ person.
 
 ### 5. Pluggable report contract — SECTION in `SERVICE-API-PATTERNS.md` (+ P10 fix)
 
+**Verdict: accepted 2026-08-31. Landed 2026-09-01** — #50, [PR #62](https://github.com/konradcinkusz/architecture-standards/pull/62), as `SERVICE-API-PATTERNS.md`'s report-contract section, with the P10 fix.
+
 **Where:** `Quality/Insights.cs:14-20` — `InsightReport(Name, Algorithm, Status, Score?,
 Metrics, Findings)`, a universal result shape the dashboard renders generically
 (`Home.razor:462-481`). `InsightPipeline` is fail-soft: an analyzer exception becomes a
@@ -158,9 +229,17 @@ statuses, and fail-soft are uncovered.
 a conditional registration. The constitution's example needs updating (or the code
 realigning).
 
+> **Fixed 2026-09-01** (#34), by updating the example: `Program.cs:23-27` registers five
+> local analyzers unconditionally and `src/CopilotScope.JudgeAgent/` is its own service, so
+> no conditional cloud registration exists to describe. P10 now carries why, which is the
+> part worth keeping — an interface is the right seam for a new algorithm and the wrong one
+> for a new dependency.
+
 ---
 
 ## Worth a paragraph each (not a full guide)
+
+**Verdict: accepted 2026-08-31. Landed 2026-09-01** — #51, [PR #63](https://github.com/konradcinkusz/architecture-standards/pull/63), as one batch. Each item names below where it went; the arrows were the plan and are now the record.
 
 - **Fire-and-forget forwarding** (`Forwarding/OtlpForwarder.cs`) — bounded channel with an
   explicit drop-oldest policy, relay raw bytes not re-serialized, enable-by-config-presence,

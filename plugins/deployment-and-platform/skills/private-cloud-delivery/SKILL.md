@@ -25,6 +25,7 @@ whether this skill applies and to check your work afterwards.
 - Upgrades and rollback
 - The product switch
 - Commercial artifacts
+- A fifth shape: public registry, one-command run
 
 ## Failure modes
 

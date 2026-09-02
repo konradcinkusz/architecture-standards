@@ -22,6 +22,9 @@ whether this skill applies and to check your work afterwards.
 - Secret hygiene
 - One-command onboarding
 - Operational scripts
+- Scripts that onboard the *product's* user
+- A dependency budget, declared in public
+- Research artifacts live in the repository
 - Workflow lifecycle
 - AI agent definitions live in the repo
 - Standards adoption is declared, not remembered
@@ -32,6 +35,9 @@ whether this skill applies and to check your work afterwards.
 - [ ] `CODEOWNERS`, dependency-update automation, `.editorconfig`, central package management, PR/issue templates, real `.gitattributes`, exclusion-based `.dockerignore`
 - [ ] Secret scanning pre-commit + CI; local scripts read secrets from gitignored `.env` with a committed example file; rotation before history-scrubbing
 - [ ] One-command interactive setup: prerequisites, secret store init, generated mandatory secret, labeled optional integrations; error-text-keyed troubleshooting table; secret-flow documented
+- [ ] Where the product's own users configure something: an enable/disable script that documents the vendor's dialect, cleans up after older versions of itself, and ends with a real-traffic smoke test
+- [ ] Per-project dependency counts published; hand-rolling justified only by a small, stable, versioned protocol subset against a high dependency cost, and written forward-compatible
+- [ ] Algorithms whose correctness is arguable carry an in-repo reference notebook, proposals with impl status / acceptance criterion / code entry point, shared numbering, and PDFs built in CI rather than committed
 - [ ] Runbook scripts numbered + delegating; hand-off token files with documented resolution order; self-sufficient scripts; scripts README with variable tiers; CI jobs mirrored locally; destroy lists carry legacy names
 - [ ] Retired workflows archived to `workflows-archive/`, never comment-disabled
 - [ ] AI agent definitions in-repo: allowlisted tools, example-bearing descriptions, committed memory policy, repo-relative paths

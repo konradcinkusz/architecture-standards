@@ -59,6 +59,14 @@ with the constitution, then pull in the guides the work touches.
 - [`docs/guides/PR-PREVIEW-ENVIRONMENTS.md`](docs/guides/PR-PREVIEW-ENVIRONMENTS.md) —
   ephemeral per-PR environments: naming as isolation, shared-vs-per-PR classification,
   sticky status comments, and teardown that actually tears down.
+- [`docs/guides/METRICS-EXPOSITION.md`](docs/guides/METRICS-EXPOSITION.md) — keeping a
+  `/metrics` endpoint from taking down the monitoring that watches it: every label as a
+  cardinality decision, high-cardinality views opt-in and capped, and an exporter that
+  emits its own truncation so a capped view cannot pass for a complete one.
+- [`docs/guides/SHARED-SERVICE-REUSE.md`](docs/guides/SHARED-SERVICE-REUSE.md) — when a
+  second, unrelated system in the estate wants to run a service the first one built: one
+  codebase and N independent instances, a pinned-image artifact dependency instead of a source
+  one, and a publish pipeline that cannot be gated by deployment secrets.
 - [`docs/guides/PRIVATE-CLOUD-DELIVERY.md`](docs/guides/PRIVATE-CLOUD-DELIVERY.md) —
   selling the SaaS as self-hosted: the vendor-pushes-images / customer-runs-everything
   split, the per-client registry, the IaC you hand over, and the one-flag product
@@ -70,6 +78,10 @@ with the constitution, then pull in the guides the work touches.
   recurring in-service patterns: rate limiting, endpoint organization, validation,
   pagination, hardened cross-service HTTP, queue-less background jobs, and the
   migration completion signal.
+- [`docs/guides/STATE-SNAPSHOT-PERSISTENCE.md`](docs/guides/STATE-SNAPSHOT-PERSISTENCE.md)
+  — durability for a hot in-memory aggregate without a write per mutation: mark dirty and
+  flush on a timer, one JSON row per aggregate, bounded rehydrate, and the deletions that
+  must reach the table or come back as ghosts.
 - [`docs/guides/IDENTITY-AND-ACCOUNTS.md`](docs/guides/IDENTITY-AND-ACCOUNTS.md) —
   the identity service beyond token signing: refresh rotation, OAuth callbacks and
   account linking, enumeration safety, lockout, deletion, versioned legal consent.
@@ -92,6 +104,10 @@ with the constitution, then pull in the guides the work touches.
   (including adversarial and degradation classes), deterministic assertions over OTel
   traces, calibrated LLM-as-judge, CI gates with baselines, and the production scoring
   loop that converts incidents into scenarios.
+- [`docs/guides/DEMO-DATA-AND-SEEDING.md`](docs/guides/DEMO-DATA-AND-SEEDING.md) — demo
+  data that is safe to create and safe to remove: a reserved namespace enforced at the
+  receiver, reset across every store it was written to, seeding through the running system
+  rather than around it, and personas so the dashboard shows something worth looking at.
 - [`docs/guides/TESTING-STRATEGY.md`](docs/guides/TESTING-STRATEGY.md) — the strategy
   above [P13](docs/architecture/00-REFERENCE-ARCHITECTURE.md#p13): the E2E charter, three
   layers with budgets, the when-to-run matrix,
@@ -102,6 +118,10 @@ with the constitution, then pull in the guides the work touches.
   (assertion discipline, locator and waiting conventions), why CI wiring is part of a
   suite's definition of done, and how to audit a suite you inherited — including the
   tells that a bulk-generated suite was never fact-checked.
+- [`docs/guides/METRIC-ETHICS.md`](docs/guides/METRIC-ETHICS.md) — measuring work without
+  measuring people: anti-goals the architecture enforces rather than merely states, a
+  counter-metric blended into every pressurable metric, confidence carried beside every
+  score, and the artifact rather than the person as the unit of evaluation.
 - [`docs/guides/SECURITY-REVIEW.md`](docs/guides/SECURITY-REVIEW.md) — the repeatable
   review method (justified N/A, the finding format, the readiness ledger) plus the
   recurring rule sets: browser tokens, CSPRNG, path validation, rendering, and
@@ -134,6 +154,14 @@ with the constitution, then pull in the guides the work touches.
   skeleton, with the rules (a paper introduces no numbers of its own, DRAFT
   marker until the study is verified, PDFs are build output) in
   `00-RESEARCH-DOCUMENTATION.md`.
+- [`docs/research/BEAMER-THEME.sty`](docs/research/BEAMER-THEME.sty) — the house
+  Beamer theme for when work graduates into a talk rather than a paper.
+- The same document also carries everything else needed to author a document
+  that compiles to PDF: how a non-study document borrows the house style
+  without claiming to be research, how Mermaid diagrams reach a PDF from a
+  single source instead of being redrawn in TikZ, how a second language edition
+  is published, and the shape of the GitHub Actions workflow that builds any of
+  them.
 
 ## The playbook
 
@@ -159,10 +187,13 @@ pattern is worse than no skill.
   to the maintainer are recorded in its closing section.
 - [`docs/proposals/EXTRACT-FROM-COPILOT-SCOPE.md`](docs/proposals/EXTRACT-FROM-COPILOT-SCOPE.md)
   — five generic patterns `copilot-scope` solved that no guide covers, ranked, plus two
-  corrections to the constitution itself. **Awaiting verdicts.**
+  corrections to the constitution itself. **All accepted** (2026-08-31) and **all
+  shipped** (2026-09-01): four new guides, one new section, and both constitution
+  corrections. Five of the six changed on the way, because every citation was
+  re-verified against the source repository rather than trusted from the proposal.
 - [`docs/proposals/EXTRACT-SHARED-SERVICE-PATTERN.md`](docs/proposals/EXTRACT-SHARED-SERVICE-PATTERN.md)
   — one codebase, N independent instances, for a service a second system wants to run
-  rather than call. **Awaiting a verdict**; one data point so far.
+  rather than call. **Promoted** (2026-09-01) to `SHARED-SERVICE-REUSE.md`.
 - [`docs/proposals/AGENT-IDENTITY-AND-DELEGATION.md`](docs/proposals/AGENT-IDENTITY-AND-DELEGATION.md)
   — what credential an agent carries into a first-party API, and whose authority it
   spends. **Proposal**, with a written promotion test waiting on `authservice` ADR 0004.

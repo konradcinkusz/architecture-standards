@@ -212,6 +212,17 @@ repo's review §3.1). Do not copy that.
 **Migrations run as a hosted service, after Kestrel starts**, so health probes answer
 while schema work is in flight and a slow migration is not read as a failed deploy.
 
+**What this rule governs, and what it does not.** The migrate-never-ensure rule is about an
+**ORM-managed relational schema**: an entity model, a migrations history, and a provider that
+applies it. A store with no entity model is a different shape and is not an exception being
+grudgingly allowed — it is outside the rule. `copilot-scope`'s collector persists one jsonb
+snapshot per session through raw Npgsql with idempotent `CREATE TABLE IF NOT EXISTS` DDL
+(`Persistence/SessionRepository.cs`) and has no Entity Framework anywhere; calling that a P4
+violation would be reading the rule by the name of a method rather than by what it protects
+against, which is an unversioned entity model drifting away from its database. The snapshot
+pattern has its own rules — bounded rehydrate, write-behind debounce, degrade to memory
+without blocking ingest — and they live in `STATE-SNAPSHOT-PERSISTENCE.md`.
+
 **Migrations describe schema; reference data is seeded separately** — by a versioned
 script or a seeding service run once per environment. `HasData` in `OnModelCreating`
 embeds the whole dataset in every migration snapshot: the legacy monorepo seeds its category taxonomy
@@ -382,6 +393,16 @@ or on Azure Container Apps.
 The test: `git clone && dotnet run` with zero cloud credentials must produce a working
 system with reduced features.
 
+**Degradation must be visible, not merely correct.** A health endpoint that returns the
+state of every optional integration — and a startup banner printing the same list — turns
+"which features are live in this deployment?" into one request instead of an inspection of
+configuration. A service can degrade perfectly and still waste an afternoon, if the only
+way to discover what degraded is to read the config that was not set.
+
+> `copilot-scope/src/CopilotScope.Collector/Program.cs` — `/api/health` returns
+> `persistence`, `forwarding` and `prometheus` alongside `status`, and the startup log
+> prints the same set.
+
 <a name="p9"></a>
 
 ### P9 — Program.cs is a manifest; wiring lives in extension methods
@@ -415,8 +436,16 @@ A new algorithm, provider or step is a class implementing an interface and one D
 No base class to derive from, no framework to satisfy.
 
 > `copilot-scope/src/CopilotScope.Collector/Quality/Insights.cs` — `IInsightAnalyzer`;
-> five implementations registered in `Program.cs`, consumed via `InsightPipeline`. Cloud-only
-> analyzers implement the same interface and register conditionally.
+> five implementations registered unconditionally in `Program.cs:23-27`, consumed via
+> `InsightPipeline`.
+
+Where the cloud judge went, and why it is the more useful half of this example: it is **not**
+a sixth analyzer registered conditionally. It is a separate service —
+`copilot-scope/src/CopilotScope.JudgeAgent/` — because it carries a model credential, a
+calibration protocol and a failure mode none of the five local analyzers have. The interface
+is the right seam for a new algorithm; it is the wrong seam for a new *dependency*. When an
+implementation would drag a credential and an availability risk in behind it, P3 wins over
+P10 and it becomes a service.
 
 This is the pattern that replaces the "core library base class" idea entirely. A `.Core`
 library in this estate exports *interfaces and extension methods*; it does not export
@@ -556,7 +585,7 @@ the reference SaaS's side here without qualification.
 | Self-instrumentation | none | OTel everywhere but AuthService | **The reference SaaS** — P15 |
 | Cloud target | Azure Container Apps (partial Bicep) | Fly.io primary, ACA in parallel | **Fly.io** — P7 |
 | Registry | GHCR, public images | `registry.fly.io`, private | **GHCR** — P12, portable and free at this scale |
-| Schema management | not applicable (jsonb snapshot) | `MigrateAsync` on SQL Server, `EnsureCreated` on Postgres | **`MigrateAsync` always** — P4 |
+| Schema management | not applicable (jsonb snapshot, no ORM) | `MigrateAsync` on SQL Server, `EnsureCreated` on Postgres | **`MigrateAsync` always for an ORM-managed schema** — P4. The two are not in conflict: a snapshot store with no entity model is outside that rule, not an exception to it |
 | API auth | one shared ingest key, read API open | JWT everywhere | **JWT / OIDC** — P5 |
 | Token signing | n/a | HS256 shared secret | **Asymmetric + JWKS** — P5; required, not aspirational. The legacy monorepo implements it first (ADR-007) |
 | Endpoint style | minimal API | MVC controllers | either, per service; keep transport thin — P9 |
@@ -579,6 +608,7 @@ Any service claiming to follow this blueprint answers yes to all of these:
 - [ ] Exactly one service holds a signing key; all others validate against its JWKS endpoint
 - [ ] The shared kernel holds no entity, DTO, enum, seed dataset, pricing constant or user-facing string — asserted by an architecture test and a CI size check
 - [ ] Every optional integration has a working no-op or fallback
+- [ ] The health endpoint reports the state of every optional integration, and the startup banner prints the same list
 - [ ] Multi-stage Dockerfile; runtime image major version equals the TFM major version; listens on `:8080`; non-root where the base image allows
 - [ ] One `fly.toml`; `min_machines_running = 1` if another service calls it in-request
 - [ ] Outbound `HttpClient`s carry the standard resilience handler with explicit timeouts

@@ -181,8 +181,12 @@ belong in the deck.
   institute and a `\titlegraphic` linking back to the repository are the
   only things a new deck must fill in — the theme supplies everything else.
 - **PDFs are build output here too.** Only the `.tex` and the copied-in
-  `.sty` are committed; nothing generated is. The build needs two passes
-  locally, same reason a paper does — the footline's
+  `.sty` are committed; nothing generated is. Beamer drops more litter than
+  `article` does, so a `.gitignore` written for papers alone is not enough:
+  alongside `*.pdf`, `*.aux`, `*.log` and `*.out` it needs `*.nav`, `*.snm`,
+  `*.toc` and `*.vrb`. Ignore them per directory (`docs/slides/*.nav`, not a
+  bare `*.nav`) so the pattern says which build it belongs to. The build needs
+  two passes locally, same reason a paper does — the footline's
   `\inserttotalframenumber` needs a prior run's `.aux` — but `latexmk`
   (what `xu-cheng/latex-action` drives in CI, see below) reruns
   automatically and needs no special handling for that.
@@ -198,6 +202,123 @@ belong in the deck.
   adopting deck, not merely inherited unread. Rule 5's reasoning applies
   as much to a one-line theme bug as to a research finding: a surprising
   result recorded beats one that dies in a chat log, however small.
+
+## Documents that borrow the house style without being studies
+
+Not everything that leaves the repository as a PDF is a study, or a paper
+derived from one. A project overview, a university thesis, a talk deck — each
+is a different kind of document, and this standard's evidence rules do not
+govern any of them. What they may legitimately share is the house look,
+because two documents handed to the same reader should look like they came
+from the same shop.
+
+- **Say what the document is not, in its own header.** The `.tex` header
+  comment names the document's kind and states plainly that it is not a
+  research paper under this standard, so a later reader does not take the
+  shared preamble for a claim of one.
+  `agent-eval-bench/docs/papers/agent-eval-bench-overview.tex` opens with
+  exactly that paragraph.
+- **`docs/papers/` is the honest sibling to `docs/research/papers/`.** A
+  non-study document lives in `docs/papers/`, where the path itself keeps the
+  distinction visible. Filing it under `docs/research/papers/` to inherit an
+  existing `.gitignore` line buys one line of config at the cost of the term
+  this standard defines narrowly on purpose — `agent-eval-bench`'s ADR-0006
+  records that trade being considered and rejected.
+- **`\paperstatus` is repurposed, not dropped.** The template's status marker
+  drives both the title block and the running header, so a document that has
+  no `draft`/`verified` axis gives it that document's own status instead (a
+  project's phase, say) and says so in the header comment — the command now
+  means something else than the template's own comment claims.
+- **Name the source of truth, and add nothing to it.** A presentation document
+  names the markdown it presents and introduces no fact that document does not
+  already carry. This is the non-research analogue of "a paper introduces no
+  numbers of its own", and it exists for the same reason: two documents that
+  are allowed to disagree eventually will.
+- **State the drift you are accepting.** A curated `.tex` presentation of a
+  markdown document is not a mechanical transform, so nothing enforces that an
+  edit to one reaches the other. Record that as an accepted consequence rather
+  than implying a convention covers it, and if the two visibly diverge more
+  than once, add a cheap mechanical check (a section-heading diff) rather than
+  a full change-coupling rule.
+
+## Diagrams in a PDF
+
+GitHub renders Mermaid; a PDF does not. Every document under this standard
+that carries a diagram meets that gap, and it has exactly one wrong answer:
+redrawing the picture a second time in TikZ for the PDF edition. That is two
+sources of truth for one diagram, and it drifts.
+
+- **One source, two output formats.** A diagram's source lives once, in its
+  own file — `docs/diagrams/<slug>.mmd`, one diagram per file. The markdown
+  that renders on GitHub carries that same source inline, because inline is
+  the only form GitHub renders, and a check keeps the two byte-identical
+  rather than a convention asking people to remember
+  (`agent-eval-bench/scripts/check-diagrams.mjs`, which joins a section headed
+  `### A1. …` to the file whose name starts `a1-`, so the filename stays free
+  to describe the diagram while the id does the joining).
+- **Render to vector, not to raster.** A `.mmd` renders straight to PDF
+  (`mmdc -i … -o ….pdf --pdfFit -b transparent`), which scales, prints, and
+  keeps its text selectable and searchable. A PNG in a paper is a screenshot
+  of a diagram.
+- **Rendered diagrams are build output too.** They land in
+  `docs/diagrams/rendered/` and are gitignored under the same rule as the PDFs
+  themselves — nothing generated is committed. The `.tex` includes them by
+  relative path:
+  `\includegraphics[width=0.7\linewidth]{../diagrams/rendered/<slug>.pdf}`.
+- **Pin the renderer, and resolve it locally.** `@mermaid-js/mermaid-cli` is a
+  pinned devDependency, so `npm ci` provides the version the lockfile records
+  and Dependabot tracks it. Invoke `node_modules/.bin/mmdc` directly rather
+  than `npx mmdc`: on a fresh clone whose `node_modules` is still empty, `npx`
+  reaches past it to the registry and resolves a squatter package literally
+  named `mmdc`, then fails with a message that names nothing useful. A missing
+  binary should say "run `npm ci`".
+- **Pass `--no-sandbox`, because the renderer drives a headless Chromium.** CI
+  containers and dev containers both commonly run as root, where Chromium's
+  sandbox refuses to start; `--no-sandbox --disable-setuid-sandbox
+  --disable-dev-shm-usage` is the working set. Where the environment already
+  has a browser, point the renderer at it
+  (`PUPPETEER_EXECUTABLE_PATH` / `CHROME_BIN`) instead of downloading a second
+  one.
+- **The render step runs before the LaTeX step in CI** (see below). A workflow
+  that builds a diagram-carrying paper without it fails on the first
+  `\includegraphics` whose file is not there.
+
+Worked example: `agent-eval-bench/scripts/render-diagrams.mjs` renders all 22
+of that repository's diagrams, and takes slug filters when only one changed.
+
+## Publishing a document in more than one language
+
+A document that has to reach readers who do not share a language gets a second
+edition rather than a compromise between the two.
+
+- **An edition is a sibling file with a language suffix** —
+  `<name>.tex` beside `<name>.<lang>.tex`
+  (`agent-eval-bench-overview.tex` and `agent-eval-bench-overview.pl.tex`),
+  mirroring the `.pl.md` suffix the same repository uses for its bilingual
+  markdown. Same directory, same build, one visible difference in the name.
+- **Set the language in the preamble, not only in the prose.**
+  `\usepackage[polish]{babel}` — or the relevant option — is what gives the
+  edition correct hyphenation and typographic conventions. Without it the text
+  is translated but still typeset as English.
+- **Translate against terminology that already exists.** Where the repository
+  already publishes translated documents, a new edition matches their
+  vocabulary instead of inventing its own; otherwise one concept acquires two
+  names inside one estate. `agent-eval-bench`'s Polish paper states this in
+  its header: the terminology is chosen to match `docs/index.pl.html`, and it
+  is deliberately not an independent translation.
+- **One workflow builds every edition, into one artifact.** One
+  `latex-action` step per root file, one rename step, and a single
+  `upload-artifact` carrying all of them — so a reader downloads a bundle
+  rather than hunting for the run that built the other language.
+- **Two copies is a drift surface, and the answer is a check.** For markdown
+  pairs the mechanical rule is cheap enough to be worth having: a commit
+  editing one half must edit the other
+  (`agent-eval-bench/scripts/check-doc-parity.mjs`, which declares which
+  directories and files are bilingual and fails a diff that touches one side
+  alone). No script can verify a translation is *correct*; this one verifies
+  that somebody looked, which is the failure that actually bites — a wrong
+  command fixed in one language, left wrong in the other, with nothing going
+  red.
 
 ## Building the PDF in CI
 
@@ -219,7 +340,13 @@ ending in `softprops/action-gh-release` (a release asset, attached to a tag)
 — whichever matches how the paper is meant to be consumed. `permissions:`
 stays `contents: read` for the artifact-only shape and rises to
 `contents: write` only in the job that actually creates a release, never at
-the workflow's top level.
+the workflow's top level. A document whose figures are generated rather than
+drawn by hand — Mermaid diagrams, per "Diagrams in a PDF" above — needs its
+render step *before* the first `latex-action` step, installing from the
+lockfile (`npm ci`) rather than resolving whatever the registry's floating
+latest happens to be on the day the PDF gets built;
+`agent-eval-bench/.github/workflows/build-overview-pdf.yml` is the worked
+example of that ordering.
 
 **Two triggers, chosen by what the paper is a presentation of:**
 

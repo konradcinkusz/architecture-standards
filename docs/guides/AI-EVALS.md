@@ -33,8 +33,9 @@ is drift.
 6. [Gates: what blocks a merge, and what merely reports](#6-gates)
 7. [Production scoring closes the loop](#7-production-scoring-closes-the-loop)
 8. [Human-in-the-loop boundaries are constraints, not vibes](#8-human-in-the-loop)
-9. [Failure modes](#9-failure-modes)
-10. [Checklist](#10-checklist)
+9. [Prove the suite can fail](#9-prove-the-suite-can-fail)
+10. [Failure modes](#10-failure-modes)
+11. [Checklist](#11-checklist)
 
 ---
 
@@ -107,6 +108,29 @@ Dataset size follows the budget: tens of scenarios per agent gated on PR, the fu
 matrix (× models, × prompt variants) nightly — mirroring the when-to-run matrix of
 [`TESTING-STRATEGY.md`](TESTING-STRATEGY.md) §3.
 
+**Fixtures: a named base world plus a per-scenario delta, rebuilt every run.** Scenario
+data needs a shape, and the obvious neighbour is the wrong one to copy.
+[`SERVICE-API-PATTERNS.md`](SERVICE-API-PATTERNS.md) §8 governs seeded *runtime*
+definitions with "insert if missing, never overwrite" — semantics that are exactly
+backwards here, because state surviving between scenarios is a named cause of
+nondeterministic evals (§9). Seeding for a running service is about preserving what is
+there; fixtures for an eval are about there being nothing left to preserve.
+
+So: one named base world holding the employees, leave types, calendars and permissions
+that most scenarios share, and each scenario naming that base plus only the delta it
+needs — a clock, one extra booking, one permission removed. Reconstructed from scratch
+for every scenario, never mutated in place.
+
+Two properties are worth the discipline. A scenario file stays readable as *what this
+case is about*, because the ninety per cent of the world it does not care about is not
+in it. And a diff to the base world is visible as a diff to every scenario that inherits
+it, rather than being buried in ninety near-identical copies — which is what makes a
+fixture change reviewable at all, and is why the base and the rubrics both belong under
+the change-coupling rule in §6.
+
+> `agent-eval-bench/evals/fixtures/` — a named base world; scenarios carry
+> `fixture: {base: …, clock: …}` and nothing they do not need.
+
 ## 4. Layer 1: deterministic assertions on traces
 
 The agent loop is instrumented with OpenTelemetry (P15 — this is not new
@@ -120,6 +144,23 @@ the **trace**, not over the output text:
   timezone; ids from the fixture, not hallucinated).
 - Ordering and absence: read-before-write; **no write-classified span before a
   confirmation event**; nothing called past the scenario's permission fixture.
+
+**"Write-classified" has to be a decision somebody wrote down, not a naming
+convention.** That phrase is load-bearing — it is the assertion the whole
+human-in-the-loop story rests on — so a suite must be able to say precisely which tools
+it covers. Pin it as a normative per-tool table in the spec: a tool is write-classified
+if and only if the table says so, and the harness derives the assertion from the table.
+
+The tempting alternative is a name prefix (`create_*`, `submit_*`, `delete_*`). Do not.
+A prefix rule silently classifies **every future tool as a read** until somebody
+remembers to rename it, so the failure mode is a new write shipping with no constraint
+on it and a green suite — the assertion still runs, still passes, and now matches
+nothing. A rule that degrades toward permissive silence is worse than no rule, because
+it also removes the pressure to write a real one.
+
+> `agent-eval-bench/docs/SPEC.md` §2.1 — a five-row table with one `write`, declared
+> normative in the spec itself, with the derivation stated so the harness cannot drift
+> from it.
 - Termination: the loop ended by decision, not by hitting the iteration cap.
 
 Three rules transfer verbatim from the E2E guide and are build-breaking here for the
@@ -148,8 +189,17 @@ Rules that keep it honest:
   bump with a re-baseline, exactly like an agent version bump.
 - **Calibrated against humans, or discarded.** A sample of judged runs gets human
   labels; agreement is measured and recorded before the judge's scores gate anything.
-  Where judge and human disagree systematically, fix the rubric, not the human. *(Not
-  yet demonstrated in the estate — stated here so the gap is a decision, not drift.)*
+  Where judge and human disagree systematically, fix the rubric, not the human. The
+  protocol is demonstrated — `agent-eval-bench`'s `docs/CALIBRATION.md`, with a stated
+  gate and the κ arithmetic — and the rule is not yet *satisfied* anywhere, which is a
+  different claim and the honest one.
+- **A non-human first rater is a rehearsal, not a calibration.** Where the first pass
+  is done by a model, say so in the label set, and count what it is worth: it exercises
+  the protocol end to end and it finds rubric defects cheaply — the pass in
+  `agent-eval-bench` surfaced three before any judge had scored anything. What it
+  cannot do is discharge this rule, whose wording is *against humans*. A judge
+  calibrated against a judge has measured its own agreement with itself, and the
+  number will look reassuring.
 - Judge scores **threshold and trend**; they do not hard-block at 100% the way
   constraints do. A judge regression is a finding to read, sometimes a rubric bug —
   treat a sudden jump in either direction with the suspicion a too-green test suite
@@ -214,7 +264,39 @@ human catches: plausible-but-wrong groundings, tone drift, and judge blind spots
 findings land as scenarios and rubric fixes, so the sample shrinks the blind spot
 instead of just observing it.
 
-## 9. Failure modes
+## 9. Prove the suite can fail
+
+> *"Once a test has a real assertion, that only proves it can pass — not that it can
+> catch anything."* — [`E2E-ACCEPTANCE-TESTING.md`](E2E-ACCEPTANCE-TESTING.md) §2
+
+That guide requires a mutation pass for an E2E suite. An eval suite needs one for the
+same reason and more urgently, because an eval suite is adopted on the strength of a
+percentage: without this step a suite can be inherited wholesale, reported green
+forever, and never once demonstrated capable of failing.
+
+**Keep a small set of deliberately broken agent variants that the constraint layer must
+catch.** Each variant breaks exactly one thing the spec forbids — one writes before the
+confirmation gate, one fabricates an id it never retrieved, one retries an
+indeterminate write, one follows an instruction found in a tool result. Run them after
+any change to the assertion vocabulary and periodically thereafter. This is a
+suite-health signal, not a per-commit gate — the same framing the E2E guide uses.
+
+**A variant that survives is a missing scenario, not a curiosity.** That is the whole
+value, and it is not hypothetical: on its first run in the estate a double-submitting
+variant *passed* two degradation scenarios, because both asserted `at_least: 1` on the
+write on the strength of a specification sentence that was itself wrong. Two scenarios
+and one spec clause were corrected. Note what found it — not the suite passing, which
+it had been doing all along.
+
+Two failure modes to design against. A variant that breaks something no scenario claims
+to cover tells you nothing, so keep each one aimed at a stated constraint. And a
+harness crash must never count as a catch: assert the variant failed *on an assertion*,
+or the pass rate silently measures the harness's ability to throw.
+
+> `agent-eval-bench/docs/SPEC.md` §8.6 — four variants, the constraint layer required
+> to catch all of them.
+
+## 10. Failure modes
 
 | Symptom | Cause |
 |---|---|
@@ -228,21 +310,28 @@ instead of just observing it.
 | Eval suite abandoned within a quarter | No budget split: full judge matrix on every PR priced the suite out of the loop |
 | Confirmation bypass found by a user, not a page | Constraint checks run offline only; no post-hoc verification over production traces |
 | "It works" defended from one good transcript | No baseline recorded; anecdote standing in for a pass-rate diff |
+| A new write tool ships with no constraint on it, suite still green | Write-classification inferred from a name prefix instead of a normative table, so the unnamed tool was silently classified a read (§4) |
+| A fixture edit lands unreviewed, and a scenario now measures something else | Per-scenario worlds copied wholesale instead of a base plus a delta, so the change is spread across near-identical files rather than visible in one (§3) |
+| A suite reports 100% for a year and has never been shown able to fail | No mutation pass: real assertions prove they can pass, never that they can catch (§9) |
+| A mutation variant "caught" by a harness crash | The pass counted an error as a catch, so the rate measures the harness's ability to throw (§9) |
 
-## 10. Checklist
+## 11. Checklist
 
 Per agent or LLM-backed feature:
 
 - [ ] Behaviour spec in-repo, versioned with the agent definition: behaviours, hard constraints, success criteria, out-of-scope — with negatives stated
 - [ ] Scenario dataset as data, covering happy / ambiguity / denied / adversarial (both injection paths) / degradation classes
+- [ ] Fixtures are a named base world plus a per-scenario delta, rebuilt from scratch each run — never mutated in place, never one full world copied per scenario
 - [ ] Agent loop instrumented per OTel GenAI conventions; confirmations are trace events
 - [ ] Layer 1 asserts over traces: right calls, right arguments, ordering, absence, termination — no guard-then-bail, no swallowed failures, unimplemented = `Skip`
+- [ ] Write-classification pinned as a normative per-tool table in the spec and derived from it by the harness — never from a naming convention
 - [ ] Layer 2: rubric-anchored per-criterion judge that sees the trace; judge model + prompt pinned and versioned; calibration against human labels recorded before scores gate
 - [ ] Gates per §6: constraints hard-block at 100%; behaviour vs baseline; judge thresholds; prompts and definitions included in change detection
 - [ ] Nightly matrix with baseline diffs; PR output is a diff, not a dashboard
 - [ ] Production sessions scored on the shared trace schema; worst sessions read on a cadence; low scorers converted to scenarios; constraint checks run post-hoc with paging
 - [ ] Human review sampled and scheduled; findings become scenarios and rubric fixes
 - [ ] Every production incident has a scenario before it has a fix
+- [ ] Deliberately broken agent variants exist and the constraint layer catches every one; a surviving variant is filed as a missing scenario, and a harness crash never counts as a catch
 
 ---
 
@@ -251,13 +340,13 @@ loop — `docs/SPEC.md` precedes the agent, a 35-scenario dataset spans all five
 classes, and Layer 1 hard-blocks constraints at 100% and gates behaviours against a
 recorded baseline on every pull request. Its Layer 2 judge is built, pinned and
 versioned, and its calibration protocol has run end to end — 45 labels across 21
-scenarios — but, as that repository's own `docs/DEVIATIONS.md` (D-9) and
-`docs/CALIBRATION.md` say without softening, the judge has never yet scored a live
-model, and its first calibration pass was an AI-disclosed rater rather than the human
-one this section names. So §5's calibration rule is demonstrated as a protocol, not yet
-satisfied by it, and §6's gating mechanics are demonstrated for Layer 1 in production CI
-and remain design for Layer 2 until a keyed run and human labels exist — this sentence
-is the §3a-style acknowledgement of that remaining gap, narrower than it was.
+scenarios — but, as that repository's own `docs/DEVIATIONS.md` (D-9) says without
+softening, the judge has never yet scored a live model. Its first calibration pass was
+an AI-disclosed rater, which [§5](#5-layer-2-llm-as-judge) now says what to make of
+rather than leaving to this paragraph. §6's gating mechanics are demonstrated for
+Layer 1 in production CI and remain design for Layer 2 until a keyed run and human
+labels exist — this sentence is the §3a-style acknowledgement of that remaining gap,
+narrower than it was.
 `copilot-scope/src/CopilotScope.Collector/` (OTLP ingestion, the
 composite scoring engine and `IInsightAnalyzer` pipeline this guide's §7 generalizes),
 `<saas>.AgenticService/Services/Orchestration/` (the step pipeline and

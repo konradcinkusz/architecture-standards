@@ -32,11 +32,14 @@ Reference-architecture principles: P2, P9.
 ## Checklist
 
 - [ ] Rate limiting from the kernel: user-partitioned with IP fallback, `auth`/`api`/global policies, uniform 429 body
+- [ ] Anonymous surfaces: one shared client resolver; the forwarded client header trusted only when configuration says a proxy is in front; rejections not queued; a process-wide concurrency bound underneath, with health probes exempt
 - [ ] Endpoint groups make the three trust levels visible in the composition root; operation names from constants
 - [ ] Validation filter (minimal APIs) / logging 400 factory (MVC); client mirrors marked, server authoritative
 - [ ] Every list endpoint clamps page/limit; page aggregates in one round trip
 - [ ] Service-to-service clients: no auto-redirect, 3xx → 502 + log, bearer forwarded, timeouts by criticality, handler timeouts explicit
+- [ ] Writes: a refused connection and a timeout reported differently; no retry of an indeterminate write, ever; a client-supplied idempotency key where the callee supports one, and the weaker fallback labelled as weaker where it does not
 - [ ] 202 jobs: own scope, inputs captured, catch-all → Failed, progress message; caveats and the queue trigger written down
+- [ ] Relays queue onto a bounded channel with an explicit drop policy, pass raw bytes, enable by config presence, and drop deliberately after a bounded retry
 - [ ] Background services await the migration completion signal
 - [ ] Seeded definitions: insert-if-missing by slug, never overwrite
 - [ ] Product mechanics above reused, not reinvented

@@ -2,12 +2,17 @@
 name: research-documentation
 description: >-
   Use when a repository produces measurements, benchmarks or experiments that
-  need writing up as research rather than as a guide. What counts as research
+  need writing up as research rather than as a guide, or when any document in
+  it has to be authored in LaTeX and compiled to PDF. What counts as research
   and what does not, the docs/research layout, the shape of a study document,
   the evidence rules (every number traceable, reproduction stated as a
   command, validate the instrument before trusting its readings, negative
-  results get written up), and when a study graduates to a LaTeX paper.
-  Bundled assets: the study template and the paper template.
+  results get written up), when a study graduates to a LaTeX paper or a Beamer
+  deck, how a non-study document borrows the house style without claiming to
+  be research, how Mermaid diagrams reach a PDF from a single source, how a
+  second language edition is published, and the shape of the GitHub Actions
+  workflow that builds any of them. Bundled assets: the study template, the
+  paper template and the Beamer theme.
 ---
 
 # Scientific research documentation
@@ -28,6 +33,9 @@ Bundled templates: [`assets/TEMPLATE.md`](assets/TEMPLATE.md), [`assets/PAPER-TE
 - The evidence rules
 - From study to paper (LaTeX)
 - Presenting work as slides (Beamer)
+- Documents that borrow the house style without being studies
+- Diagrams in a PDF
+- Publishing a document in more than one language
 - Building the PDF in CI
 - Relationship to the rest of the standards
 - Worked example

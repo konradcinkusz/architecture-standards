@@ -44,6 +44,7 @@ Any service claiming to follow this blueprint answers yes to all of these:
 - [ ] Exactly one service holds a signing key; all others validate against its JWKS endpoint
 - [ ] The shared kernel holds no entity, DTO, enum, seed dataset, pricing constant or user-facing string — asserted by an architecture test and a CI size check
 - [ ] Every optional integration has a working no-op or fallback
+- [ ] The health endpoint reports the state of every optional integration, and the startup banner prints the same list
 - [ ] Multi-stage Dockerfile; runtime image major version equals the TFM major version; listens on `:8080`; non-root where the base image allows
 - [ ] One `fly.toml`; `min_machines_running = 1` if another service calls it in-request
 - [ ] Outbound `HttpClient`s carry the standard resilience handler with explicit timeouts
