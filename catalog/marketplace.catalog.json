@@ -285,26 +285,46 @@
     },
     {
       "name": "ticket-delivery",
-      "version": "1.0.1",
-      "description": "The per-ticket delivery procedure as phases you invoke: ticket analysis and the gate into implementation, the implementation phase itself, and the review of a pull request against the ticket. Unlike the other plugins, which are rules you consult, these are procedures you run — expressed in the constitution's terms rather than a generic checklist.",
+      "version": "2.0.0",
+      "description": "The per-ticket delivery procedure as phases you invoke: ticket analysis against an analysis document you refine run by run, the generation of a self-contained master prompt from it, the implementation phase itself, the review of a pull request against the ticket, and a feedback phase that lands a correction in the artifact that owns it. Unlike the other plugins, which are rules you consult, these are procedures you run — expressed in the constitution's terms rather than a generic checklist.",
       "keywords": [
         "ticket",
         "workflow",
         "implementation",
         "code-review",
         "process",
-        "delivery"
+        "delivery",
+        "master-prompt",
+        "feedback"
       ],
       "skills": [
         {
           "name": "ticket-analysis",
           "kind": "procedure",
           "source": "docs/delivery/TICKET-ANALYSIS.md",
+          "frontMatter": {
+            "argument-hint": "[analysis]"
+          },
           "principles": [
             "P3",
             "P13"
           ],
-          "description": "Use when starting work on a ticket, before any implementation, or when unsure whether a ticket is ready to implement at all. Turns the business request into an architectural one: a table with a row per acceptance criterion carrying the owning bounded context and layer, the principle that governs it, the guide implementation must load, and the named files — then a walk of the compliance checklist listing what the change puts at risk, so a deviation is decided and recorded here rather than discovered mid-diff. Reads the ticket against the architecture rather than against the existing code, runs a read-only exploratory round, separates blocking questions from assumptions worth documenting, and tests the four conditions that gate entry into implementation. Refuses to proceed if the standards are not actually readable in the session."
+          "description": "Use when starting work on a ticket, before any implementation, or when unsure whether a ticket is ready to implement at all. Turns the business request into an architectural one: a table with a row per acceptance criterion carrying the owning context and layer, the principle that governs it, the guide implementation must load, and the files — then a walk of the compliance checklist listing what the change puts at risk, so a deviation is decided and recorded here rather than discovered mid-diff. Takes the analysis document as its argument and revises it in place run after run, amending rows and striking answered questions rather than regenerating an essay. Reads the ticket against the architecture rather than against the existing code, runs a read-only exploratory round, then reports the four gate conditions with their evidence and leaves the decision to proceed to the person — recording anything they proceed without as an accepted risk. Refuses to start if the standards are not readable in the session."
+        },
+        {
+          "name": "generate-master-prompt",
+          "kind": "procedure",
+          "source": "docs/delivery/GENERATE-MASTER-PROMPT.md",
+          "frontMatter": {
+            "argument-hint": "[analysis]",
+            "disallowed-tools": "Edit, NotebookEdit"
+          },
+          "principles": [
+            "P3",
+            "P5",
+            "P14"
+          ],
+          "description": "Use when a ticket's analysis is accepted and there is enough information to implement it — invoking this is what that answer means. Turns the analysis document into one self-contained master prompt a coding agent can be handed in a local development environment or another session: the acceptance criteria verbatim, the analysis table copied whole with its layers, principles, guides and named files, what is out of scope, the compliance items at risk, the recorded decisions and the accepted risks — plus a single line handing off to the installed implementation phase rather than a retyped copy of it, because the procedure does not vary per ticket and the content does. Invents nothing: a gap found while generating is reported and sent back to analysis instead of resolved. Keeps secrets, real users' data and machine-specific paths out of the prompt, writes it beside the analysis, and stops rather than running it."
         },
         {
           "name": "implementation-phase",
@@ -367,6 +387,18 @@
             "P12"
           ],
           "description": "Use when exercising an API against a deployed environment — a preview, a shared non-production environment, or anything else reachable over the network. The target base URL is passed in and echoed back, never derived from a naming convention, because a guessed host either wastes the pass or hits the wrong environment. Read-only by default: writes need authorising in that run, irreversible operations need confirming one at a time, and production stays read-only regardless. Confirms the deployed build actually contains the change before trusting any result, captures degraded optional integrations, and accounts for scale-to-zero cold starts. Credentials come from the environment and never reach a document; neither do real users' data or full response bodies. Never deploys and never edits code."
+        },
+        {
+          "name": "ticket-feedback",
+          "kind": "procedure",
+          "source": "docs/delivery/FEEDBACK.md",
+          "frontMatter": {
+            "argument-hint": "[what is wrong or newly known]"
+          },
+          "principles": [
+            "P14"
+          ],
+          "description": "Use when correcting a delivery artifact mid-ticket: answering an open question, saying the analysis read a criterion wrongly, reporting that a master prompt's run produced the wrong thing, or noting that the ticket itself has moved. Names the artifact that owns the correction before changing anything, classifies it as new information, a correction, a scope change or a preference, and lands it in the document rather than only in the reply — quoting the words it arrived in, striking the question it answers with its answer and who gave it, and appending to the revision log. Then names what has gone stale: a changed row makes the master prompt stale, along with any code already written against it, and the prompt is regenerated rather than edited. Refuses to widen scope quietly, to turn a preference into a standard, or to close a question because it was discussed."
         }
       ]
     }

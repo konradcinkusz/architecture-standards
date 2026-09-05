@@ -278,33 +278,48 @@
         <tr><th class="grp" colspan="2">research-standards</th></tr>
         <tr><td class="cmd">/research-documentation</td><td>Writing measurements up as research, and authoring any document so it compiles to PDF.</td></tr>
         <tr><th class="grp" colspan="2">ticket-delivery</th></tr>
-        <tr><td class="cmd">/ticket-analysis</td><td>Turns a ticket into an architectural one: every acceptance criterion to a layer, a principle and named files.</td></tr>
+        <tr><td class="cmd">/ticket-analysis</td><td>Turns a ticket into an architectural one: every acceptance criterion to a layer, a principle and named files. Takes the analysis document and revises it in place.</td></tr>
+        <tr><td class="cmd">/generate-master-prompt</td><td>Turns the accepted analysis into one self-contained prompt: criteria verbatim, the table whole, the risks accepted — and one line delegating the procedure.</td></tr>
         <tr><td class="cmd">/implementation-phase</td><td>The fixed per-ticket procedure: pre-analysis, the change, tests at the layer holding the logic, docs, the PR.</td></tr>
         <tr><td class="cmd">/test-on-localhost</td><td>Exercises the change against the API already running locally, with addresses read from the solution.</td></tr>
         <tr><td class="cmd">/cloud-test</td><td>The same pass against a deployed environment. URL passed in, read-only by default.</td></tr>
         <tr><td class="cmd">/pr-review</td><td>Reviews a pull request against its ticket and the compliance checklist, and ends with a verdict.</td></tr>
+        <tr><td class="cmd">/ticket-feedback</td><td>Lands a correction in the artifact that owns it, and names what has gone stale downstream. The edge that closes every loop.</td></tr>
       </tbody>
     </table>
     </div>
     <h3 style="margin:26px 0 10px; font-size:.93rem; text-transform:uppercase; letter-spacing:.07em; color:var(--muted);">Using them</h3>
     <p>
-      One ticket, end to end. The commands take no arguments — they work from the session
-      they are invoked in, which is where the ticket, the agreed change and the diff already
-      are. Paste the ticket into the conversation, then:
+      One ticket, end to end. Every argument is optional except <code>/cloud-test</code>'s
+      URL — without one, each phase works from the session it is invoked in, which is where
+      the ticket, the agreed change and the diff already are. Paste the ticket into the
+      conversation, then:
     </p>
-    <div class="code"><button class="copy">Copy</button><pre><code>/ticket-analysis</code></pre></div>
+    <div class="code"><button class="copy">Copy</button><pre><code>/ticket-analysis
+/ticket-analysis docs/analysis/PROJ-412.md</code></pre></div>
     <p>
       It reads the ticket from the conversation; it cannot fetch one, and a bare ticket
-      number with no text behind it is refused rather than analysed. Once its gate passes and
-      the change is agreed:
+      number with no text behind it is refused rather than analysed. It writes the analysis
+      to a document and revises that same document on every later run — amended rows,
+      answered questions struck rather than deleted. Corrections go back in through the loop
+      edge, which lands them in the document rather than in the transcript:
     </p>
-    <div class="code"><button class="copy">Copy</button><pre><code>/implementation-phase
+    <div class="code"><button class="copy">Copy</button><pre><code>/ticket-feedback the empty-collection case must 404, not return an empty list</code></pre></div>
+    <p>
+      The phase reports its four gate conditions with the evidence for each; <strong>you</strong>
+      decide whether that is enough information, and anything you proceed without is recorded
+      as an accepted risk that travels into the prompt and the pull request. Saying yes means
+      generating the master prompt — the criteria verbatim, the table copied whole, and one
+      line delegating the procedure to the installed phase rather than retyping it:
+    </p>
+    <div class="code"><button class="copy">Copy</button><pre><code>/generate-master-prompt
+/implementation-phase
 /test-on-localhost
 /pr-review</code></pre></div>
     <p>
       Each phase refuses to start if the constitution is not readable in the session, so
       install <code>architecture-core</code> alongside <code>ticket-delivery</code>.
-      <code>/cloud-test</code> is the one command that does take an argument — the base URL
+      <code>/cloud-test</code> is the one command whose argument is required — the base URL
       is passed in, never guessed from a naming convention:
     </p>
     <div class="code"><button class="copy">Copy</button><pre><code>/cloud-test https://my-service.fly.dev</code></pre></div>

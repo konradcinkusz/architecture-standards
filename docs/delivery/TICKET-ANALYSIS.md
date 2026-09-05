@@ -1,19 +1,34 @@
 # Ticket analysis
 
-The phase before implementation. Its job is to decide one thing: **is there enough
+The phase before implementation. It exists to answer one thing: **is there enough
 information to implement this ticket without guessing?** It produces an analysis, a list
-of open questions, and an answer to that question. It writes no production code.
+of open questions, and the evidence you answer that question from. It writes no
+production code.
 
 **The ticket arrives in the conversation** — pasted, in its own words, with its acceptance
-criteria. This phase takes no argument and fetches nothing.
+criteria. This phase fetches nothing.
 
-The gate matters more than the document. A ticket that enters implementation with an
-unresolved ambiguity does not fail loudly — it produces a plausible diff that solves the
-wrong problem, and the cost lands in review or in production rather than here.
+**The analysis is the argument.** `/ticket-analysis docs/analysis/PROJ-412.md` opens the
+analysis already written for this ticket and produces the next revision of it. With no
+argument this is the first pass, and the phase says where it wrote the document. The
+phase is built to be run repeatedly, every run against the same file: what improves is
+one document, not a pile of essays about the same ticket. §2 has the rules for that.
 
-First of three phases: this, then [`IMPLEMENTATION-PHASE.md`](IMPLEMENTATION-PHASE.md),
-then [`PR-REVIEW.md`](PR-REVIEW.md). [`WORKFLOW.md`](WORKFLOW.md) is how they fit
-together and how to install them.
+**The gate is yours.** The phase tests §6's four conditions and reports them honestly; it
+does not refuse to continue. You decide whether there is enough information. What the
+phase decides for itself is only what gets *recorded* when you overrule it — which is
+§6's whole job, and the reason overruling it is safe.
+
+The gate matters more than the prose around it. A ticket that enters implementation with
+an unresolved ambiguity does not fail loudly — it produces a plausible diff that solves
+the wrong problem, and the cost lands in review or in production rather than here. That is
+why an ambiguity you knowingly accept still gets written down: the danger is not deciding
+early, it is deciding early and leaving no trace.
+
+First of the phases: this, then [`GENERATE-MASTER-PROMPT.md`](GENERATE-MASTER-PROMPT.md),
+[`IMPLEMENTATION-PHASE.md`](IMPLEMENTATION-PHASE.md) and [`PR-REVIEW.md`](PR-REVIEW.md),
+with [`FEEDBACK.md`](FEEDBACK.md) closing every loop back to here.
+[`WORKFLOW.md`](WORKFLOW.md) is how they fit together and how to install them.
 
 **Contents**
 
@@ -23,7 +38,7 @@ together and how to install them.
 3. [What the change puts at risk](#3-what-the-change-puts-at-risk)
 4. [The exploratory round](#4-the-exploratory-round)
 5. [Questions and gaps](#5-questions-and-gaps)
-6. [The gate](#6-the-gate)
+6. [The gate, and who holds it](#6-the-gate)
 7. [Failure modes](#7-failure-modes)
 8. [Checklist](#8-checklist)
 
@@ -104,6 +119,33 @@ Below the table, state what is **out of scope** and why — a criterion the tick
 but does not ask for is the cheapest thing to refuse here and the most expensive to refuse
 after it is built.
 
+### Where it lives, and how it is revised
+
+The table is a file, because a table that lives only in a transcript cannot be corrected
+next week and cannot be handed to
+[`GENERATE-MASTER-PROMPT.md`](GENERATE-MASTER-PROMPT.md). Write it to the path you were
+given; with no argument, write it under `docs/analysis/<ticket-id>.md` in the target repo
+and say so in the first line of your reply, because a person who does not know where it
+went cannot pass it back.
+
+Every later run **revises that document in place**. That means:
+
+- **Amend rows; do not regenerate the table.** A run that reproduces the same six columns
+  from scratch loses the decisions the previous runs paid for, and it loses them silently
+  because the output looks the same. If a row is now wrong, change that row.
+- **Say what changed and why, in the reply.** Which rows moved, which questions closed and
+  on whose answer, which are new. The document is the state; the reply is the diff, and
+  without it a person cannot tell a real narrowing from a reshuffle.
+- **Answered questions are struck, not deleted.** Keep the question, the answer and who
+  gave it. A question that vanishes cannot be distinguished from one that was never asked,
+  and §7's "same clarification requested twice" starts exactly there.
+- **The revision log is four columns and lives at the foot of the document**: run, what
+  changed, what closed it, still open. It is what makes "I have been round this three
+  times" a fact rather than a feeling.
+
+Corrections arriving from the *other* direction — a person telling you the analysis is
+wrong — are [`FEEDBACK.md`](FEEDBACK.md)'s job, and it lands them in this same document.
+
 ## 3. What the change puts at risk
 
 Walk the [compliance checklist](../architecture/00-REFERENCE-ARCHITECTURE.md#3-compliance-checklist)
@@ -161,9 +203,9 @@ Separate them honestly, because only the first kind is a gate:
 
 A question that has been sitting unanswered is not thereby resolved. It is still blocking.
 
-## 6. The gate
+## 6. The gate, and who holds it
 
-Implementation starts when all four hold:
+Four conditions decide whether this ticket can be implemented without guessing:
 
 - [ ] **Zero blocking questions outstanding.**
 - [ ] **Every acceptance criterion has a complete row** in §2 — layer, governing principle
@@ -172,9 +214,37 @@ Implementation starts when all four hold:
 - [ ] **Every compliance item at risk in §3 is either kept, or covered by a recorded
       decision** with its reason.
 
-If any fails, the loop is: ask, or explore further, then re-test the gate. Do not enter
-implementation with a failing gate on the theory that it will become clear once the code is
-open. It does not; it becomes invisible.
+**The phase tests them; the person decides on them.** End every run by reporting the four,
+one line each, each marked *met* or *not met* and each carrying the evidence — the row, the
+question, the decision — rather than a verdict on its own. Then say which way you would go
+and why, in one sentence. Then stop: this phase does not enter implementation and does not
+generate anything. Whoever is reading decides whether the answer is *enough information,
+yes*, and that answer is given to [`GENERATE-MASTER-PROMPT.md`](GENERATE-MASTER-PROMPT.md)
+by invoking it — which is the only thing that means *yes* here.
+
+An unmet condition is a reason to go round again: answer it, or explore further (§4), or
+send a correction through [`FEEDBACK.md`](FEEDBACK.md), then re-run against the same
+document. That loop is cheap. What it protects against is not.
+
+**Proceeding with a condition unmet is allowed, and is never silent.** A person may know
+something the analysis cannot — that the empty-collection case cannot occur in this
+release, that the deviation is already agreed elsewhere. When that happens, the condition
+does not become met; it becomes **accepted**, and the accepted risk is written down before
+anything downstream is generated:
+
+| Condition | Why it is unmet | Who accepted it | What it costs if the assumption is wrong |
+|---|---|---|---|
+
+That table is part of the analysis document, and
+[`GENERATE-MASTER-PROMPT.md`](GENERATE-MASTER-PROMPT.md) §4 copies it into the prompt
+verbatim, so the implementing session is told what it is standing on rather than inferring
+it. It reaches the pull request the same way. **An accepted risk that was never written
+down is the failure this whole phase exists to prevent** — not because someone decided
+wrongly, but because in three weeks nobody can tell a decision from an oversight.
+
+Never record a condition as met because it was discussed, and never mark one accepted on
+your own: acceptance names a person. Where you cannot tell whether a person accepted a
+risk or simply moved on, treat it as unmet and say so.
 
 ## 7. Failure modes
 
@@ -187,6 +257,9 @@ open. It does not; it becomes invisible.
 | An architectural conflict appears in review | §1's deviation flag or §3's checklist walk was skipped, so the conflict was first seen in a diff |
 | A deviation is "discovered" mid-implementation | It was visible in §3 and recorded as neither kept nor decided |
 | Questions surface mid-implementation and stall it | The gate was passed on optimism rather than on its four conditions |
+| Nobody can say why the ticket was implemented with a question still open | §6's condition was unmet and neither met nor accepted — the run reported a verdict instead of four lines of evidence, and the person had nothing to accept |
+| Each run of the phase produces a fresh, slightly different analysis | The document was regenerated rather than revised, so the decisions the earlier runs bought were overwritten by output that looked identical |
+| The third run asks a question the first run already answered | The answer stayed in the conversation. §2's revision rules put it in the document, struck rather than deleted |
 | The same clarification is requested twice on one ticket | Questions were asked in conversation and never written down with the decision each blocks |
 | Analysis takes longer than the change | The exploratory round became implementation without the edits — reading everything instead of what the table's rows point at |
 
@@ -203,4 +276,8 @@ open. It does not; it becomes invisible.
 - [ ] Exploratory round run read-only; current behaviour, duplication and existing test coverage located
 - [ ] Open questions written as questions, each with the decision it blocks, split into blocking and non-blocking
 - [ ] Non-blocking assumptions written down for the pull request
-- [ ] The four gate conditions tested explicitly before implementation starts
+- [ ] The analysis written to the path given, or to `docs/analysis/<ticket-id>.md` with the location stated in the reply
+- [ ] A re-run revised that document in place — rows amended, answered questions struck rather than deleted, revision log appended — and the reply said what changed
+- [ ] The four gate conditions reported one line each, marked met or not met, each carrying its evidence, with a one-sentence recommendation
+- [ ] Any condition the person chose to proceed without recorded as accepted, with who accepted it and what it costs if the assumption is wrong
+- [ ] Stopped there: no implementation, no master prompt generated by this phase
