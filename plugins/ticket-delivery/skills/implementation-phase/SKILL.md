@@ -14,7 +14,6 @@ description: >-
   pull-request description. Formatting is left to .editorconfig rather than
   restated. Refuses to proceed if the standards are not actually readable in
   the session.
-argument-hint: "[ticket-id]"
 ---
 
 # The implementation phase
@@ -31,8 +30,10 @@ checklist](https://github.com/konradcinkusz/architecture-standards/blob/main/doc
 whatever code it happens to see will reconstruct it wrong, and the diff will look
 plausible.
 
-The ticket ID is the only thing that varies per run. Everything else is fixed, which is
-why this is a document and not a prompt you rewrite each time.
+**The input is this session.** What varies per run is the change agreed in the
+conversation — the analysis, the decisions taken, the scope approved. The procedure below
+does not vary at all, which is why it is a document you invoke rather than a prompt you
+rewrite per ticket. It takes no argument: everything it needs is already in front of it.
 
 Second of three phases: [`TICKET-ANALYSIS.md`](https://github.com/konradcinkusz/architecture-standards/blob/main/docs/delivery/TICKET-ANALYSIS.md) comes first and its
 gate is what admits you here; [`PR-REVIEW.md`](https://github.com/konradcinkusz/architecture-standards/blob/main/docs/delivery/PR-REVIEW.md) comes after.
@@ -65,7 +66,13 @@ only safe next to the text it compresses. Implementing against a remembered vers
 these rules produces a diff that looks compliant and is not, which is more expensive than
 one that obviously ignores them.
 
-If [`TICKET-ANALYSIS.md`](https://github.com/konradcinkusz/architecture-standards/blob/main/docs/delivery/TICKET-ANALYSIS.md) ran, its §2 table and §3 risk list are the
+**And there has to be an agreed change.** This phase implements what the session already
+settled; it does not choose what to build. If the conversation carries no approved
+scope — no analysis, no decision, nothing but a ticket reference — that is the finding.
+Say so and go back to [`TICKET-ANALYSIS.md`](https://github.com/konradcinkusz/architecture-standards/blob/main/docs/delivery/TICKET-ANALYSIS.md), rather than inventing a
+change plausible enough to look like the one that was meant.
+
+If that phase ran, its §2 table and §3 risk list are the
 inputs to this phase: the table names the guides to load and the files to touch, and the
 risk list names the compliance items to protect. Read them before §1 rather than
 re-deriving both.
@@ -222,7 +229,9 @@ immediately, and it implies a human pass that nobody scheduled. Record in the pu
 that the automated tests are the evidence, and which ones.
 
 When it *is* warranted, write it to `docs/manual-tests/{TICKET-ID}-{short-description}.md`
-and give it the discipline the guide requires rather than a list of clicks:
+— the ticket id being whatever the conversation used, not something passed in; where the
+session names no ticket, the file is named for the change instead. Give it the discipline
+the guide requires rather than a list of clicks:
 
 - **Prerequisites** — the account matrix (plan × role) prepared in advance, the deployed
   version verified, state cleared, backends health-checked.
@@ -265,7 +274,7 @@ Write the description to say what changed and why it was done that way, in this 
 - **Out of scope** — explicitly excluded items, so a reviewer stops looking for them.
 
 Follow the repository's own pull request template where it has one; it is a layout to
-fill in. The commit message references the ticket ID.
+fill in. The commit message references the ticket id the session used, if it used one.
 
 If the repo keeps its PR descriptions as files, write to
 `docs/pr/{TICKET-ID}-pr-description.md`; otherwise the description is the PR body and no

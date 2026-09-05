@@ -87,8 +87,8 @@ Against the manual flow this replaces, node by node:
 **The two nodes that disappear are the point.** Generating a master prompt and then running
 it are two steps and one feedback edge that exist *only because the prompt is a text
 artifact that has to be produced somewhere and carried somewhere else*. Generation is the
-cost of pasting. Once the phase is installed, the procedure is fixed and reviewed once; the
-ticket ID is the only thing that varies per run.
+cost of pasting. Once the phase is installed, the procedure is fixed and reviewed once, and
+what varies per run is the change agreed in the session — not an argument you type.
 
 That also removes a class of failure rather than just some typing. The old
 "results unsatisfactory → back to ticket analysis" loop was partly a check on whether the
@@ -134,13 +134,18 @@ The other clients, and the attach-the-repo-versus-install-the-plugin trade-off, 
 
 ## 4. Running a ticket
 
-Three commands, in order, in the target repo's session. Each takes the ticket ID.
+In order, in the target repo's session. **Only `/cloud-test` takes an argument** — every
+other phase works from the session it is invoked in, which is where the ticket, the agreed
+change and the diff already are.
+
+Paste the ticket into the session — its own words, its acceptance criteria — then:
 
 ```
-/ticket-analysis ABC-123
+/ticket-analysis
 ```
 
-Reads the ticket against the architecture, maps every acceptance criterion to a layer and
+It reads the ticket from the conversation; it cannot fetch one, and a bare identifier with
+no text behind it is refused rather than analysed. Reads it against the architecture, maps every acceptance criterion to a layer and
 at least one file, runs the read-only exploratory round, and ends by testing the gate. Its
 output is an analysis, a list of open questions split into blocking and non-blocking, and a
 verdict on whether implementation can start.
@@ -150,10 +155,11 @@ then re-run. A ticket that enters implementation with an unresolved ambiguity do
 loudly — it produces a plausible diff that solves the wrong problem.
 
 ```
-/implementation-phase ABC-123
+/implementation-phase
 ```
 
-The procedure: pre-analysis that proves the build green and names every file and existing
+No argument: it implements the change this session already agreed, and stops if the session
+agreed none. The procedure: pre-analysis that proves the build green and names every file and existing
 test *before* an edit; the change itself, keyed to the principles a diff can violate; tests
 at the layer holding the logic, including the regression half; the manual test document
 only where automation genuinely cannot substitute for a human; recorded decisions; and the
@@ -163,7 +169,7 @@ Between implementation and review, optionally — only when the change has an HT
 worth seeing over the wire:
 
 ```
-/test-on-localhost ABC-123
+/test-on-localhost
 ```
 
 Exercises the change against the API **already running on your machine**. It resolves the
@@ -174,7 +180,7 @@ It checks `/health` and `/alive` first and records which optional integrations a
 It never starts the application and never edits code.
 
 ```
-/cloud-test https://<host> ABC-123
+/cloud-test https://my-service.fly.dev
 ```
 
 The same pass against a deployed environment. **The base URL is a parameter**, echoed back
@@ -189,10 +195,10 @@ Both keep credentials in the environment and out of every document, and neither 
 results file unless somebody will read it.
 
 ```
-/pr-review ABC-123
+/pr-review
 ```
 
-Or `/pr-review <branch>` to review a branch other than the current one. Starts from the
+Reviews the current branch; pass `/pr-review <branch>` for another one. Starts from the
 acceptance criteria rather than the diff, requires both satisfying code and a proving test
 for each, walks the compliance checklist for the layers touched, reads test bodies instead
 of counting them, and ends with an explicit verdict. It reports; it does not edit.
@@ -221,13 +227,15 @@ you did not meet is the failure the gates exist to catch.
 
 ## 6. Under a client without slash commands
 
-`/ticket-analysis` and the rest are Claude Code's spelling. The same three skills install
+`/ticket-analysis` and the rest are Claude Code's spelling. The same five skills install
 under Copilot CLI and VS Code from the same tree, where they are selected by their
-descriptions rather than typed — so "implement ABC-123" reaches the implementation phase by
-routing instead of by invocation.
+descriptions rather than typed — so "implement what we just agreed" reaches the
+implementation phase by routing instead of by invocation. That works because none of them
+depend on being handed an argument in the first place.
 
 Two things do not travel, and it is better to know which:
 
-- **The argument hint.** Name the ticket in the sentence instead.
+- **The argument hint**, which now matters for one command only: name the environment's URL
+  in the sentence when you mean `/cloud-test`.
 - **`disallowed-tools` on `/pr-review`.** Under a client that ignores it, "the review does
   not edit" is back to being a rule in the document rather than a property of the session.

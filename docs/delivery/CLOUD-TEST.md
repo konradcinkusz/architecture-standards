@@ -124,7 +124,9 @@ measure.
 
 ## 5. Running the pass
 
-Cases come from the ticket, exactly as in [`TEST-ON-LOCALHOST.md`](TEST-ON-LOCALHOST.md) §3,
+Cases come from the ticket and from what this session changed, exactly as in
+[`TEST-ON-LOCALHOST.md`](TEST-ON-LOCALHOST.md) §3 — the base URL is the only thing this
+phase takes as an argument,
 and are recorded in the same `[x]` / `[FAIL: #ticket]` / `[SKIP: reason]` notation from
 `TESTING-STRATEGY.md` §7. Two differences worth stating:
 

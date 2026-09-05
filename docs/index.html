@@ -175,6 +175,15 @@
   .group li a:hover { text-decoration: underline; }
   .group li em { display: block; font-style: normal; color: var(--muted); font-size: .84rem; }
 
+  /* The command table is the page's only table and it is long. It scrolls inside its own
+     container so a narrow screen never pushes the whole page sideways. */
+  .tablewrap { overflow-x: auto; border: 1px solid var(--border); border-radius: 10px; background: var(--surface); }
+  table.skills { border-collapse: collapse; width: 100%; font-size: .9rem; }
+  table.skills td { padding: 9px 14px; border-top: 1px solid var(--border); vertical-align: top; color: var(--muted); }
+  table.skills td.cmd { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: .84rem; color: var(--accent); white-space: nowrap; }
+  table.skills th.grp { text-align: left; padding: 15px 14px 7px; font-size: .74rem; font-weight: 600; text-transform: uppercase; letter-spacing: .07em; color: var(--muted); background: var(--surface-2); border-top: 1px solid var(--border); }
+  table.skills tr:first-child th.grp { border-top: 0; }
+
   .note {
     background: var(--accent-soft);
     border: 1px solid var(--border);
@@ -226,6 +235,87 @@
       <div class="stat"><b>3</b><span>Agents</span></div>
     </div>
   </header>
+
+  <section id="skills">
+    <h2>The commands</h2>
+    <p>
+      Everything the plugins install is a command you can type. Install a plugin and its
+      rows below become available; an agent also loads any of them on its own when the
+      subject comes up.
+    </p>
+    <div class="tablewrap">
+    <table class="skills">
+      <tbody>
+        <tr><th class="grp" colspan="2">architecture-core</th></tr>
+        <tr><td class="cmd">/reference-architecture</td><td>The 15 principles (P1–P15) and the compliance checklist every service is measured against.</td></tr>
+        <tr><td class="cmd">/architecture-session-playbook</td><td>Chooses REVIEW, MODERNIZE or RECOVER for a repo, and says which documents each mode must produce.</td></tr>
+        <tr><td class="cmd">/master-delivery-prompt</td><td>The fill-in prompt for a delivery session: align one app repo to the standards and leave it live.</td></tr>
+        <tr><td class="cmd">/repo-baseline</td><td>What every repository carries before its first feature: hygiene, secret scanning, onboarding, agent definitions.</td></tr>
+        <tr><th class="grp" colspan="2">deployment-and-platform</th></tr>
+        <tr><td class="cmd">/fly-io-deployment</td><td>Every fly.toml field annotated, the four service shapes, private networking, scale-to-zero, the tag-driven pipeline.</td></tr>
+        <tr><td class="cmd">/azure-ai-foundry-agents</td><td>Provisioning tool-using AI agents on Azure AI Foundry: the Bicep pattern, managed identity, the two-role RBAC gotcha.</td></tr>
+        <tr><td class="cmd">/azure-operations</td><td>Running .NET services on Azure: passwordless SQL, managed identity and RBAC everywhere, capacity, Container Apps.</td></tr>
+        <tr><td class="cmd">/pr-preview-environments</td><td>Giving each pull request its own running environment — and teardown that actually tears down.</td></tr>
+        <tr><td class="cmd">/private-cloud-delivery</td><td>Shipping the product as a customer-hosted edition: image push, per-client registry, handover IaC, upgrades.</td></tr>
+        <tr><td class="cmd">/shared-service-reuse</td><td>One codebase, one independent instance per consuming system, each with its own database and signing key.</td></tr>
+        <tr><td class="cmd">/metrics-exposition</td><td>Which metric labels are cardinality decisions, capping high-cardinality views, dashboards provisioned from the repo.</td></tr>
+        <tr><th class="grp" colspan="2">services-and-clients</th></tr>
+        <tr><td class="cmd">/service-api-patterns</td><td>Rate limiting, endpoint groups, validation, list clamping, hardened cross-service calls, 202 jobs, seeding.</td></tr>
+        <tr><td class="cmd">/identity-and-accounts</td><td>Everything beyond signing tokens: claims, refresh rotation, OAuth, account linking, lockout, deletion, consent.</td></tr>
+        <tr><td class="cmd">/payments-and-monetization</td><td>Merchant of record versus gateway, mock-first integration, webhook discipline, subscriptions, quotas and metering.</td></tr>
+        <tr><td class="cmd">/frontend-bff</td><td>Next.js frontends: runtime config, HttpOnly cookie sessions, the proxy route, the JWT verified at the edge.</td></tr>
+        <tr><td class="cmd">/browser-extensions</td><td>MV3 across browsers, web-to-extension session handoff, isolated worlds, per-site adapters, packaging.</td></tr>
+        <tr><td class="cmd">/state-snapshot-persistence</td><td>A hot in-memory aggregate that survives restart without a write on every mutation.</td></tr>
+        <tr><th class="grp" colspan="2">quality-and-process</th></tr>
+        <tr><td class="cmd">/ai-evals</td><td>Testing an LLM-backed feature, where the same input can produce different outputs and a prompt change regresses it.</td></tr>
+        <tr><td class="cmd">/testing-strategy</td><td>What to test, at which layer, and what runs when: the charter, three layers with budgets, the per-test bar.</td></tr>
+        <tr><td class="cmd">/e2e-acceptance-testing</td><td>Writing and auditing an acceptance suite — including the bulk-generated one that never asserted anything.</td></tr>
+        <tr><td class="cmd">/security-review</td><td>The repeatable review method, the finding format, the readiness ledger, and the recurring rule sets.</td></tr>
+        <tr><td class="cmd">/open-source-release</td><td>The one-time gate before a repository goes public, built around the history-aware secret audit.</td></tr>
+        <tr><td class="cmd">/readme-badges</td><td>What a badge row may claim, which service is used for what, and how to keep it honest.</td></tr>
+        <tr><td class="cmd">/demo-data-and-seeding</td><td>Demo data, and a reset that cannot touch real records: a reserved id namespace enforced server-side.</td></tr>
+        <tr><td class="cmd">/metric-ethics</td><td>Publishing numbers that score people's work, with anti-goals enforced by architecture rather than by prose.</td></tr>
+        <tr><th class="grp" colspan="2">research-standards</th></tr>
+        <tr><td class="cmd">/research-documentation</td><td>Writing measurements up as research, and authoring any document so it compiles to PDF.</td></tr>
+        <tr><th class="grp" colspan="2">ticket-delivery</th></tr>
+        <tr><td class="cmd">/ticket-analysis</td><td>Turns a ticket into an architectural one: every acceptance criterion to a layer, a principle and named files.</td></tr>
+        <tr><td class="cmd">/implementation-phase</td><td>The fixed per-ticket procedure: pre-analysis, the change, tests at the layer holding the logic, docs, the PR.</td></tr>
+        <tr><td class="cmd">/test-on-localhost</td><td>Exercises the change against the API already running locally, with addresses read from the solution.</td></tr>
+        <tr><td class="cmd">/cloud-test</td><td>The same pass against a deployed environment. URL passed in, read-only by default.</td></tr>
+        <tr><td class="cmd">/pr-review</td><td>Reviews a pull request against its ticket and the compliance checklist, and ends with a verdict.</td></tr>
+      </tbody>
+    </table>
+    </div>
+    <h3 style="margin:26px 0 10px; font-size:.93rem; text-transform:uppercase; letter-spacing:.07em; color:var(--muted);">Using them</h3>
+    <p>
+      One ticket, end to end. The commands take no arguments — they work from the session
+      they are invoked in, which is where the ticket, the agreed change and the diff already
+      are. Paste the ticket into the conversation, then:
+    </p>
+    <div class="code"><button class="copy">Copy</button><pre><code>/ticket-analysis</code></pre></div>
+    <p>
+      It reads the ticket from the conversation; it cannot fetch one, and a bare ticket
+      number with no text behind it is refused rather than analysed. Once its gate passes and
+      the change is agreed:
+    </p>
+    <div class="code"><button class="copy">Copy</button><pre><code>/implementation-phase
+/test-on-localhost
+/pr-review</code></pre></div>
+    <p>
+      Each phase refuses to start if the constitution is not readable in the session, so
+      install <code>architecture-core</code> alongside <code>ticket-delivery</code>.
+      <code>/cloud-test</code> is the one command that does take an argument — the base URL
+      is passed in, never guessed from a naming convention:
+    </p>
+    <div class="code"><button class="copy">Copy</button><pre><code>/cloud-test https://my-service.fly.dev</code></pre></div>
+    <p>
+      Any standard can also be reached directly, without a ticket — <code>/fly-io-deployment</code>
+      before writing a <code>fly.toml</code>, <code>/security-review</code> before something goes
+      public. If a bare name collides with another plugin's, the namespaced form always works:
+      <code>/ticket-delivery:implementation-phase</code>.
+    </p>
+  </section>
+
 
   <section id="what">
     <h2>What this is</h2>

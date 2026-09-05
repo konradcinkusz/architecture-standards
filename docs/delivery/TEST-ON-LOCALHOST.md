@@ -95,7 +95,8 @@ was started relative to your last build.
 
 ## 3. Choose what to exercise
 
-From the ticket, not from the API surface. The cases worth a request:
+From the ticket and from what this session changed — not from the API surface, and not
+from an argument: this phase takes none. The cases worth a request:
 
 - **One per acceptance criterion** that has an HTTP surface — this is the same list
   [`TICKET-ANALYSIS.md`](TICKET-ANALYSIS.md) §2 produced, so take it from there.

@@ -12,7 +12,7 @@ description: >-
   integrations, and accounts for scale-to-zero cold starts. Credentials come
   from the environment and never reach a document; neither do real users' data
   or full response bodies. Never deploys and never edits code.
-argument-hint: "[base-url] [ticket-id]"
+argument-hint: "[base-url]"
 disallowed-tools: "Edit, NotebookEdit"
 ---
 
@@ -142,7 +142,9 @@ measure.
 
 ## 5. Running the pass
 
-Cases come from the ticket, exactly as in [`TEST-ON-LOCALHOST.md`](https://github.com/konradcinkusz/architecture-standards/blob/main/docs/delivery/TEST-ON-LOCALHOST.md) §3,
+Cases come from the ticket and from what this session changed, exactly as in
+[`TEST-ON-LOCALHOST.md`](https://github.com/konradcinkusz/architecture-standards/blob/main/docs/delivery/TEST-ON-LOCALHOST.md) §3 — the base URL is the only thing this
+phase takes as an argument,
 and are recorded in the same `[x]` / `[FAIL: #ticket]` / `[SKIP: reason]` notation from
 `TESTING-STRATEGY.md` §7. Two differences worth stating:
 
