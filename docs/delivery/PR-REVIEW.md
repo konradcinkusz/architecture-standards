@@ -8,7 +8,7 @@ that outrank the reviewer's taste: the acceptance criteria, and the
 This review reads and reports. It does not edit: a review that fixes what it finds
 destroys the evidence of what was wrong, and nobody learns the pattern.
 
-Last of three phases, after [`TICKET-ANALYSIS.md`](TICKET-ANALYSIS.md) and
+Last of the phases, after [`TICKET-ANALYSIS.md`](TICKET-ANALYSIS.md) and
 [`IMPLEMENTATION-PHASE.md`](IMPLEMENTATION-PHASE.md). [`WORKFLOW.md`](WORKFLOW.md) is how
 they fit together and how to install them.
 

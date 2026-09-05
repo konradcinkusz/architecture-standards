@@ -17,9 +17,13 @@ conversation — the analysis, the decisions taken, the scope approved. The proc
 does not vary at all, which is why it is a document you invoke rather than a prompt you
 rewrite per ticket. It takes no argument: everything it needs is already in front of it.
 
-Second of three phases: [`TICKET-ANALYSIS.md`](TICKET-ANALYSIS.md) comes first and its
-gate is what admits you here; [`PR-REVIEW.md`](PR-REVIEW.md) comes after.
-[`WORKFLOW.md`](WORKFLOW.md) is how they fit together and how to install them.
+[`TICKET-ANALYSIS.md`](TICKET-ANALYSIS.md) comes first, and
+[`GENERATE-MASTER-PROMPT.md`](GENERATE-MASTER-PROMPT.md) between the two — where a master
+prompt was generated, it is the agreed change, and it names the criteria, the files and the
+accepted risks this phase works from. [`PR-REVIEW.md`](PR-REVIEW.md) comes after, and
+[`FEEDBACK.md`](FEEDBACK.md) is how a correction gets back upstream instead of being
+patched into the diff. [`WORKFLOW.md`](WORKFLOW.md) is how they fit together and how to
+install them.
 
 **Contents**
 
@@ -49,7 +53,10 @@ these rules produces a diff that looks compliant and is not, which is more expen
 one that obviously ignores them.
 
 **And there has to be an agreed change.** This phase implements what the session already
-settled; it does not choose what to build. If the conversation carries no approved
+settled; it does not choose what to build. A master prompt is that agreement in its most
+portable form — read it first where one exists, including its accepted risks, because an
+assumption recorded there failing mid-implementation is a §7 stop condition rather than a
+puzzle to route around. If the conversation carries no approved
 scope — no analysis, no decision, nothing but a ticket reference — that is the finding.
 Say so and go back to [`TICKET-ANALYSIS.md`](TICKET-ANALYSIS.md), rather than inventing a
 change plausible enough to look like the one that was meant.

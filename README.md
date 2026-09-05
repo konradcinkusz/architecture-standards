@@ -9,9 +9,9 @@ fifteen principles plus twenty-two operational guides, each one extracted from s
 already running in production rather than written from first principles. It ships three
 ways: as documentation you read; as installable agent plugins, so a coding agent reads
 the standard instead of re-deriving it from whatever code it happens to see; and as a
-per-ticket delivery procedure you invoke — `/ticket-analysis`, `/implementation-phase`,
-`/pr-review` — which runs a ticket through those same standards and stops rather than
-guess if it cannot read them.
+per-ticket delivery procedure you invoke — `/ticket-analysis`,
+`/generate-master-prompt`, `/implementation-phase`, `/pr-review` — which runs a ticket
+through those same standards and stops rather than guess if it cannot read them.
 
 **Start here:** [the constitution](docs/architecture/00-REFERENCE-ARCHITECTURE.md) for
 the principles, [the guide index](#operational-guides) below for the domain you are
@@ -180,20 +180,35 @@ with the constitution, then pull in the guides the work touches.
 ## The delivery phases
 
 The playbook and the master prompt above cover a *session* against a whole repo. These
-cover a *ticket*: the recurring procedure that used to be a master prompt rewritten and
-pasted per ticket. Each one installs as a skill you invoke — `/ticket-analysis`,
-`/implementation-phase`, `/pr-review` — and each states its rules in the constitution's
-terms rather than restating them.
+cover a *ticket*: the recurring procedure that used to be rewritten and pasted per ticket.
+Each one installs as a skill you invoke — `/ticket-analysis`,
+`/generate-master-prompt`, `/implementation-phase`, `/pr-review`, `/ticket-feedback` — and
+each states its rules in the constitution's terms rather than restating them. The
+per-ticket master prompt is still generated, but only the half that varies: the procedure
+it hands off to is installed and cited in a line, never retyped.
 
 - [`docs/delivery/WORKFLOW.md`](docs/delivery/WORKFLOW.md) — **start here**: the flow as a
   diagram, what changed against running the phases by hand, how to install the plugin, and
-  the three commands in order. Also says when to break the sequence, and what a client
+  the commands in order. Also says when to break the sequence, and what a client
   without slash commands does and does not give you.
 - [`docs/delivery/TICKET-ANALYSIS.md`](docs/delivery/TICKET-ANALYSIS.md) — the phase
   before implementation, and the gate out of it: read the ticket against the architecture
   rather than against the code, map every acceptance criterion to a layer and a file, run
   the exploratory round read-only, and separate blocking questions from assumptions worth
-  documenting.
+  documenting. Takes the analysis document as its argument and revises it in place run
+  after run. The gate is reported with its evidence and held by you, not by the phase —
+  and anything you proceed without is recorded as an accepted risk that travels downstream.
+- [`docs/delivery/GENERATE-MASTER-PROMPT.md`](docs/delivery/GENERATE-MASTER-PROMPT.md) —
+  invoking it is what "enough information, yes" means. Turns the accepted analysis into one
+  self-contained prompt: acceptance criteria verbatim, the table copied whole, out of
+  scope, the compliance items at risk, the decisions and the accepted risks — and a single
+  line handing off to the implementation phase, because the procedure does not vary per
+  ticket and the content does. Invents nothing; a gap found while generating goes back to
+  analysis.
+- [`docs/delivery/FEEDBACK.md`](docs/delivery/FEEDBACK.md) — the edge that closes every
+  loop: names the artifact that owns a correction before changing anything, classifies it
+  as new information, a correction, a scope change or a preference, lands it in the
+  document rather than in the transcript, and says what has gone stale downstream.
 - [`docs/delivery/IMPLEMENTATION-PHASE.md`](docs/delivery/IMPLEMENTATION-PHASE.md) —
   pre-analysis that proves the build green and names every file before an edit;
   implementation keyed to the principles a diff can actually violate; tests at the layer
