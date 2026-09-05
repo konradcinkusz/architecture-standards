@@ -22,8 +22,8 @@
       "contentHash": "sha256:9bd477fcbb5137e3"
     },
     "ticket-delivery": {
-      "version": "1.0.0",
-      "contentHash": "sha256:36ac913277eca451"
+      "version": "1.0.1",
+      "contentHash": "sha256:4129a9264846532a"
     }
   }
 }

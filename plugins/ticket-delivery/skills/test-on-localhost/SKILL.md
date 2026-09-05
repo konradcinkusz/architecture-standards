@@ -13,7 +13,6 @@ description: >-
   notation. Never starts the application and never edits code. Every
   regression it finds becomes a test at the layer holding the logic rather
   than a document to re-run by hand.
-argument-hint: "[ticket-id]"
 disallowed-tools: "Edit, NotebookEdit"
 ---
 
@@ -114,7 +113,8 @@ was started relative to your last build.
 
 ## 3. Choose what to exercise
 
-From the ticket, not from the API surface. The cases worth a request:
+From the ticket and from what this session changed — not from the API surface, and not
+from an argument: this phase takes none. The cases worth a request:
 
 - **One per acceptance criterion** that has an HTTP surface — this is the same list
   [`TICKET-ANALYSIS.md`](https://github.com/konradcinkusz/architecture-standards/blob/main/docs/delivery/TICKET-ANALYSIS.md) §2 produced, so take it from there.

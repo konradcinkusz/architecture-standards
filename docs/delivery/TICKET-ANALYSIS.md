@@ -4,6 +4,9 @@ The phase before implementation. Its job is to decide one thing: **is there enou
 information to implement this ticket without guessing?** It produces an analysis, a list
 of open questions, and an answer to that question. It writes no production code.
 
+**The ticket arrives in the conversation** — pasted, in its own words, with its acceptance
+criteria. This phase takes no argument and fetches nothing.
+
 The gate matters more than the document. A ticket that enters implementation with an
 unresolved ambiguity does not fail loudly — it produces a plausible diff that solves the
 wrong problem, and the cost lands in review or in production rather than here.
@@ -44,6 +47,12 @@ because this repository is attached to the session. **If neither is true, stop a
 so.** Do not proceed on a recollection of these rules: an analysis that sounds like the
 standards but was not read against them is worse than no analysis, because it will be
 trusted.
+
+**A bare ticket number is not a ticket.** This phase cannot fetch one, so an identifier
+with no text behind it leaves nothing to analyse except the identifier and whatever the
+code implies — which is §1's failure mode arriving through a different door, and it
+produces an analysis confident enough to be believed. Ask for the ticket instead, and say
+that is what you are waiting on.
 
 **Everything this phase outputs cites its source.** Every layer assignment, every
 constraint, every deviation and every recommendation names the principle (`P3`) or the
@@ -172,6 +181,7 @@ open. It does not; it becomes invisible.
 | Symptom | Cause |
 |---|---|
 | The implementation is competent and solves the wrong problem | The ticket was read through the existing code, so the current behaviour was mistaken for the requirement |
+| An analysis exists for a ticket nobody supplied | Work started from an identifier alone; with no text to read, the requirement was reconstructed from the code it was supposed to judge |
 | The analysis reads well and changes nothing about how the ticket gets built | It stayed prose. §2's table is what forces every criterion to land on a layer and a principle |
 | The analysis cites principles that do not say what it claims | §0 was skipped and the rules were recalled rather than read |
 | An architectural conflict appears in review | §1's deviation flag or §3's checklist walk was skipped, so the conflict was first seen in a diff |
@@ -182,6 +192,7 @@ open. It does not; it becomes invisible.
 
 ## 8. Checklist
 
+- [ ] The ticket present in the conversation as text, not as a bare identifier
 - [ ] The constitution and the needed guides confirmed readable before starting; stopped and said so if not
 - [ ] Every rule-shaped statement in the output cites a principle or a guide section
 - [ ] Change restated in one sentence; owning bounded context named (P3); confirmed to be one ticket

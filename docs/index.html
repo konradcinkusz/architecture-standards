@@ -288,19 +288,26 @@
     </div>
     <h3 style="margin:26px 0 10px; font-size:.93rem; text-transform:uppercase; letter-spacing:.07em; color:var(--muted);">Using them</h3>
     <p>
-      One ticket, end to end. Each command takes the ticket id, and each phase refuses to
-      start if the constitution is not readable in the session — so install
-      <code>architecture-core</code> alongside <code>ticket-delivery</code>.
+      One ticket, end to end. The commands take no arguments — they work from the session
+      they are invoked in, which is where the ticket, the agreed change and the diff already
+      are. Paste the ticket into the conversation, then:
     </p>
-    <div class="code"><button class="copy">Copy</button><pre><code>/ticket-analysis ABC-123
-/implementation-phase ABC-123
-/test-on-localhost ABC-123
-/pr-review ABC-123</code></pre></div>
+    <div class="code"><button class="copy">Copy</button><pre><code>/ticket-analysis</code></pre></div>
     <p>
-      Against a deployed environment the base URL is passed in, never guessed from a naming
-      convention:
+      It reads the ticket from the conversation; it cannot fetch one, and a bare ticket
+      number with no text behind it is refused rather than analysed. Once its gate passes and
+      the change is agreed:
     </p>
-    <div class="code"><button class="copy">Copy</button><pre><code>/cloud-test https://my-service.fly.dev ABC-123</code></pre></div>
+    <div class="code"><button class="copy">Copy</button><pre><code>/implementation-phase
+/test-on-localhost
+/pr-review</code></pre></div>
+    <p>
+      Each phase refuses to start if the constitution is not readable in the session, so
+      install <code>architecture-core</code> alongside <code>ticket-delivery</code>.
+      <code>/cloud-test</code> is the one command that does take an argument — the base URL
+      is passed in, never guessed from a naming convention:
+    </p>
+    <div class="code"><button class="copy">Copy</button><pre><code>/cloud-test https://my-service.fly.dev</code></pre></div>
     <p>
       Any standard can also be reached directly, without a ticket — <code>/fly-io-deployment</code>
       before writing a <code>fly.toml</code>, <code>/security-review</code> before something goes
