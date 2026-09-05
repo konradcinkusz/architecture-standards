@@ -2,18 +2,19 @@
 name: generate-master-prompt
 description: >-
   Use when a ticket's analysis is accepted and there is enough information to
-  implement it — invoking this is what that answer means. Turns the analysis
-  document into one self-contained master prompt a coding agent can be handed
-  in a local development environment or another session: the acceptance
-  criteria verbatim, the analysis table copied whole with its layers,
-  principles, guides and named files, what is out of scope, the compliance
-  items at risk, the recorded decisions and the accepted risks — plus a single
-  line handing off to the installed implementation phase rather than a retyped
-  copy of it, because the procedure does not vary per ticket and the content
-  does. Invents nothing: a gap found while generating is reported and sent
-  back to analysis instead of resolved. Keeps secrets, real users' data and
-  machine-specific paths out of the prompt, writes it beside the analysis, and
-  stops rather than running it.
+  implement it — invoking this is what that answer means. Takes the analysis
+  this session has been working on — or a path to another one — and turns it
+  into one self-contained master prompt a coding agent can be handed in a
+  local development environment or another session: the acceptance criteria
+  verbatim, the analysis table copied whole with its layers, principles,
+  guides and named files, what is out of scope, the compliance items at risk,
+  the recorded decisions and the accepted risks — plus a single line handing
+  off to the installed implementation phase rather than a retyped copy of it,
+  because the procedure does not vary per ticket and the content does. Invents
+  nothing: a gap found while generating is reported and sent back to analysis
+  instead of resolved. Keeps secrets, real users' data and machine-specific
+  paths out of the prompt, writes it beside the analysis, and stops rather
+  than running it.
 argument-hint: "[analysis]"
 disallowed-tools: "Edit, NotebookEdit"
 ---
@@ -30,10 +31,24 @@ four conditions and stops; running this is the answer. So the first thing this p
 is check that the answer was earned (§0), and the last thing it does is hand back a
 prompt (§5) — not a diff.
 
-**The input is the analysis.** `/generate-master-prompt docs/analysis/PROJ-412.md`. With
-no argument it uses the analysis this session has been working on, and refuses if there
-is not exactly one — generating from "whatever was discussed" is how a prompt acquires
-requirements nobody agreed to.
+**The input is the analysis, and the session is where it comes from.** `/generate-master-prompt`
+with no argument is the normal call: this session ran `/ticket-analysis`, that phase wrote
+an analysis document and has been revising it, and this is the one to generate from. Name
+one explicitly — `/generate-master-prompt docs/analysis/PROJ-412.md` — only when the
+session holds more than one, or when the analysis was written in an earlier session.
+
+Resolve it in that order, and **say which document you resolved to before generating**:
+
+1. the path passed as an argument;
+2. the analysis document this session wrote or last revised;
+3. more than one candidate, and nothing distinguishes them — ask which, rather than
+   picking. A prompt generated from the wrong ticket's analysis is not obviously wrong at
+   a glance, which is what makes guessing expensive here.
+
+An analysis that exists only in the conversation, never written to a document, is not an
+input. Say so and run `/ticket-analysis` first: a prompt whose source cannot be reopened
+cannot be corrected, regenerated, or checked against what was actually agreed — and §7's
+whole method for a bad run is to fix the source and generate again.
 
 **Why this exists when the procedure is already installed.** The implementation procedure
 does not vary per ticket, which is why it lives in
@@ -255,6 +270,7 @@ hoping for a better result, which treats a specification defect as luck.
 ## 9. Checklist
 
 - [ ] Constitution and the analysis's named guides confirmed readable; stopped and said so if not
+- [ ] Analysis resolved from the argument, else from this session's document; the resolved path stated before generating, and ambiguity asked about rather than guessed
 - [ ] An analysis document exists, is current, and was read — not a ticket, not a conversation
 - [ ] Every acceptance criterion has a complete row; every blocking question closed or accepted; anything missing reported and nothing generated
 - [ ] All ten blocks present, in order, with acceptance criteria verbatim and the table copied whole

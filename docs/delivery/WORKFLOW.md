@@ -151,16 +151,23 @@ The other clients, and the attach-the-repo-versus-install-the-plugin trade-off, 
 
 ## 4. Running a ticket
 
-In order, in the target repo's session. Four of them take an argument, and it is always
-optional except for `/ticket-feedback` and `/cloud-test`:
+In order, in the target repo's session. Five of them take an argument, and it is optional
+on all but `/cloud-test` — **the session is the default input everywhere else**, because
+the ticket, the analysis, the agreed change and the diff are already in it:
 
 | Command | Argument | Without it |
 |---|---|---|
 | `/ticket-analysis` | the analysis document to revise | first pass; it says where it wrote the document |
 | `/ticket-feedback` | the correction, in your words | it uses the correction already in the conversation, and asks if there is more than one |
-| `/generate-master-prompt` | the analysis to generate from | the one this session has been working on; refuses if there is not exactly one |
+| `/generate-master-prompt` | another analysis to generate from | the one this session wrote or last revised — the normal call |
 | `/pr-review` | the branch | the current one |
 | `/cloud-test` | **the base URL — required** | it will not guess a host |
+
+**The brackets in an argument hint are notation, not syntax.** `[analysis]` is how a client
+renders "there is an optional argument here"; you type the value on its own after the
+command, with no brackets and no quoting — `/ticket-analysis docs/analysis/PROJ-412.md`,
+or a whole sentence for `/ticket-feedback`. Typing the command alone is the common case,
+and is what passes the session in.
 
 Paste the ticket into the session — its own words, its acceptance criteria — then:
 
