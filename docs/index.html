@@ -4,11 +4,11 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>architecture-standards — an architecture constitution you can install</title>
-<meta name="description" content="Fifteen architectural principles and seventeen operational guides for .NET Aspire services on Fly.io and Azure, extracted from systems already in production and packaged as installable agent plugins for Claude Code, GitHub Copilot and VS Code.">
+<meta name="description" content="Fifteen architectural principles and twenty-two operational guides for .NET Aspire services on Fly.io and Azure, extracted from systems already in production — readable as documentation, installable as agent plugins, and runnable as a per-ticket delivery procedure under Claude Code, GitHub Copilot and VS Code.">
 <link rel="icon" href="assets/logo.svg" type="image/svg+xml">
 <meta property="og:type" content="website">
 <meta property="og:title" content="architecture-standards">
-<meta property="og:description" content="An architecture constitution for .NET Aspire services on Fly.io and Azure — read it as documentation, or install it as agent plugins.">
+<meta property="og:description" content="An architecture constitution for .NET Aspire services on Fly.io and Azure — read it as documentation, install it as agent plugins, or run a ticket through it phase by phase.">
 <meta property="og:url" content="https://konradcinkusz.github.io/architecture-standards/">
 <style>
   /* Light is the base palette; every token is redefined for dark below, so no colour
@@ -208,8 +208,9 @@
     <h1>architecture-standards</h1>
     <p class="tagline">
       An architecture constitution for .NET Aspire services on Fly.io and Azure —
-      fifteen principles and seventeen operational guides, every one extracted from
+      fifteen principles and twenty-two operational guides, every one extracted from
       systems already running in production rather than written from first principles.
+      Installable, and now runnable: the per-ticket delivery procedure is part of it.
     </p>
     <div class="cta">
       <a class="btn primary" href="https://github.com/konradcinkusz/architecture-standards/blob/main/docs/architecture/00-REFERENCE-ARCHITECTURE.md">Read the constitution</a>
@@ -219,9 +220,9 @@
 
     <div class="stats">
       <div class="stat"><b>15</b><span>Principles</span></div>
-      <div class="stat"><b>17</b><span>Guides</span></div>
-      <div class="stat"><b>5</b><span>Plugins</span></div>
-      <div class="stat"><b>21</b><span>Skills</span></div>
+      <div class="stat"><b>22</b><span>Guides</span></div>
+      <div class="stat"><b>6</b><span>Plugins</span></div>
+      <div class="stat"><b>31</b><span>Skills</span></div>
       <div class="stat"><b>3</b><span>Agents</span></div>
     </div>
   </header>
@@ -236,9 +237,13 @@
       came from.
     </p>
     <p>
-      It ships <strong>two ways</strong>. As documentation you read, and as installable
-      agent plugins, so a coding agent <em>has</em> the standard instead of re-deriving
-      it from whatever code it happens to see. The packaging follows
+      It ships <strong>three ways</strong>. As documentation you read. As installable
+      skills an agent loads when a standard applies, so it <em>has</em> the rule instead
+      of re-deriving it from whatever code it happens to see. And as procedures you
+      invoke by name — <code>/ticket-analysis</code>, <code>/implementation-phase</code>,
+      <code>/pr-review</code> — which run one ticket through those same standards, cite
+      the principle behind every rule they apply, and stop rather than guess if the
+      constitution is not readable in the session. The packaging follows
       <a href="https://agent-plugins.org/">Agent Plugins 1.0.0</a>, the vendor-neutral
       format behind GitHub Copilot, VS Code, Claude Code, Cursor and Codex, so one tree
       serves every client.
@@ -251,6 +256,14 @@
       Start with <code>architecture-core</code> — it carries the constitution, the
       session playbook and the repository baseline, and the other plugins assume it.
       Every client reads the repository's default branch.
+    </p>
+    <p>
+      <code>ticket-delivery</code> is the one that changes how a session is
+      <em>driven</em> rather than what it knows. Its phases refuse to run without the
+      constitution in front of them, so install it alongside
+      <code>architecture-core</code> rather than on its own —
+      <a href="https://github.com/konradcinkusz/architecture-standards/blob/main/docs/delivery/WORKFLOW.md">WORKFLOW.md</a>
+      is the flow, the commands and when to break the sequence.
     </p>
 
     <div class="client">
