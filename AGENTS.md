@@ -16,7 +16,7 @@ see, instead of reading the rules that already exist.
 2. **Pick a mode** — `docs/PLAYBOOK.md` decides between REVIEW, MODERNIZE and RECOVER and
    states which documents each mode must produce.
 3. **Load the guide for the domain you are touching**, rather than reinventing its
-   patterns. `docs/guides/` holds seventeen of them; `catalog/marketplace.catalog.json`
+   patterns. `docs/guides/` holds twenty-two of them; `catalog/marketplace.catalog.json`
    lists every one with a "use when…" description, which is the fastest way to route.
 
 Findings, reviews and migration plans are written into **the target repo's** own

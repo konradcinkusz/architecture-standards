@@ -5,10 +5,13 @@
 # architecture-standards
 
 A written architecture constitution for .NET Aspire services on Fly.io and Azure —
-fifteen principles plus seventeen operational guides, each one extracted from systems
-already running in production rather than written from first principles. It ships two
-ways: as documentation you read, and as installable agent plugins so a coding agent
-reads the standard instead of re-deriving it from whatever code it happens to see.
+fifteen principles plus twenty-two operational guides, each one extracted from systems
+already running in production rather than written from first principles. It ships three
+ways: as documentation you read; as installable agent plugins, so a coding agent reads
+the standard instead of re-deriving it from whatever code it happens to see; and as a
+per-ticket delivery procedure you invoke — `/ticket-analysis`, `/implementation-phase`,
+`/pr-review` — which runs a ticket through those same standards and stops rather than
+guess if it cannot read them.
 
 **Start here:** [the constitution](docs/architecture/00-REFERENCE-ARCHITECTURE.md) for
 the principles, [the guide index](#operational-guides) below for the domain you are
