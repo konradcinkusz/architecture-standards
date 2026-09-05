@@ -2,7 +2,7 @@
   "$comment": "Hand-authored metadata layer for the documents under docs/. The docs themselves carry no front-matter and are never modified; this file supplies the machine-readable half (routing descriptions, plugin grouping, principle links) that agent tooling needs. scripts/build-marketplace.mjs reads this plus docs/ and generates plugins/, .github/plugin/marketplace.json, .claude-plugin/marketplace.json and .github/agents/. Edit this file, then re-run the generator; never edit generated output by hand.",
   "marketplace": {
     "name": "architecture-standards",
-    "version": "1.0.0",
+    "version": "1.1.0",
     "description": "The estate's architecture constitution and operational guides, packaged as installable agent plugins.",
     "owner": {
       "name": "Konrad Cinkusz",
@@ -46,7 +46,7 @@
         {
           "name": "master-delivery-prompt",
           "source": "docs/MASTER-PROMPT.md",
-          "description": "Use when running a delivery session against an application repo \u2014 one that must end aligned to the standards AND live as a workable product. The generic fill-in prompt covering, in phases: the assessment (a playbook mode plus gap analysis against the compliance checklist), adopting the external authservice as the system's only identity provider, bringing the frontend to a Next.js product surface under the frontend/BFF rules, comprehensive UI/UX documentation with a ranked backlog, shipping every service to Fly.io, and an optional parallel Azure provisioning job. States what to attach, the read-only scope of the standards and authservice repos, and the definition of done."
+          "description": "Use when running a delivery session against an application repo — one that must end aligned to the standards AND live as a workable product. The generic fill-in prompt covering, in phases: the assessment (a playbook mode plus gap analysis against the compliance checklist), adopting the external authservice as the system's only identity provider, bringing the frontend to a Next.js product surface under the frontend/BFF rules, comprehensive UI/UX documentation with a ranked backlog, shipping every service to Fly.io, and an optional parallel Azure provisioning job. States what to attach, the read-only scope of the standards and authservice repos, and the definition of done."
         },
         {
           "name": "repo-baseline",
@@ -280,6 +280,70 @@
             "docs/research/PAPER-TEMPLATE.tex",
             "docs/research/BEAMER-THEME.sty"
           ]
+        }
+      ]
+    },
+    {
+      "name": "ticket-delivery",
+      "version": "1.0.0",
+      "description": "The per-ticket delivery procedure as phases you invoke: ticket analysis and the gate into implementation, the implementation phase itself, and the review of a pull request against the ticket. Unlike the other plugins, which are rules you consult, these are procedures you run — expressed in the constitution's terms rather than a generic checklist.",
+      "keywords": [
+        "ticket",
+        "workflow",
+        "implementation",
+        "code-review",
+        "process",
+        "delivery"
+      ],
+      "skills": [
+        {
+          "name": "ticket-analysis",
+          "kind": "procedure",
+          "source": "docs/delivery/TICKET-ANALYSIS.md",
+          "frontMatter": {
+            "argument-hint": "[ticket-id]"
+          },
+          "principles": [
+            "P3",
+            "P13"
+          ],
+          "description": "Use when starting work on a ticket, before any implementation, or when unsure whether a ticket is ready to implement at all. Reads the ticket against the architecture rather than against the existing code, maps every acceptance criterion to a layer and at least one file, names the guides implementation will need, flags principle-level deviations while they are still cheap, runs a read-only exploratory round, separates blocking questions from assumptions worth documenting, and tests the three conditions that gate entry into implementation."
+        },
+        {
+          "name": "implementation-phase",
+          "kind": "procedure",
+          "source": "docs/delivery/IMPLEMENTATION-PHASE.md",
+          "frontMatter": {
+            "argument-hint": "[ticket-id]"
+          },
+          "principles": [
+            "P2",
+            "P3",
+            "P4",
+            "P5",
+            "P8",
+            "P9",
+            "P10",
+            "P11",
+            "P13",
+            "P14",
+            "P15"
+          ],
+          "description": "Use when implementing an approved ticket, once analysis and planning are done — the fixed procedure that replaces rewriting an implementation prompt per ticket. Pre-analysis that proves the build green and names every file and existing test before an edit is made; implementation keyed to the principles a diff can actually violate, from a kernel free of domain through database ownership, migrations, secrets, degrading optional dependencies, wiring, anti-corruption and observability to the API patterns; tests at the layer holding the logic, with regression coverage and the per-test bar; a manual test document only where automation genuinely cannot substitute for a human; recorded decisions; and the pull-request description. Formatting is left to .editorconfig rather than restated as prose."
+        },
+        {
+          "name": "pr-review",
+          "kind": "procedure",
+          "source": "docs/delivery/PR-REVIEW.md",
+          "frontMatter": {
+            "argument-hint": "[branch]",
+            "disallowed-tools": "Edit, NotebookEdit"
+          },
+          "principles": [
+            "P13",
+            "P14"
+          ],
+          "description": "Use when reviewing a pull request against the ticket it claims to deliver, before marking it ready for review or merging it. Starts from the acceptance criteria rather than from the diff and requires both satisfying code and a proving test for each one, identifies changes with no criterion behind them, walks the compliance checklist for every layer the diff touches, reads recorded decisions first so justified deviations are not reported as findings, reads test bodies instead of counting them, ranks findings blocking / should fix / consider, and ends with an explicit verdict. Reports findings; never edits the code."
         }
       ]
     }

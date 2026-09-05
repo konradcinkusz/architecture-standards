@@ -308,12 +308,13 @@ copilot plugin install architecture-core@architecture-standards</code></pre>
   </section>
 
   <section id="plugins">
-    <h2>The five plugins</h2>
+    <h2>The six plugins</h2>
     <p>
-      Each skill is a short router — when it applies, its failure modes, its checklist —
+      Most skills are short routers — when it applies, its failure modes, its checklist —
       with the full standard bundled underneath it in <code>references/</code>. Agents
-      load the reference only when the skill actually fires, so twenty-one standards
-      cost nothing until one is needed.
+      load the reference only when the skill actually fires, so twenty-six standards
+      cost nothing until one is needed. <code>ticket-delivery</code> is the exception:
+      its skills are procedures you invoke, so each carries its document as its body.
     </p>
     <div class="cards">
       <div class="card first">
@@ -323,23 +324,28 @@ copilot plugin install architecture-core@architecture-standards</code></pre>
       </div>
       <div class="card">
         <h3><span class="n">deployment-and-platform</span></h3>
-        <div class="meta">5 skills</div>
+        <div class="meta">7 skills</div>
         <p>Fly.io, Azure AI Foundry agents, Azure operations, per-PR preview environments, and customer-hosted private-cloud delivery.</p>
       </div>
       <div class="card">
         <h3><span class="n">services-and-clients</span></h3>
-        <div class="meta">5 skills</div>
+        <div class="meta">6 skills</div>
         <p>HTTP and API plumbing, identity and accounts, payments and metering, Next.js frontends and BFFs, and browser extensions.</p>
       </div>
       <div class="card">
         <h3><span class="n">quality-and-process</span></h3>
-        <div class="meta">6 skills</div>
+        <div class="meta">8 skills</div>
         <p>LLM evaluation, testing strategy, E2E acceptance suites, security review, open-source release, and README badges.</p>
       </div>
       <div class="card">
         <h3><span class="n">research-standards</span></h3>
         <div class="meta">1 skill · bundled templates</div>
         <p>How a repository documents scientific research: the layout, the study shape, the evidence rules, plus the study and LaTeX paper templates.</p>
+      </div>
+      <div class="card">
+        <h3><span class="n">ticket-delivery</span></h3>
+        <div class="meta">3 skills · procedures, not routers</div>
+        <p>The per-ticket procedure you invoke rather than paste: ticket analysis and the gate into implementation, the implementation phase itself, and the review of a pull request against its ticket.</p>
       </div>
     </div>
   </section>

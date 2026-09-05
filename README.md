@@ -174,6 +174,30 @@ with the constitution, then pull in the guides the work touches.
   surface per the frontend/BFF guide, UI/UX documentation, deployment to Fly.io, and
   an optional parallel Azure provisioning job.
 
+## The delivery phases
+
+The playbook and the master prompt above cover a *session* against a whole repo. These
+cover a *ticket*: the recurring procedure that used to be a master prompt rewritten and
+pasted per ticket. Each one installs as a skill you invoke — `/ticket-analysis`,
+`/implementation-phase`, `/pr-review` — and each states its rules in the constitution's
+terms rather than restating them.
+
+- [`docs/delivery/TICKET-ANALYSIS.md`](docs/delivery/TICKET-ANALYSIS.md) — the phase
+  before implementation, and the gate out of it: read the ticket against the architecture
+  rather than against the code, map every acceptance criterion to a layer and a file, run
+  the exploratory round read-only, and separate blocking questions from assumptions worth
+  documenting.
+- [`docs/delivery/IMPLEMENTATION-PHASE.md`](docs/delivery/IMPLEMENTATION-PHASE.md) —
+  pre-analysis that proves the build green and names every file before an edit;
+  implementation keyed to the principles a diff can actually violate; tests at the layer
+  that holds the logic, with the regression half that usually gets skipped; a manual test
+  document only where automation genuinely cannot substitute for a human; recorded
+  decisions and the pull-request description. Formatting is left to `.editorconfig`.
+- [`docs/delivery/PR-REVIEW.md`](docs/delivery/PR-REVIEW.md) — the last gate: start from
+  the acceptance criteria rather than the diff, require both satisfying code and a proving
+  test for each, walk the compliance checklist for every layer touched, read test bodies
+  instead of counting them, and end with an explicit verdict.
+
 ## Proposals
 
 A proposal is a *candidate*, not a standard: something the estate does that the guides
@@ -197,13 +221,6 @@ pattern is worse than no skill.
 - [`docs/proposals/AGENT-IDENTITY-AND-DELEGATION.md`](docs/proposals/AGENT-IDENTITY-AND-DELEGATION.md)
   — what credential an agent carries into a first-party API, and whose authority it
   spends. **Proposal**, with a written promotion test waiting on `authservice` ADR 0004.
-- [`docs/proposals/TICKET-DELIVERY-WORKFLOW.md`](docs/proposals/TICKET-DELIVERY-WORKFLOW.md)
-  — the ticket workflow's hand-pasted master prompts as installed skills: why no
-  `commands/` directory is needed (every skill here is already a slash command), the one
-  generator change that would make an *executable* skill possible alongside the
-  twenty-six knowledge skills, and the split between the generic procedure and the
-  employer-specific profile that keeps the second half out of a public repository.
-  **Proposal**.
 
 ## Origin
 

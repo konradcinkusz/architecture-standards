@@ -9,15 +9,23 @@ GitHub Copilot, VS Code, Claude Code, Cursor and Codex — so one tree serves ev
 
 | Plugin | Skills | Covers |
 |---|---|---|
-| `architecture-core` | 3 | The constitution (P1–P15), the REVIEW/MODERNIZE/RECOVER playbook, the repository baseline. Also ships the three custom agents. Install this first. |
-| `deployment-and-platform` | 5 | Fly.io, Azure AI Foundry agents, Azure operations, per-PR preview environments, private-cloud delivery |
-| `services-and-clients` | 5 | Service and API patterns, identity and accounts, payments and metering, Next.js frontends and BFFs, browser extensions |
-| `quality-and-process` | 6 | LLM evaluation, testing strategy, E2E acceptance suites, security review, open-source release, README badges |
+| `architecture-core` | 4 | The constitution (P1–P15), the REVIEW/MODERNIZE/RECOVER playbook, the master delivery prompt, the repository baseline. Also ships the three custom agents. Install this first. |
+| `deployment-and-platform` | 7 | Fly.io, Azure AI Foundry agents, Azure operations, per-PR preview environments, private-cloud delivery, shared-service reuse, metrics exposition |
+| `services-and-clients` | 6 | Service and API patterns, identity and accounts, payments and metering, Next.js frontends and BFFs, browser extensions, state and snapshot persistence |
+| `quality-and-process` | 8 | LLM evaluation, testing strategy, E2E acceptance suites, security review, open-source release, README badges, metric ethics, demo data and seeding |
 | `research-standards` | 1 | The research-documentation standard, with the study and LaTeX paper templates as bundled assets |
+| `ticket-delivery` | 3 | The per-ticket procedure: ticket analysis and its gate, the implementation phase, the review of a pull request against its ticket |
 
-Each skill is a short router — when it applies, its failure modes, its checklist — with
-the **full standard bundled underneath it** in `references/`. Agents load the reference
-only when the skill actually fires, so twenty standards cost nothing until one is needed.
+Most skills here are short routers — when it applies, its failure modes, its checklist —
+with the **full standard bundled underneath it** in `references/`. Agents load the
+reference only when the skill actually fires, so twenty-six standards cost nothing until
+one is needed.
+
+`ticket-delivery` is the exception, and deliberately so. Its three skills are
+**procedures you invoke** rather than standards you consult, so each one carries its
+document as its body instead of pointing at a copy: `/implementation-phase` has to *be*
+the checklist to be worth typing. They cite the guides rather than restating them, so the
+constitution stays the single source for every rule they enforce.
 
 ## Installing it
 
@@ -135,9 +143,14 @@ Measured with `claude plugin details`:
 | `quality-and-process` | ~850 |
 | `services-and-clients` | ~670 |
 | `research-standards` | ~155 |
+| `ticket-delivery` | ~560 (estimated) |
 
-All five is ~3.5k tokens per session. Installing only the ones a repo actually needs is
-the reason the standards are split into five plugins rather than shipped as one.
+All six is roughly 4k tokens per session. Installing only the ones a repo actually needs
+is the reason the standards are split into six plugins rather than shipped as one.
+
+The `ticket-delivery` figure is estimated from its skill descriptions rather than
+measured, because it has not been installed anywhere yet; replace it with the measured
+number on first install.
 
 ## Two clients, one tree
 

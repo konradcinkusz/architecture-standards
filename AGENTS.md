@@ -24,7 +24,7 @@ Findings, reviews and migration plans are written into **the target repo's** own
 
 ## B. You want the standards installed as skills
 
-The same documents ship as five plugins under `plugins/`, following the
+The same documents ship as six plugins under `plugins/`, following the
 [Agent Plugins 1.0.0](https://agent-plugins.org/) format, so Copilot, Claude Code, VS
 Code and any other compatible client can install them.
 
@@ -81,3 +81,12 @@ through in [`docs/BASELINE-COMPLIANCE.md`](docs/BASELINE-COMPLIANCE.md).
 - A guide is added to the marketplace by adding one entry to
   `catalog/marketplace.catalog.json`. A guide with no catalog entry ships as
   documentation only.
+- **Procedure documents** under `docs/delivery/` are the one exception to the guide
+  shape, and they are packaged differently: a catalog entry marked `"kind": "procedure"`
+  emits the document as the skill body verbatim, with no `references/` copy, because a
+  procedure you invoke has to *be* the checklist rather than point at one. They keep the
+  `Failure modes` and `Checklist` sections, they cite the guides instead of restating
+  their rules, and their catalog entry may carry a `frontMatter` map — `argument-hint`,
+  `disallowed-tools` and the rest of the closed set in `scripts/build-marketplace.mjs`,
+  which is what turns "this phase does not edit code" from prose into an enforced
+  property.
