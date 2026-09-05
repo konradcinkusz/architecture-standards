@@ -51,7 +51,8 @@ flowchart TD
 
     H -- fail --> F
     H -- pass --> I["manual test document<br/><i>only if TESTING-STRATEGY §7 applies</i>"]
-    I --> J["decisions recorded ·<br/>PR description written"]
+    I --> V["<i>optional, if the change has an HTTP surface</i><br/><b>/test-on-localhost</b> · <b>/cloud-test</b>"]
+    V --> J["decisions recorded ·<br/>PR description written"]
     J --> K["<b>/pr-review</b><br/>criteria first, then the<br/>compliance checklist, then test bodies"]
     K --> L{"Verdict against the ticket"}
 
@@ -60,7 +61,7 @@ flowchart TD
 
     classDef skill fill:#dbeafe,stroke:#1d4ed8,color:#1e3a8a
     classDef gate fill:#fef3c7,stroke:#b45309,color:#78350f
-    class B,F,K skill
+    class B,F,K,V skill
     class D,H,L gate
 ```
 
@@ -78,6 +79,7 @@ Against the manual flow this replaces, node by node:
 | **Run master prompt** | **Gone** |
 | Implementation phase (a: code, b: tests) | `/implementation-phase` — both tracks, in one procedure, in order |
 | Optional test artifacts | A step inside that phase, conditional on what the change actually touches |
+| *(was: run it and click around)* | `/test-on-localhost` and `/cloud-test` — the same pass written down, with the base URL resolved from the solution or passed in, health and degraded integrations captured first, and findings that must cite a principle to count |
 | Create PR draft | §6 of the same phase, so the description is written from the work rather than reconstructed after it |
 | PR review agent | `/pr-review`, which cannot edit — `disallowed-tools` enforces it |
 | "Results satisfactory?" ×2, "Enough information?" | Three gates with named exit criteria — the first of them four conditions, not a feeling |
@@ -157,6 +159,35 @@ at the layer holding the logic, including the regression half; the manual test d
 only where automation genuinely cannot substitute for a human; recorded decisions; and the
 pull-request description.
 
+Between implementation and review, optionally — only when the change has an HTTP surface
+worth seeing over the wire:
+
+```
+/test-on-localhost ABC-123
+```
+
+Exercises the change against the API **already running on your machine**. It resolves the
+base URL from the solution itself — the Aspire AppHost (P1), the service's
+`launchSettings` profile, or the running dashboard — rather than from a remembered port.
+It checks `/health` and `/alive` first and records which optional integrations are degraded
+(P8), because that is the difference between a broken endpoint and one correctly degrading.
+It never starts the application and never edits code.
+
+```
+/cloud-test https://<host> ABC-123
+```
+
+The same pass against a deployed environment. **The base URL is a parameter**, echoed back
+before the first request and never derived from a naming convention — a guessed host either
+wastes the pass or hits the wrong environment. Read-only by default; writes need
+authorising in that run, irreversible operations need confirming one at a time, and
+production stays read-only regardless. It confirms the deployed build actually carries your
+change before trusting any result (P12), and treats a slow first request as scale-to-zero
+(P7) rather than a latency finding.
+
+Both keep credentials in the environment and out of every document, and neither writes a
+results file unless somebody will read it.
+
 ```
 /pr-review ABC-123
 ```
@@ -181,6 +212,9 @@ The phases are separable, and pretending otherwise makes them ceremony:
 - **`/pr-review` stands alone.** It is useful on any pull request with acceptance criteria,
   including ones no agent implemented — reviewing someone else's work against the
   compliance checklist is its own job.
+- **The two verification passes are optional and independent.** A change with no HTTP
+  surface needs neither. `/cloud-test` is also useful with no ticket at all — pointed at an
+  environment to establish what is deployed and what is degraded there.
 
 What does not bend: the gates. Compressing a phase is a decision you record; passing a gate
 you did not meet is the failure the gates exist to catch.

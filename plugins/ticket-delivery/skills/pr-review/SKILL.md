@@ -12,8 +12,8 @@ description: >-
   verdict. Every finding cites the principle or guide section behind it; an
   uncited one is labelled a preference rather than dressed as a standard.
   Reports findings; never edits the code.
-argument-hint: [branch]
-disallowed-tools: Edit, NotebookEdit
+argument-hint: "[branch]"
+disallowed-tools: "Edit, NotebookEdit"
 ---
 
 # Reviewing a pull request against the ticket

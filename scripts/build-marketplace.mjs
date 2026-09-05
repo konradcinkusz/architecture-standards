@@ -162,7 +162,11 @@ function buildProcedureSkill(skill, sourcePath, raw, baseUrl) {
       );
       process.exit(1);
     }
-    front.push(`${key}: ${value}`);
+    // Always emit a double-quoted scalar. An argument hint like `[url] [ticket-id]` is
+    // two YAML flow sequences and would fail the whole front-matter block, taking the
+    // skill's name and description down with it; quoting removes the footgun entirely
+    // rather than asking each catalog entry to remember it.
+    front.push(`${key}: ${JSON.stringify(String(value))}`);
   }
   front.push('---', '', '');
 

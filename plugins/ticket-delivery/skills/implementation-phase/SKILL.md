@@ -14,7 +14,7 @@ description: >-
   pull-request description. Formatting is left to .editorconfig rather than
   restated. Refuses to proceed if the standards are not actually readable in
   the session.
-argument-hint: [ticket-id]
+argument-hint: "[ticket-id]"
 ---
 
 # The implementation phase

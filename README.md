@@ -197,6 +197,16 @@ terms rather than restating them.
   that holds the logic, with the regression half that usually gets skipped; a manual test
   document only where automation genuinely cannot substitute for a human; recorded
   decisions and the pull-request description. Formatting is left to `.editorconfig`.
+- [`docs/delivery/TEST-ON-LOCALHOST.md`](docs/delivery/TEST-ON-LOCALHOST.md) — optional, and
+  only when the change has an HTTP surface: exercise it against the API already running
+  locally, with the base URL resolved from the AppHost or `launchSettings` rather than a
+  remembered port, `/health` and the degraded-integration list captured before anything
+  else, and every regression found turned into a test rather than a document. Never starts
+  the app, never edits code.
+- [`docs/delivery/CLOUD-TEST.md`](docs/delivery/CLOUD-TEST.md) — the same pass against a
+  deployed environment, whose base URL is a parameter rather than a naming convention.
+  Read-only by default, confirms the deployed build actually carries the change before
+  trusting a result, and keeps credentials and real users' data out of every artifact.
 - [`docs/delivery/PR-REVIEW.md`](docs/delivery/PR-REVIEW.md) — the last gate: start from
   the acceptance criteria rather than the diff, require both satisfying code and a proving
   test for each, walk the compliance checklist for every layer touched, read test bodies

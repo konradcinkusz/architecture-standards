@@ -13,7 +13,7 @@ description: >-
   assumptions worth documenting, and tests the four conditions that gate entry
   into implementation. Refuses to proceed if the standards are not actually
   readable in the session.
-argument-hint: [ticket-id]
+argument-hint: "[ticket-id]"
 ---
 
 # Ticket analysis

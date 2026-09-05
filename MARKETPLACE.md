@@ -14,7 +14,7 @@ GitHub Copilot, VS Code, Claude Code, Cursor and Codex — so one tree serves ev
 | `services-and-clients` | 6 | Service and API patterns, identity and accounts, payments and metering, Next.js frontends and BFFs, browser extensions, state and snapshot persistence |
 | `quality-and-process` | 8 | LLM evaluation, testing strategy, E2E acceptance suites, security review, open-source release, README badges, metric ethics, demo data and seeding |
 | `research-standards` | 1 | The research-documentation standard, with the study and LaTeX paper templates as bundled assets |
-| `ticket-delivery` | 3 | The per-ticket procedure: ticket analysis and its gate, the implementation phase, the review of a pull request against its ticket |
+| `ticket-delivery` | 5 | The per-ticket procedure: ticket analysis and its gate, the implementation phase, two optional API verification passes (local and deployed), the review of a pull request against its ticket |
 
 Most skills here are short routers — when it applies, its failure modes, its checklist —
 with the **full standard bundled underneath it** in `references/`. Agents load the
@@ -97,7 +97,8 @@ session is *driven* rather than what it knows, so it is worth naming explicitly:
 claude plugin install ticket-delivery@architecture-standards
 ```
 
-It ships `/ticket-analysis`, `/implementation-phase` and `/pr-review`, and its skills cite
+It ships `/ticket-analysis`, `/implementation-phase`, `/pr-review` and the two optional
+verification passes `/test-on-localhost` and `/cloud-test`, and its skills cite
 the constitution and the guides throughout — so install it alongside `architecture-core`
 rather than on its own. How the three fit together, when to break the sequence, and what a
 client without slash commands does and does not give you are in
@@ -157,9 +158,9 @@ Measured with `claude plugin details`:
 | `quality-and-process` | ~850 |
 | `services-and-clients` | ~670 |
 | `research-standards` | ~155 |
-| `ticket-delivery` | ~560 (estimated) |
+| `ticket-delivery` | ~980 (estimated) |
 
-All six is roughly 4k tokens per session. Installing only the ones a repo actually needs
+All six is roughly 4.4k tokens per session. Installing only the ones a repo actually needs
 is the reason the standards are split into six plugins rather than shipped as one.
 
 The `ticket-delivery` figure is estimated from its skill descriptions rather than
