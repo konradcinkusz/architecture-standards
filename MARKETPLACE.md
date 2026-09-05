@@ -89,6 +89,20 @@ The key under `extraKnownMarketplaces` is the `name` from `marketplace.json`, wh
 what `@architecture-standards` refers to — not the repository name. The two happen to
 match here; they do not have to.
 
+Every example above installs `architecture-core`, which is the one to install first.
+Add any other plugin the same way — `ticket-delivery` is the one that changes how a
+session is *driven* rather than what it knows, so it is worth naming explicitly:
+
+```sh
+claude plugin install ticket-delivery@architecture-standards
+```
+
+It ships `/ticket-analysis`, `/implementation-phase` and `/pr-review`, and its skills cite
+the constitution and the guides throughout — so install it alongside `architecture-core`
+rather than on its own. How the three fit together, when to break the sequence, and what a
+client without slash commands does and does not give you are in
+[`docs/delivery/WORKFLOW.md`](docs/delivery/WORKFLOW.md).
+
 **Any other agent** — attach the repo as a sibling checkout and point it at
 [`AGENTS.md`](AGENTS.md). No install step, no client support required.
 

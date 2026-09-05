@@ -8,6 +8,10 @@ The gate matters more than the document. A ticket that enters implementation wit
 unresolved ambiguity does not fail loudly — it produces a plausible diff that solves the
 wrong problem, and the cost lands in review or in production rather than here.
 
+First of three phases: this, then [`IMPLEMENTATION-PHASE.md`](IMPLEMENTATION-PHASE.md),
+then [`PR-REVIEW.md`](PR-REVIEW.md). [`WORKFLOW.md`](WORKFLOW.md) is how they fit
+together and how to install them.
+
 **Contents**
 
 1. [Read the ticket against the architecture](#1-read-the-ticket)

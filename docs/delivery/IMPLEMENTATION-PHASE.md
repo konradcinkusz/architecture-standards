@@ -15,6 +15,10 @@ plausible.
 The ticket ID is the only thing that varies per run. Everything else is fixed, which is
 why this is a document and not a prompt you rewrite each time.
 
+Second of three phases: [`TICKET-ANALYSIS.md`](TICKET-ANALYSIS.md) comes first and its
+gate is what admits you here; [`PR-REVIEW.md`](PR-REVIEW.md) comes after.
+[`WORKFLOW.md`](WORKFLOW.md) is how they fit together and how to install them.
+
 **Contents**
 
 1. [Pre-analysis, before any code](#1-pre-analysis)

@@ -24,6 +24,10 @@ that outrank the reviewer's taste: the acceptance criteria, and the
 This review reads and reports. It does not edit: a review that fixes what it finds
 destroys the evidence of what was wrong, and nobody learns the pattern.
 
+Last of three phases, after [`TICKET-ANALYSIS.md`](https://github.com/konradcinkusz/architecture-standards/blob/main/docs/delivery/TICKET-ANALYSIS.md) and
+[`IMPLEMENTATION-PHASE.md`](https://github.com/konradcinkusz/architecture-standards/blob/main/docs/delivery/IMPLEMENTATION-PHASE.md). [`WORKFLOW.md`](https://github.com/konradcinkusz/architecture-standards/blob/main/docs/delivery/WORKFLOW.md) is how
+they fit together and how to install them.
+
 **Contents**
 
 1. [Establish what is actually being reviewed](#1-establish-the-diff)
