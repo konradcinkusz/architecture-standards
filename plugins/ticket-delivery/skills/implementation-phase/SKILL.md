@@ -10,9 +10,11 @@ description: >-
   wiring, anti-corruption and observability to the API patterns; tests at the
   layer holding the logic, with regression coverage and the per-test bar; a
   manual test document only where automation genuinely cannot substitute for a
-  human; recorded decisions; and the pull-request description. Formatting is
-  left to .editorconfig rather than restated as prose.
-argument-hint: [ticket-id]
+  human; recorded decisions that cite the principle behind them; and the
+  pull-request description. Formatting is left to .editorconfig rather than
+  restated. Refuses to proceed if the standards are not actually readable in
+  the session.
+argument-hint: "[ticket-id]"
 ---
 
 # The implementation phase
@@ -38,6 +40,7 @@ gate is what admits you here; [`PR-REVIEW.md`](https://github.com/konradcinkusz/
 
 **Contents**
 
+0. [The standards have to be in front of you](#0-the-standards-have-to-be-in-front-of-you)
 1. [Pre-analysis, before any code](#1-pre-analysis)
 2. [Implementation](#2-implementation)
 3. [Tests](#3-tests)
@@ -49,6 +52,28 @@ gate is what admits you here; [`PR-REVIEW.md`](https://github.com/konradcinkusz/
 9. [Checklist](#9-checklist)
 
 ---
+
+## 0. The standards have to be in front of you
+
+Confirm, before the first edit, that you can actually open
+[`00-REFERENCE-ARCHITECTURE.md`](https://github.com/konradcinkusz/architecture-standards/blob/main/docs/architecture/00-REFERENCE-ARCHITECTURE.md) and the
+guides under [`docs/guides/`](https://github.com/konradcinkusz/architecture-standards/blob/main/docs/guides/) — because
+`architecture-core@architecture-standards` is installed, or because this repository is
+attached to the session. **If you cannot, stop and say so.** Every rule below is stated in
+shorthand — "the kernel stays a kernel", "translate at the edge" — and the shorthand is
+only safe next to the text it compresses. Implementing against a remembered version of
+these rules produces a diff that looks compliant and is not, which is more expensive than
+one that obviously ignores them.
+
+If [`TICKET-ANALYSIS.md`](https://github.com/konradcinkusz/architecture-standards/blob/main/docs/delivery/TICKET-ANALYSIS.md) ran, its §2 table and §3 risk list are the
+inputs to this phase: the table names the guides to load and the files to touch, and the
+risk list names the compliance items to protect. Read them before §1 rather than
+re-deriving both.
+
+**Everything this phase outputs cites its source.** A decision recorded under §5, a
+deviation, a rejected alternative, a rule invoked in review of your own diff — each names
+the principle (`P4`) or guide section (`SERVICE-API-PATTERNS.md` §5) it rests on. A
+statement with no citation is a fact about this ticket, never a rule.
 
 ## 1. Pre-analysis
 
@@ -281,6 +306,9 @@ message.
 
 ## 9. Checklist
 
+- [ ] Constitution and guides confirmed readable before the first edit; stopped and said so if not
+- [ ] The analysis phase's table and risk list read as input, not re-derived
+- [ ] Every rule-shaped statement in the output cites a principle or a guide section
 - [ ] Build and existing tests proven green *before* any edit
 - [ ] Owning bounded context named; layers touched identified; the guide loaded for each
 - [ ] Flow traced end to end; every file to be changed named in advance

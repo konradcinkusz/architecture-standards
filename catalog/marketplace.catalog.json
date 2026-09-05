@@ -307,7 +307,7 @@
             "P3",
             "P13"
           ],
-          "description": "Use when starting work on a ticket, before any implementation, or when unsure whether a ticket is ready to implement at all. Reads the ticket against the architecture rather than against the existing code, maps every acceptance criterion to a layer and at least one file, names the guides implementation will need, flags principle-level deviations while they are still cheap, runs a read-only exploratory round, separates blocking questions from assumptions worth documenting, and tests the three conditions that gate entry into implementation."
+          "description": "Use when starting work on a ticket, before any implementation, or when unsure whether a ticket is ready to implement at all. Turns the business request into an architectural one: a table with a row per acceptance criterion carrying the owning bounded context and layer, the principle that governs it, the guide implementation must load, and the named files — then a walk of the compliance checklist listing what the change puts at risk, so a deviation is decided and recorded here rather than discovered mid-diff. Reads the ticket against the architecture rather than against the existing code, runs a read-only exploratory round, separates blocking questions from assumptions worth documenting, and tests the four conditions that gate entry into implementation. Refuses to proceed if the standards are not actually readable in the session."
         },
         {
           "name": "implementation-phase",
@@ -329,7 +329,7 @@
             "P14",
             "P15"
           ],
-          "description": "Use when implementing an approved ticket, once analysis and planning are done — the fixed procedure that replaces rewriting an implementation prompt per ticket. Pre-analysis that proves the build green and names every file and existing test before an edit is made; implementation keyed to the principles a diff can actually violate, from a kernel free of domain through database ownership, migrations, secrets, degrading optional dependencies, wiring, anti-corruption and observability to the API patterns; tests at the layer holding the logic, with regression coverage and the per-test bar; a manual test document only where automation genuinely cannot substitute for a human; recorded decisions; and the pull-request description. Formatting is left to .editorconfig rather than restated as prose."
+          "description": "Use when implementing an approved ticket, once analysis and planning are done — the fixed procedure that replaces rewriting an implementation prompt per ticket. Pre-analysis that proves the build green and names every file and existing test before an edit is made; implementation keyed to the principles a diff can actually violate, from a kernel free of domain through database ownership, migrations, secrets, degrading optional dependencies, wiring, anti-corruption and observability to the API patterns; tests at the layer holding the logic, with regression coverage and the per-test bar; a manual test document only where automation genuinely cannot substitute for a human; recorded decisions that cite the principle behind them; and the pull-request description. Formatting is left to .editorconfig rather than restated. Refuses to proceed if the standards are not actually readable in the session."
         },
         {
           "name": "pr-review",
@@ -343,7 +343,37 @@
             "P13",
             "P14"
           ],
-          "description": "Use when reviewing a pull request against the ticket it claims to deliver, before marking it ready for review or merging it. Starts from the acceptance criteria rather than from the diff and requires both satisfying code and a proving test for each one, identifies changes with no criterion behind them, walks the compliance checklist for every layer the diff touches, reads recorded decisions first so justified deviations are not reported as findings, reads test bodies instead of counting them, ranks findings blocking / should fix / consider, and ends with an explicit verdict. Reports findings; never edits the code."
+          "description": "Use when reviewing a pull request against the ticket it claims to deliver, before marking it ready for review or merging it. Starts from the acceptance criteria rather than from the diff and requires both satisfying code and a proving test for each one, identifies changes with no criterion behind them, walks the compliance checklist for every layer the diff touches, reads the pull request's recorded decisions first so justified deviations are not reported as findings, reads test bodies instead of counting them, ranks findings blocking / should fix / consider, and ends with an explicit verdict. Every finding cites the principle or guide section behind it; an uncited one is labelled a preference rather than dressed as a standard. Reports findings; never edits the code."
+        },
+        {
+          "name": "test-on-localhost",
+          "kind": "procedure",
+          "source": "docs/delivery/TEST-ON-LOCALHOST.md",
+          "frontMatter": {
+            "argument-hint": "[ticket-id]",
+            "disallowed-tools": "Edit, NotebookEdit"
+          },
+          "principles": [
+            "P1",
+            "P8",
+            "P13"
+          ],
+          "description": "Use when exercising an API change over HTTP against the application already running on your own machine, after the automated tests are green and before opening the pull request. Resolves the base URL from the solution itself — the Aspire AppHost, the service's launchSettings profile, or the running dashboard — rather than from a remembered port; checks /health and /alive first and captures which optional integrations are degraded, so a correctly degrading endpoint is not filed as a 500; confirms the running process is the build under test; then exercises the acceptance criteria plus the regression, contract-shape and negative cases, in the estate's manual notation. Never starts the application and never edits code. Every regression it finds becomes a test at the layer holding the logic rather than a document to re-run by hand."
+        },
+        {
+          "name": "cloud-test",
+          "kind": "procedure",
+          "source": "docs/delivery/CLOUD-TEST.md",
+          "frontMatter": {
+            "argument-hint": "[base-url] [ticket-id]",
+            "disallowed-tools": "Edit, NotebookEdit"
+          },
+          "principles": [
+            "P5",
+            "P7",
+            "P12"
+          ],
+          "description": "Use when exercising an API against a deployed environment — a preview, a shared non-production environment, or anything else reachable over the network. The target base URL is passed in and echoed back, never derived from a naming convention, because a guessed host either wastes the pass or hits the wrong environment. Read-only by default: writes need authorising in that run, irreversible operations need confirming one at a time, and production stays read-only regardless. Confirms the deployed build actually contains the change before trusting any result, captures degraded optional integrations, and accounts for scale-to-zero cold starts. Credentials come from the environment and never reach a document; neither do real users' data or full response bodies. Never deploys and never edits code."
         }
       ]
     }

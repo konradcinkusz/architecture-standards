@@ -25,11 +25,20 @@ Boxes naming a `/command` are skills you invoke. Diamonds are gates, and each on
 written exit criteria in the phase document that precedes it — that is the whole point of
 them being drawn as gates rather than as good intentions.
 
+Every phase opens by confirming the constitution and the guides are actually readable, and
+stops if they are not. That is why `architecture-core` is not an optional companion
+install: the phases are written in shorthand — "the kernel stays a kernel", "translate at
+the edge" — and shorthand applied from memory produces output that sounds compliant
+without being checkable. Each phase also requires every rule-shaped statement it emits to
+cite the principle or guide section behind it, so an analysis, a decision or a review
+finding can be traced back rather than taken on trust.
+
 ```mermaid
 flowchart TD
-    A([Incoming ticket]) --> B["<b>/ticket-analysis</b><br/>read against the architecture,<br/>map criteria to layers and files"]
-    B --> C["exploratory round<br/><i>read-only, inside the phase</i>"]
-    C --> D{"Gate: zero blocking questions ·<br/>every criterion mapped ·<br/>owning context named"}
+    A([Incoming ticket]) --> B["<b>/ticket-analysis</b><br/>every criterion to a layer,<br/>a principle and named files"]
+    B --> B2["compliance items at risk:<br/>kept, or a recorded decision"]
+    B2 --> C["exploratory round<br/><i>read-only, inside the phase</i>"]
+    C --> D{"Gate: no blocking questions ·<br/>every row complete · one context ·<br/>every risked item kept or decided"}
 
     D -- "questions outstanding" --> E["ask, or explore further"]
     E --> B
@@ -42,7 +51,8 @@ flowchart TD
 
     H -- fail --> F
     H -- pass --> I["manual test document<br/><i>only if TESTING-STRATEGY §7 applies</i>"]
-    I --> J["decisions recorded ·<br/>PR description written"]
+    I --> V["<i>optional, if the change has an HTTP surface</i><br/><b>/test-on-localhost</b> · <b>/cloud-test</b>"]
+    V --> J["decisions recorded ·<br/>PR description written"]
     J --> K["<b>/pr-review</b><br/>criteria first, then the<br/>compliance checklist, then test bodies"]
     K --> L{"Verdict against the ticket"}
 
@@ -51,7 +61,7 @@ flowchart TD
 
     classDef skill fill:#dbeafe,stroke:#1d4ed8,color:#1e3a8a
     classDef gate fill:#fef3c7,stroke:#b45309,color:#78350f
-    class B,F,K skill
+    class B,F,K,V skill
     class D,H,L gate
 ```
 
@@ -61,16 +71,18 @@ Against the manual flow this replaces, node by node:
 
 | Was | Now |
 |---|---|
-| Ticket analysis, by hand | `/ticket-analysis` — same phase, with the gate's three conditions written down instead of eyeballed |
+| Ticket analysis, by hand | `/ticket-analysis` — and its output is a table, not prose: one row per acceptance criterion, carrying the layer, the governing principle, the guide to load and the files. A criterion with no layer is not analysed yet |
+| *(nothing — this was implicit)* | A walk of the compliance checklist for the layers touched, listing what the change puts at risk, so a deviation is decided here rather than discovered mid-diff |
 | Exploratory agent round | A step *inside* that phase, explicitly read-only, run before the code is allowed to redefine the requirement |
 | Generate questions → resolve gaps → back to analysis | The same loop, but a question is only blocking if it blocks a decision; the rest become documented assumptions that reach the pull request |
 | **Master prompt generation** | **Gone** |
 | **Run master prompt** | **Gone** |
 | Implementation phase (a: code, b: tests) | `/implementation-phase` — both tracks, in one procedure, in order |
 | Optional test artifacts | A step inside that phase, conditional on what the change actually touches |
+| *(was: run it and click around)* | `/test-on-localhost` and `/cloud-test` — the same pass written down, with the base URL resolved from the solution or passed in, health and degraded integrations captured first, and findings that must cite a principle to count |
 | Create PR draft | §6 of the same phase, so the description is written from the work rather than reconstructed after it |
 | PR review agent | `/pr-review`, which cannot edit — `disallowed-tools` enforces it |
-| "Results satisfactory?" ×2, "Enough information?" | Three gates with named exit criteria |
+| "Results satisfactory?" ×2, "Enough information?" | Three gates with named exit criteria — the first of them four conditions, not a feeling |
 
 **The two nodes that disappear are the point.** Generating a master prompt and then running
 it are two steps and one feedback edge that exist *only because the prompt is a text
@@ -147,6 +159,35 @@ at the layer holding the logic, including the regression half; the manual test d
 only where automation genuinely cannot substitute for a human; recorded decisions; and the
 pull-request description.
 
+Between implementation and review, optionally — only when the change has an HTTP surface
+worth seeing over the wire:
+
+```
+/test-on-localhost ABC-123
+```
+
+Exercises the change against the API **already running on your machine**. It resolves the
+base URL from the solution itself — the Aspire AppHost (P1), the service's
+`launchSettings` profile, or the running dashboard — rather than from a remembered port.
+It checks `/health` and `/alive` first and records which optional integrations are degraded
+(P8), because that is the difference between a broken endpoint and one correctly degrading.
+It never starts the application and never edits code.
+
+```
+/cloud-test https://<host> ABC-123
+```
+
+The same pass against a deployed environment. **The base URL is a parameter**, echoed back
+before the first request and never derived from a naming convention — a guessed host either
+wastes the pass or hits the wrong environment. Read-only by default; writes need
+authorising in that run, irreversible operations need confirming one at a time, and
+production stays read-only regardless. It confirms the deployed build actually carries your
+change before trusting any result (P12), and treats a slow first request as scale-to-zero
+(P7) rather than a latency finding.
+
+Both keep credentials in the environment and out of every document, and neither writes a
+results file unless somebody will read it.
+
 ```
 /pr-review ABC-123
 ```
@@ -171,6 +212,9 @@ The phases are separable, and pretending otherwise makes them ceremony:
 - **`/pr-review` stands alone.** It is useful on any pull request with acceptance criteria,
   including ones no agent implemented — reviewing someone else's work against the
   compliance checklist is its own job.
+- **The two verification passes are optional and independent.** A change with no HTTP
+  surface needs neither. `/cloud-test` is also useful with no ticket at all — pointed at an
+  environment to establish what is deployed and what is degraded there.
 
 What does not bend: the gates. Compressing a phase is a decision you record; passing a gate
 you did not meet is the failure the gates exist to catch.
