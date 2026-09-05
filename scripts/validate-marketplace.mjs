@@ -19,6 +19,20 @@ const read = (path) => readFileSync(join(ROOT, path), 'utf8');
 const readJson = (path) => JSON.parse(read(path));
 const SEMVER = /^\d+\.\d+\.\d+$/;
 const SKILL_NAME = /^[a-z0-9]+(-[a-z0-9]+)*$/;
+// Everything a SKILL.md front-matter may declare here. A procedure skill adds the keys
+// that decide who may invoke it and what it may touch while active; a misspelt one would
+// otherwise be ignored by the client, silently turning a gate off.
+const SKILL_KEYS = new Set([
+  'name',
+  'description',
+  'argument-hint',
+  'arguments',
+  'disable-model-invocation',
+  'user-invocable',
+  'allowed-tools',
+  'disallowed-tools',
+  'model',
+]);
 
 // Front-matter is a fixed shape here (the generator writes it), so a full YAML parser
 // would be more dependency than the job needs.
@@ -31,7 +45,7 @@ function frontMatter(text, where) {
   const fields = {};
   let key = null;
   for (const line of match[1].split('\n')) {
-    const start = line.match(/^([a-zA-Z_]+):\s*(.*)$/);
+    const start = line.match(/^([a-zA-Z_][a-zA-Z0-9_-]*):\s*(.*)$/);
     if (start) {
       key = start[1];
       fields[key] = start[2].replace(/^>-?\s*$/, '').trim();
@@ -159,6 +173,12 @@ for (const entry of marketplace.plugins ?? []) {
     }
     if (!/\buse when\b/i.test(description)) {
       fail(skillPath, 'description should say when to use the skill — that is what routes it');
+    }
+
+    for (const key of Object.keys(fields)) {
+      if (!SKILL_KEYS.has(key)) {
+        fail(skillPath, `unknown front-matter key "${key}"`);
+      }
     }
 
     checkRelativeLinks(text, skillDir, skillPath);

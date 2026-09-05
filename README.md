@@ -174,6 +174,34 @@ with the constitution, then pull in the guides the work touches.
   surface per the frontend/BFF guide, UI/UX documentation, deployment to Fly.io, and
   an optional parallel Azure provisioning job.
 
+## The delivery phases
+
+The playbook and the master prompt above cover a *session* against a whole repo. These
+cover a *ticket*: the recurring procedure that used to be a master prompt rewritten and
+pasted per ticket. Each one installs as a skill you invoke — `/ticket-analysis`,
+`/implementation-phase`, `/pr-review` — and each states its rules in the constitution's
+terms rather than restating them.
+
+- [`docs/delivery/WORKFLOW.md`](docs/delivery/WORKFLOW.md) — **start here**: the flow as a
+  diagram, what changed against running the phases by hand, how to install the plugin, and
+  the three commands in order. Also says when to break the sequence, and what a client
+  without slash commands does and does not give you.
+- [`docs/delivery/TICKET-ANALYSIS.md`](docs/delivery/TICKET-ANALYSIS.md) — the phase
+  before implementation, and the gate out of it: read the ticket against the architecture
+  rather than against the code, map every acceptance criterion to a layer and a file, run
+  the exploratory round read-only, and separate blocking questions from assumptions worth
+  documenting.
+- [`docs/delivery/IMPLEMENTATION-PHASE.md`](docs/delivery/IMPLEMENTATION-PHASE.md) —
+  pre-analysis that proves the build green and names every file before an edit;
+  implementation keyed to the principles a diff can actually violate; tests at the layer
+  that holds the logic, with the regression half that usually gets skipped; a manual test
+  document only where automation genuinely cannot substitute for a human; recorded
+  decisions and the pull-request description. Formatting is left to `.editorconfig`.
+- [`docs/delivery/PR-REVIEW.md`](docs/delivery/PR-REVIEW.md) — the last gate: start from
+  the acceptance criteria rather than the diff, require both satisfying code and a proving
+  test for each, walk the compliance checklist for every layer touched, read test bodies
+  instead of counting them, and end with an explicit verdict.
+
 ## Proposals
 
 A proposal is a *candidate*, not a standard: something the estate does that the guides

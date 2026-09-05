@@ -20,6 +20,10 @@
     "research-standards": {
       "version": "1.1.0",
       "contentHash": "sha256:9bd477fcbb5137e3"
+    },
+    "ticket-delivery": {
+      "version": "1.0.0",
+      "contentHash": "sha256:a49ddd0cdff78ff0"
     }
   }
 }

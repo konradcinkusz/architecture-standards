@@ -2,7 +2,7 @@
   "name": "architecture-standards",
   "metadata": {
     "description": "The estate's architecture constitution and operational guides, packaged as installable agent plugins.",
-    "version": "1.0.0"
+    "version": "1.1.0"
   },
   "owner": {
     "name": "Konrad Cinkusz",
@@ -109,6 +109,26 @@
         "reproducibility"
       ],
       "source": "./plugins/research-standards"
+    },
+    {
+      "name": "ticket-delivery",
+      "description": "The per-ticket delivery procedure as phases you invoke: ticket analysis and the gate into implementation, the implementation phase itself, and the review of a pull request against the ticket. Unlike the other plugins, which are rules you consult, these are procedures you run — expressed in the constitution's terms rather than a generic checklist.",
+      "version": "1.0.0",
+      "author": {
+        "name": "Konrad Cinkusz",
+        "url": "https://github.com/konradcinkusz"
+      },
+      "homepage": "https://github.com/konradcinkusz/architecture-standards",
+      "repository": "https://github.com/konradcinkusz/architecture-standards",
+      "keywords": [
+        "ticket",
+        "workflow",
+        "implementation",
+        "code-review",
+        "process",
+        "delivery"
+      ],
+      "source": "./plugins/ticket-delivery"
     }
   ]
 }
