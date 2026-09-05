@@ -197,6 +197,13 @@ pattern is worse than no skill.
 - [`docs/proposals/AGENT-IDENTITY-AND-DELEGATION.md`](docs/proposals/AGENT-IDENTITY-AND-DELEGATION.md)
   — what credential an agent carries into a first-party API, and whose authority it
   spends. **Proposal**, with a written promotion test waiting on `authservice` ADR 0004.
+- [`docs/proposals/TICKET-DELIVERY-WORKFLOW.md`](docs/proposals/TICKET-DELIVERY-WORKFLOW.md)
+  — the ticket workflow's hand-pasted master prompts as installed skills: why no
+  `commands/` directory is needed (every skill here is already a slash command), the one
+  generator change that would make an *executable* skill possible alongside the
+  twenty-six knowledge skills, and the split between the generic procedure and the
+  employer-specific profile that keeps the second half out of a public repository.
+  **Proposal**.
 
 ## Origin
 
