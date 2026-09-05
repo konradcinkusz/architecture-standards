@@ -14,6 +14,7 @@ they fit together and how to install them.
 
 **Contents**
 
+0. [The standards have to be in front of you](#0-the-standards-have-to-be-in-front-of-you)
 1. [Establish what is actually being reviewed](#1-establish-the-diff)
 2. [Acceptance criteria first](#2-acceptance-criteria-first)
 3. [The architectural pass](#3-the-architectural-pass)
@@ -23,6 +24,26 @@ they fit together and how to install them.
 7. [Checklist](#7-checklist)
 
 ---
+
+## 0. The standards have to be in front of you
+
+A review is only worth the authority behind it. Confirm you can actually open
+[`00-REFERENCE-ARCHITECTURE.md`](../architecture/00-REFERENCE-ARCHITECTURE.md) — P1–P15
+and the compliance checklist — and the guides for the domains the diff touches, because
+`architecture-core@architecture-standards` is installed or this repository is attached.
+**If you cannot, stop and say so, and do not file architectural findings.** A finding
+raised from a remembered rule is the worst output this phase can produce: it costs the
+author real work, it cannot be checked against a source, and being wrong once teaches
+everyone to discount the next one.
+
+Read the pull request's own **recorded decisions before the diff**. A deviation the author
+justified under P14 is not a finding, and reporting it as one wastes the review's
+credibility on something already answered.
+
+**Every finding cites its source** — the principle (`P2`) or guide section
+(`TESTING-STRATEGY.md` §6) it rests on. A finding with no citation is a preference. It may
+still be a good preference, but it is filed under *consider* in §5 and labelled as
+personal taste, never dressed as a standard.
 
 ## 1. Establish the diff
 
@@ -117,6 +138,8 @@ findings named. "Looks good, some comments" is not a verdict.
 
 ## 7. Checklist
 
+- [ ] Constitution and guides confirmed readable; no architectural findings filed if not
+- [ ] Every finding cites the principle or guide section it rests on; uncited ones labelled as preference
 - [ ] Diffed against the repository's real base branch; every changed file read
 - [ ] Each acceptance criterion mapped to the code that satisfies it **and** the test that proves it
 - [ ] Changes with no criterion behind them identified and classified

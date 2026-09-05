@@ -25,11 +25,20 @@ Boxes naming a `/command` are skills you invoke. Diamonds are gates, and each on
 written exit criteria in the phase document that precedes it — that is the whole point of
 them being drawn as gates rather than as good intentions.
 
+Every phase opens by confirming the constitution and the guides are actually readable, and
+stops if they are not. That is why `architecture-core` is not an optional companion
+install: the phases are written in shorthand — "the kernel stays a kernel", "translate at
+the edge" — and shorthand applied from memory produces output that sounds compliant
+without being checkable. Each phase also requires every rule-shaped statement it emits to
+cite the principle or guide section behind it, so an analysis, a decision or a review
+finding can be traced back rather than taken on trust.
+
 ```mermaid
 flowchart TD
-    A([Incoming ticket]) --> B["<b>/ticket-analysis</b><br/>read against the architecture,<br/>map criteria to layers and files"]
-    B --> C["exploratory round<br/><i>read-only, inside the phase</i>"]
-    C --> D{"Gate: zero blocking questions ·<br/>every criterion mapped ·<br/>owning context named"}
+    A([Incoming ticket]) --> B["<b>/ticket-analysis</b><br/>every criterion to a layer,<br/>a principle and named files"]
+    B --> B2["compliance items at risk:<br/>kept, or a recorded decision"]
+    B2 --> C["exploratory round<br/><i>read-only, inside the phase</i>"]
+    C --> D{"Gate: no blocking questions ·<br/>every row complete · one context ·<br/>every risked item kept or decided"}
 
     D -- "questions outstanding" --> E["ask, or explore further"]
     E --> B
@@ -61,7 +70,8 @@ Against the manual flow this replaces, node by node:
 
 | Was | Now |
 |---|---|
-| Ticket analysis, by hand | `/ticket-analysis` — same phase, with the gate's three conditions written down instead of eyeballed |
+| Ticket analysis, by hand | `/ticket-analysis` — and its output is a table, not prose: one row per acceptance criterion, carrying the layer, the governing principle, the guide to load and the files. A criterion with no layer is not analysed yet |
+| *(nothing — this was implicit)* | A walk of the compliance checklist for the layers touched, listing what the change puts at risk, so a deviation is decided here rather than discovered mid-diff |
 | Exploratory agent round | A step *inside* that phase, explicitly read-only, run before the code is allowed to redefine the requirement |
 | Generate questions → resolve gaps → back to analysis | The same loop, but a question is only blocking if it blocks a decision; the rest become documented assumptions that reach the pull request |
 | **Master prompt generation** | **Gone** |
@@ -70,7 +80,7 @@ Against the manual flow this replaces, node by node:
 | Optional test artifacts | A step inside that phase, conditional on what the change actually touches |
 | Create PR draft | §6 of the same phase, so the description is written from the work rather than reconstructed after it |
 | PR review agent | `/pr-review`, which cannot edit — `disallowed-tools` enforces it |
-| "Results satisfactory?" ×2, "Enough information?" | Three gates with named exit criteria |
+| "Results satisfactory?" ×2, "Enough information?" | Three gates with named exit criteria — the first of them four conditions, not a feeling |
 
 **The two nodes that disappear are the point.** Generating a master prompt and then running
 it are two steps and one feedback edge that exist *only because the prompt is a text
