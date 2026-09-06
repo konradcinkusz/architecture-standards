@@ -18,6 +18,7 @@ happens to do.
 |---|---|
 | `docs/architecture/` | The constitution: 15 principles plus the compliance checklist |
 | `docs/guides/` | Seventeen repo-agnostic operational guides |
+| `docs/scaffold/` | The greenfield initializer procedure (`/init-generic-template`) |
 | `docs/research/` | The research-documentation standard and its templates |
 | `docs/proposals/` | Unmerged proposals — explicitly not yet standards |
 | `catalog/` | Hand-authored metadata: skill descriptions, plugin grouping, agent definitions |

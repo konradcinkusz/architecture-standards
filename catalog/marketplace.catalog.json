@@ -14,15 +14,17 @@
   "plugins": [
     {
       "name": "architecture-core",
-      "version": "1.2.0",
-      "description": "The architectural constitution (P1-P15), the review/modernize/recover session playbook, and the repository baseline. Install this one first; the other plugins assume it.",
+      "version": "1.3.0",
+      "description": "The architectural constitution (P1-P15), the review/modernize/recover session playbook, the repository baseline, and the greenfield initializer that scaffolds an empty repo into a compliant containerized application. Install this one first; the other plugins assume it.",
       "keywords": [
         "architecture",
         "standards",
         "dotnet",
         "aspire",
         "review",
-        "baseline"
+        "baseline",
+        "scaffolding",
+        "greenfield"
       ],
       "agents": [
         "architecture-review",
@@ -46,12 +48,24 @@
         {
           "name": "master-delivery-prompt",
           "source": "docs/MASTER-PROMPT.md",
-          "description": "Use when running a delivery session against an application repo — one that must end aligned to the standards AND live as a workable product. The generic fill-in prompt covering, in phases: the assessment (a playbook mode plus gap analysis against the compliance checklist), adopting the external authservice as the system's only identity provider, bringing the frontend to a Next.js product surface under the frontend/BFF rules, comprehensive UI/UX documentation with a ranked backlog, shipping every service to Fly.io, and an optional parallel Azure provisioning job. States what to attach, the read-only scope of the standards and authservice repos, and the definition of done."
+          "description": "Use when running a delivery session against an application repo \u2014 one that must end aligned to the standards AND live as a workable product. The generic fill-in prompt covering, in phases: the assessment (a playbook mode plus gap analysis against the compliance checklist), adopting the external authservice as the system's only identity provider, bringing the frontend to a Next.js product surface under the frontend/BFF rules, comprehensive UI/UX documentation with a ranked backlog, shipping every service to Fly.io, and an optional parallel Azure provisioning job. States what to attach, the read-only scope of the standards and authservice repos, and the definition of done."
         },
         {
           "name": "repo-baseline",
           "source": "docs/guides/REPO-BASELINE.md",
           "description": "Use when creating a new repository, or auditing an existing repo's hygiene and developer tooling. What every repo carries before its first feature: hygiene files, secret scanning in pre-commit and CI, one-command onboarding, operational script conventions, workflow lifecycle and archiving, in-repo AI agent definitions with allowlisted tools and repo-relative paths, declaring architecture-standards adoption via `.claude/settings.json` rather than relying on memory, and documentation staleness rules."
+        },
+        {
+          "name": "init-generic-template",
+          "source": "docs/scaffold/INIT-GENERIC-TEMPLATE.md",
+          "kind": "procedure",
+          "frontMatter": {
+            "argument-hint": "[repo-name]"
+          },
+          "principles": [
+            "P1-P15"
+          ],
+          "description": "Use when starting a brand-new repository from nothing - the repo name is passed and the repo is empty. Scaffolds the estate's default containerized application in one pass: an Aspire AppHost composition root, a ServiceDefaults kernel with its size and no-domain guards, one service owning its database and migrating it from a hosted service, a Next.js product surface with runtime config, cookie sessions and the catch-all BFF proxy, multi-stage Dockerfiles, a Fly.io app per service, tag-driven workflows that provision a cold estate from the first tag, the repository baseline (secret scanning, one-command onboarding, central package management), and the docs set including ADRs and the LaTeX PDF track. Derives every name from the repo name and runs the verification gates before the first commit. Refuses a repo that already holds an application - that is a modernize or delivery session, not an init."
         }
       ]
     },
@@ -286,7 +300,7 @@
     {
       "name": "ticket-delivery",
       "version": "2.0.0",
-      "description": "The per-ticket delivery procedure as phases you invoke: ticket analysis against an analysis document you refine run by run, the generation of a self-contained master prompt from it, the implementation phase itself, the review of a pull request against the ticket, and a feedback phase that lands a correction in the artifact that owns it. Unlike the other plugins, which are rules you consult, these are procedures you run — expressed in the constitution's terms rather than a generic checklist.",
+      "description": "The per-ticket delivery procedure as phases you invoke: ticket analysis against an analysis document you refine run by run, the generation of a self-contained master prompt from it, the implementation phase itself, the review of a pull request against the ticket, and a feedback phase that lands a correction in the artifact that owns it. Unlike the other plugins, which are rules you consult, these are procedures you run \u2014 expressed in the constitution's terms rather than a generic checklist.",
       "keywords": [
         "ticket",
         "workflow",
@@ -309,7 +323,7 @@
             "P3",
             "P13"
           ],
-          "description": "Use when starting work on a ticket, before any implementation, or when unsure whether a ticket is ready to implement at all. Turns the business request into an architectural one: a table with a row per acceptance criterion carrying the owning context and layer, the principle that governs it, the guide implementation must load, and the files — then a walk of the compliance checklist listing what the change puts at risk, so a deviation is decided and recorded here rather than discovered mid-diff. Takes the analysis document as its argument and revises it in place run after run, amending rows and striking answered questions rather than regenerating an essay. Reads the ticket against the architecture rather than against the existing code, runs a read-only exploratory round, then reports the four gate conditions with their evidence and leaves the decision to proceed to the person — recording anything they proceed without as an accepted risk. Refuses to start if the standards are not readable in the session."
+          "description": "Use when starting work on a ticket, before any implementation, or when unsure whether a ticket is ready to implement at all. Turns the business request into an architectural one: a table with a row per acceptance criterion carrying the owning context and layer, the principle that governs it, the guide implementation must load, and the files \u2014 then a walk of the compliance checklist listing what the change puts at risk, so a deviation is decided and recorded here rather than discovered mid-diff. Takes the analysis document as its argument and revises it in place run after run, amending rows and striking answered questions rather than regenerating an essay. Reads the ticket against the architecture rather than against the existing code, runs a read-only exploratory round, then reports the four gate conditions with their evidence and leaves the decision to proceed to the person \u2014 recording anything they proceed without as an accepted risk. Refuses to start if the standards are not readable in the session."
         },
         {
           "name": "generate-master-prompt",
@@ -324,7 +338,7 @@
             "P5",
             "P14"
           ],
-          "description": "Use when a ticket's analysis is accepted and there is enough information to implement it — invoking this is what that answer means. Takes the analysis this session has been working on — or a path to another one — and turns it into one self-contained master prompt a coding agent can be handed in a local development environment or another session: the acceptance criteria verbatim, the analysis table copied whole with its layers, principles, guides and named files, what is out of scope, the compliance items at risk, the recorded decisions and the accepted risks — plus a single line handing off to the installed implementation phase rather than a retyped copy of it, because the procedure does not vary per ticket and the content does. Invents nothing: a gap found while generating is reported and sent back to analysis instead of resolved. Keeps secrets, real users' data and machine-specific paths out of the prompt, writes it beside the analysis, and stops rather than running it."
+          "description": "Use when a ticket's analysis is accepted and there is enough information to implement it \u2014 invoking this is what that answer means. Takes the analysis this session has been working on \u2014 or a path to another one \u2014 and turns it into one self-contained master prompt a coding agent can be handed in a local development environment or another session: the acceptance criteria verbatim, the analysis table copied whole with its layers, principles, guides and named files, what is out of scope, the compliance items at risk, the recorded decisions and the accepted risks \u2014 plus a single line handing off to the installed implementation phase rather than a retyped copy of it, because the procedure does not vary per ticket and the content does. Invents nothing: a gap found while generating is reported and sent back to analysis instead of resolved. Keeps secrets, real users' data and machine-specific paths out of the prompt, writes it beside the analysis, and stops rather than running it."
         },
         {
           "name": "implementation-phase",
@@ -343,7 +357,7 @@
             "P14",
             "P15"
           ],
-          "description": "Use when implementing an approved ticket, once analysis and planning are done — the fixed procedure that replaces rewriting an implementation prompt per ticket. Pre-analysis that proves the build green and names every file and existing test before an edit is made; implementation keyed to the principles a diff can actually violate, from a kernel free of domain through database ownership, migrations, secrets, degrading optional dependencies, wiring, anti-corruption and observability to the API patterns; tests at the layer holding the logic, with regression coverage and the per-test bar; a manual test document only where automation genuinely cannot substitute for a human; recorded decisions that cite the principle behind them; and the pull-request description. Formatting is left to .editorconfig rather than restated. Refuses to proceed if the standards are not actually readable in the session."
+          "description": "Use when implementing an approved ticket, once analysis and planning are done \u2014 the fixed procedure that replaces rewriting an implementation prompt per ticket. Pre-analysis that proves the build green and names every file and existing test before an edit is made; implementation keyed to the principles a diff can actually violate, from a kernel free of domain through database ownership, migrations, secrets, degrading optional dependencies, wiring, anti-corruption and observability to the API patterns; tests at the layer holding the logic, with regression coverage and the per-test bar; a manual test document only where automation genuinely cannot substitute for a human; recorded decisions that cite the principle behind them; and the pull-request description. Formatting is left to .editorconfig rather than restated. Refuses to proceed if the standards are not actually readable in the session."
         },
         {
           "name": "pr-review",
@@ -371,7 +385,7 @@
             "P8",
             "P13"
           ],
-          "description": "Use when exercising an API change over HTTP against the application already running on your own machine, after the automated tests are green and before opening the pull request. Resolves the base URL from the solution itself — the Aspire AppHost, the service's launchSettings profile, or the running dashboard — rather than from a remembered port; checks /health and /alive first and captures which optional integrations are degraded, so a correctly degrading endpoint is not filed as a 500; confirms the running process is the build under test; then exercises the acceptance criteria plus the regression, contract-shape and negative cases, in the estate's manual notation. Never starts the application and never edits code. Every regression it finds becomes a test at the layer holding the logic rather than a document to re-run by hand."
+          "description": "Use when exercising an API change over HTTP against the application already running on your own machine, after the automated tests are green and before opening the pull request. Resolves the base URL from the solution itself \u2014 the Aspire AppHost, the service's launchSettings profile, or the running dashboard \u2014 rather than from a remembered port; checks /health and /alive first and captures which optional integrations are degraded, so a correctly degrading endpoint is not filed as a 500; confirms the running process is the build under test; then exercises the acceptance criteria plus the regression, contract-shape and negative cases, in the estate's manual notation. Never starts the application and never edits code. Every regression it finds becomes a test at the layer holding the logic rather than a document to re-run by hand."
         },
         {
           "name": "cloud-test",
@@ -386,7 +400,7 @@
             "P7",
             "P12"
           ],
-          "description": "Use when exercising an API against a deployed environment — a preview, a shared non-production environment, or anything else reachable over the network. The target base URL is passed in and echoed back, never derived from a naming convention, because a guessed host either wastes the pass or hits the wrong environment. Read-only by default: writes need authorising in that run, irreversible operations need confirming one at a time, and production stays read-only regardless. Confirms the deployed build actually contains the change before trusting any result, captures degraded optional integrations, and accounts for scale-to-zero cold starts. Credentials come from the environment and never reach a document; neither do real users' data or full response bodies. Never deploys and never edits code."
+          "description": "Use when exercising an API against a deployed environment \u2014 a preview, a shared non-production environment, or anything else reachable over the network. The target base URL is passed in and echoed back, never derived from a naming convention, because a guessed host either wastes the pass or hits the wrong environment. Read-only by default: writes need authorising in that run, irreversible operations need confirming one at a time, and production stays read-only regardless. Confirms the deployed build actually contains the change before trusting any result, captures degraded optional integrations, and accounts for scale-to-zero cold starts. Credentials come from the environment and never reach a document; neither do real users' data or full response bodies. Never deploys and never edits code."
         },
         {
           "name": "ticket-feedback",
@@ -398,7 +412,7 @@
           "principles": [
             "P14"
           ],
-          "description": "Use when correcting a delivery artifact mid-ticket: answering an open question, saying the analysis read a criterion wrongly, reporting that a master prompt's run produced the wrong thing, or noting that the ticket itself has moved. Names the artifact that owns the correction before changing anything, classifies it as new information, a correction, a scope change or a preference, and lands it in the document rather than only in the reply — quoting the words it arrived in, striking the question it answers with its answer and who gave it, and appending to the revision log. Then names what has gone stale: a changed row makes the master prompt stale, along with any code already written against it, and the prompt is regenerated rather than edited. Refuses to widen scope quietly, to turn a preference into a standard, or to close a question because it was discussed."
+          "description": "Use when correcting a delivery artifact mid-ticket: answering an open question, saying the analysis read a criterion wrongly, reporting that a master prompt's run produced the wrong thing, or noting that the ticket itself has moved. Names the artifact that owns the correction before changing anything, classifies it as new information, a correction, a scope change or a preference, and lands it in the document rather than only in the reply \u2014 quoting the words it arrived in, striking the question it answers with its answer and who gave it, and appending to the revision log. Then names what has gone stale: a changed row makes the master prompt stale, along with any code already written against it, and the prompt is regenerated rather than edited. Refuses to widen scope quietly, to turn a preference into a standard, or to close a question because it was discussed."
         }
       ]
     }
