@@ -8,10 +8,11 @@ A written architecture constitution for .NET Aspire services on Fly.io and Azure
 fifteen principles plus twenty-two operational guides, each one extracted from systems
 already running in production rather than written from first principles. It ships three
 ways: as documentation you read; as installable agent plugins, so a coding agent reads
-the standard instead of re-deriving it from whatever code it happens to see; and as a
-per-ticket delivery procedure you invoke — `/ticket-analysis`,
-`/generate-master-prompt`, `/implementation-phase`, `/pr-review` — which runs a ticket
-through those same standards and stops rather than guess if it cannot read them.
+the standard instead of re-deriving it from whatever code it happens to see; and as
+procedures you invoke — `/init-generic-template` to scaffold an empty repo into a
+compliant system, then `/ticket-analysis`, `/generate-master-prompt`,
+`/implementation-phase` and `/pr-review` to run a ticket through those same standards,
+each of them stopping rather than guessing if it cannot read them.
 
 **Start here:** [the constitution](docs/architecture/00-REFERENCE-ARCHITECTURE.md) for
 the principles, [the guide index](#operational-guides) below for the domain you are
@@ -176,6 +177,26 @@ with the constitution, then pull in the guides the work touches.
   playbook mode, `authservice` adopted as the only identity provider, a Next.js product
   surface per the frontend/BFF guide, UI/UX documentation, deployment to Fly.io, and
   an optional parallel Azure provisioning job.
+
+## Starting a new repository
+
+The playbook and the master prompt above both assume a repository that already holds
+something. This one is the other end: an empty repo, and one command that leaves it holding
+a compliant system.
+
+- [`docs/scaffold/INIT-GENERIC-TEMPLATE.md`](docs/scaffold/INIT-GENERIC-TEMPLATE.md) —
+  installs as `/init-generic-template <repo-name>`. Takes the repository name, derives
+  every other name from it, and scaffolds the estate's default containerized application in
+  one pass: the Aspire composition root, the shared kernel with its size and no-domain
+  guards, one service that owns and migrates its database, a Next.js product surface under
+  the frontend/BFF rules, a container per service, a Fly.io app per service with every
+  pinning decision justified, the tag-driven workflows that bring a cold estate up from the
+  first tag, the whole repository baseline, and the documentation set — ADRs, an opened
+  deviation register, and the LaTeX/PDF track. It records the three decisions that are
+  genuinely decisions (region, registry, whether the system has users) rather than
+  defaulting them silently, runs its verification gates — including the zero-credential
+  run — before the first commit, and **refuses a repository that already holds an
+  application**, because that is a modernize or a delivery session and not an init.
 
 ## The delivery phases
 
