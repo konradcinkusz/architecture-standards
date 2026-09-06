@@ -203,7 +203,7 @@ system that exercises every principle — not a demonstration of every guide at 
 │  ├─ diagrams/*.mmd                    one diagram per file, one source (RESEARCH §"Diagrams in a PDF")
 │  └─ papers/<slug>-overview.tex        house style, explicitly not a research paper
 └─ .github/
-   ├─ CODEOWNERS · dependabot.yml · pull_request_template.md · ISSUE_TEMPLATE/
+   ├─ CODEOWNERS · dependabot.yml (declared, limit 0) · pull_request_template.md · ISSUE_TEMPLATE/
    ├─ agents/                           in-repo agent definitions, allowlisted tools
    └─ workflows/  ci.yml · secret-scan.yml · codeql.yml
                   flyio.yml · flyio-scale.yml · flyio-destroy.yml
@@ -219,11 +219,39 @@ This is [`REPO-BASELINE.md`](https://github.com/konradcinkusz/architecture-stand
 section most likely to be skipped as "not the interesting part". Every item in its §1 table
 exists because something in the estate was lost to its absence.
 
-- **Hygiene files** (§1): `CODEOWNERS`, `dependabot.yml` covering every ecosystem the repo
-  actually has (nuget, npm, github-actions, docker), a real `.editorconfig`, a real
-  `.gitattributes` — not the stock template with every rule commented out — and an
-  **exclusion-based `.dockerignore`**, so a backend image build does not ship `web/`,
-  `tests/` and `docs/` as build context.
+- **Hygiene files** (§1): `CODEOWNERS`, a real `.editorconfig`, a real `.gitattributes` —
+  not the stock template with every rule commented out — and an **exclusion-based
+  `.dockerignore`**, so a backend image build does not ship `web/`, `tests/` and `docs/` as
+  build context.
+- **Dependency update automation: configured, and off.** `.github/dependabot.yml` is
+  written with every ecosystem the repo actually has (nuget, npm, github-actions, docker)
+  and a schedule for each, and **every one of them carries
+  `open-pull-requests-limit: 0`** — Dependabot's own switch for "declared but opening no
+  version-update pull requests". Turning it on later is one line per ecosystem against a
+  file somebody already reviewed, rather than a research task on the day it is wanted.
+
+  This is a **deliberate deviation** from [`REPO-BASELINE.md`](https://github.com/konradcinkusz/architecture-standards/blob/main/docs/guides/REPO-BASELINE.md)
+  §1, which lists dependency-update automation as a baseline item, so it is recorded as
+  one: an ADR under §9 and a dated row in the deviation register, never a silent
+  omission. The reasoning the ADR should carry, because it is what makes the deviation
+  reviewable rather than merely convenient:
+
+  - A repository on its first day has no one to own a bump. Automation that opens pull
+    requests nobody triages produces the thing baselines exist to prevent — a queue that
+    is ignored until it is closed wholesale, after which the repo has *worse* dependency
+    hygiene than one with no automation, because everyone believes it is covered.
+  - The half of §1's concern that is actually about *risk* is already covered from the
+    first commit and not by Dependabot: `NuGetAuditMode=all` with
+    `NuGetAuditLevel=low` in `Directory.Build.props` fails the restore on a vulnerable
+    package, transitive ones included, and the CodeQL workflow (§8) runs the dependency
+    audit. What is deferred is version *freshness*, not vulnerability detection.
+  - **Dependabot security updates and vulnerability alerts are a repository setting, not
+    this file**, so "off by default" here does not turn those off. Say so in the ADR, and
+    say which way the repository setting was left, or the next reader will assume the
+    wrong one.
+  - Name the trigger for turning it on — the repo has a maintainer who triages, or it
+    goes public — so the row has an exit condition instead of becoming permanent by
+    forgetting.
 - **Central package management** (§1): `Directory.Build.props` for everything that is not a
   version (TFM, `Nullable`, warnings-as-errors, package metadata) and
   `Directory.Packages.props` for every version, exactly once. Projects reference packages by
@@ -438,8 +466,9 @@ that means four things, and a fifth if the system will ever hand somebody a PDF.
   (§3a) — created empty, with the rule that every row carries a date and a reason. An
   acknowledged deviation is a decision; an unacknowledged one is drift.
 - **`docs/adr/`**: `0000-template.md`, `0001-record-architecture-decisions.md`, and one ADR
-  for each decision §1 and §7 actually took — the region, the registry, whether the system
-  has users, and anything you defaulted that a reader might otherwise think was inevitable.
+  for each decision §1, §4 and §7 actually took — the region, the registry, whether the
+  system has users, dependency automation declared but off, and anything you defaulted that
+  a reader might otherwise think was inevitable.
 - **`docs/ux/UI-UX.md`**: the screens and flows as scaffolded, and a ranked backlog, so the
   first delivery session picks the backlog up instead of re-deriving it.
 
@@ -545,6 +574,8 @@ non-goals — so that scope creep has something to fail against:
 | The kernel carries domain by month two | The size check and the architecture test were left for later; prose has already failed twice in this estate (P2) |
 | The README is already untrue at the first pull request | It was written from the plan rather than from the tree (P14) |
 | A credential is committed in week one | The scanner and `.gitignore` were added after the code rather than before it (§4) |
+| Twenty dependency pull requests on a repo with one commit, then all of them closed unread | Dependency automation was switched on before anyone owned the triage; §4 declares it and leaves it at `open-pull-requests-limit: 0` for exactly this |
+| A year in, every dependency is stale and nobody decided that | The §4 deviation was recorded without a trigger for reversing it, so "off for now" became "off" by forgetting |
 | The E2E suite exists and has never run | It was committed without its CI wiring; wiring is part of a suite's definition of done |
 
 ## 14. Checklist
@@ -555,6 +586,7 @@ non-goals — so that scope creep has something to fail against:
 - [ ] Repository confirmed empty; a non-empty one sent to the playbook or the master prompt instead
 - [ ] Toolchain checked and reported; every gate in §10 either run or reported as not run
 - [ ] Baseline first: hygiene files, central package management, `.gitleaks.toml` + hook + CI job, gitignored `.env` with a committed `secrets.env.example` carrying tiers and degrade lines
+- [ ] `dependabot.yml` declares every ecosystem at `open-pull-requests-limit: 0`; the deviation from `REPO-BASELINE.md` §1 carries an ADR, a dated register row, the state of the repository's security-update setting, and a trigger for turning it on
 - [ ] One-command setup on both platforms: prerequisites, secret store, the mandatory secret generated, optional integrations labelled, troubleshooting keyed on exception text
 - [ ] `.claude/settings.json` declares the marketplace and enables `architecture-core`
 - [ ] AppHost declares every resource with `WithReference`, `WaitFor` and `WithHttpHealthCheck`; no secret literal; publish branch treated as a manifest generator
