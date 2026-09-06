@@ -197,6 +197,11 @@ a compliant system.
   defaulting them silently, runs its verification gates — including the zero-credential
   run — before the first commit, and **refuses a repository that already holds an
   application**, because that is a modernize or a delivery session and not an init.
+- [`docs/scaffold/README.md`](docs/scaffold/README.md) — the reader's companion to
+  that procedure, for deciding whether to run it rather than executing it: what the
+  command leaves you with, why the Aspire composition root is unconditional while the
+  three genuine decisions are asked, where the AppHost stops and Fly.io starts, and what
+  it deliberately never creates.
 
 ## The delivery phases
 
