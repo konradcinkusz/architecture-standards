@@ -1,115 +1,59 @@
 % ============================================================================
 % Research paper template (see 00-RESEARCH-DOCUMENTATION.md, "From study to
 % paper"). Copy to <repo>/docs/research/papers/NN-SLUG.tex and replace every
-% ALL-CAPS placeholder. The preamble is the estate's house LaTeX style,
-% extracted from <saas>/docs (business_analysis.tex,
-% pitch-deck-demium.tex) — keep it so papers from different repos look like
-% they come from the same shop.
+% ALL-CAPS placeholder.
 %
-% Build (PDFs are build output — never committed):
+% THE HOUSE STYLE IS NOT IN THIS FILE. It is in HOUSE-PREAMBLE.tex, which you
+% copy into the repository once as docs/research/papers/house-preamble.tex and
+% every document there \inputs -- so that fixing the house style is one edit
+% rather than one edit per document, and so that a document cannot drift out
+% of it by being written from memory. That file's header states the contract;
+% the four \newcommands below are it.
+%
+% Build (PDFs are build output -- never committed):
 %   pdflatex NN-SLUG.tex && pdflatex NN-SLUG.tex
 % ============================================================================
 \documentclass[11pt,a4paper]{article}
 
-% Package imports — the house set
-\usepackage[utf8]{inputenc}
-\usepackage[T1]{fontenc}
-\usepackage{geometry}
-\usepackage{xcolor}
-\usepackage{hyperref}
-\usepackage{graphicx}
-\usepackage{enumitem}
-\usepackage{fancyhdr}
-\usepackage{titlesec}
-\usepackage{parskip}
-\usepackage{booktabs}
-\usepackage{array}
-\usepackage{tabularx}
-
-% Page geometry
-\geometry{
-    a4paper,
-    left=2.2cm,
-    right=2.2cm,
-    top=2.5cm,
-    bottom=2.5cm
-}
-
-% House colors
-\definecolor{primaryblue}{RGB}{41,128,185}
-\definecolor{darkblue}{RGB}{31,78,121}
-\definecolor{lightgray}{RGB}{236,240,241}
-\definecolor{darkgray}{RGB}{52,73,94}
-\definecolor{accentgreen}{RGB}{39,174,96}
-\definecolor{accentorange}{RGB}{230,126,34}
-\definecolor{accentred}{RGB}{231,76,60}
-
-% Section formatting — house style
-\titleformat{\section}
-    {\color{primaryblue}\Large\bfseries\sffamily}
-    {\thesection.}{0.5em}{}[\titlerule]
-
-\titleformat{\subsection}
-    {\color{darkblue}\large\bfseries\sffamily}
-    {\thesubsection}{0.5em}{}
-
-\titleformat{\subsubsection}
-    {\color{darkgray}\normalsize\bfseries\sffamily}
-    {\thesubsubsection}{0.5em}{}
-
-% Paper status: draft | verified — mirrors the study's status header.
-% While the companion study is not `verified`, this MUST say DRAFT.
+% ----------------------------------------------------------------------------
+% The house preamble's contract.
+%
+% \paperstatus is this standard's own marker: draft | verified, mirroring the
+% companion study's status header. WHILE THE STUDY IS NOT VERIFIED THIS MUST
+% SAY DRAFT -- it rides in the header of every page, so a reader who opens the
+% PDF at page 9 still sees it.
+% ----------------------------------------------------------------------------
 \newcommand{\paperstatus}{DRAFT}
+\newcommand{\headerleft}{PROJECT-NAME --- SHORT-PAPER-TITLE}
+\newcommand{\pdftitleline}{PAPER-TITLE}
+\newcommand{\pdfauthorline}{AUTHOR-NAME}
 
-% Header/footer
-\pagestyle{fancy}
-\fancyhf{}
-\renewcommand{\headrulewidth}{0.4pt}
-\fancyhead[L]{\small\sffamily\color{darkgray} PROJECT-NAME --- SHORT-PAPER-TITLE}
-\fancyhead[R]{\small\sffamily\color{accentred} \paperstatus\ --- \today}
-\fancyfoot[C]{\thepage}
+% A second language edition of this paper adds two lines here -- and nothing
+% else -- before the \input (see the standard, "Publishing a document in more
+% than one language"):
+%   \def\houselang{polish}
+%   \def\editionsuffix{.pl}
 
-% Hyperref setup
-\hypersetup{
-    colorlinks=true,
-    linkcolor=primaryblue,
-    urlcolor=primaryblue,
-    pdfauthor={AUTHOR-NAME},
-    pdftitle={PAPER-TITLE}
-}
-
-% House convenience commands
-\newcommand{\repopath}[1]{\colorbox{lightgray}{\texttt{#1}}}
-\newcommand{\finding}[1]{{\color{primaryblue}\textbf{#1}}}
+% Packages beyond the house set go AFTER this line, with a comment saying so.
+\input{house-preamble}
 
 \begin{document}
 
 % ============================================================================
-% TITLE BLOCK — compact, paper-style (not the full-page title of the
-% business docs): title, authors, affiliation, status, date.
+% TITLE BLOCK. The fifth argument is the provenance line: a paper is a
+% presentation of a study, and this is where it says which one and at what
+% commit, so that a reader who finds the two disagreeing knows the study is
+% the document and the paper is stale.
 % ============================================================================
-\thispagestyle{plain}
-\begin{center}
-    {\LARGE\bfseries\sffamily\color{darkblue} PAPER-TITLE}
-
-    \vspace{0.6cm}
-
-    {\large AUTHOR-NAME}
-
-    \vspace{0.2cm}
-
-    {\normalsize\color{darkgray} AFFILIATION-OR-REPO-URL}
-
-    \vspace{0.2cm}
-
-    {\normalsize\color{accentred}\sffamily \paperstatus\ --- \today\ ---
-     companion study: \texttt{docs/research/NN-SLUG.md} at commit \texttt{COMMIT}}
-\end{center}
-
-\vspace{0.4cm}
+\housetitle
+    {PAPER-TITLE}
+    {OPTIONAL-SUBTITLE-OR-LEAVE-EMPTY}
+    {AUTHOR-NAME}
+    {AFFILIATION-OR-REPO-URL}
+    {companion study: \texttt{docs/research/NN-SLUG.md} at commit \texttt{COMMIT}}
 
 % ----------------------------------------------------------------------------
-% Abstract: question, method, headline result. Written last, placed first —
+% Abstract: question, method, headline result. Written last, placed first --
 % same rule as the markdown study.
 % ----------------------------------------------------------------------------
 \begin{abstract}
@@ -118,7 +62,6 @@
 
 \vspace{0.4cm}
 
-% ============================================================================
 \section{Introduction}
 % The context and the research questions, numbered as in the study (RQ1,
 % RQ2, ...) so Results can answer them by name.
@@ -142,10 +85,21 @@ BACKGROUND-TEXT.
 
 METHOD-TEXT.
 
+% A figure is called by slug, never by path -- \dgm resolves the rendered file
+% for this edition. Run the repository's render step BEFORE pdflatex, or the
+% build dies here rather than on the missing diagram you would rather hear
+% about.
+%
+% \begin{figure}[ht]
+% \centering
+% \includegraphics[width=0.7\linewidth]{\dgm{SLUG}}
+% \caption{CAPTION-TEXT.}
+% \end{figure}
+
 \section{Results}
 % Findings tied to RQs, evidence inline. Every number in this section is
 % traceable to the companion study's tests, artifacts, or shown derivations
-% — a paper introduces no numbers of its own.
+% -- a paper introduces no numbers of its own.
 
 RESULTS-TEXT.
 
@@ -178,7 +132,7 @@ IMPLICATIONS-TEXT.
 CONCLUSION-TEXT.
 
 \section*{Reproducibility}
-% Verbatim commands — same as the study's Reproduction section.
+% Verbatim commands -- same as the study's Reproduction section.
 
 Every number in this paper regenerates from the companion study's committed
 artifacts:
@@ -188,7 +142,7 @@ artifacts:
 \end{quote}
 
 % ============================================================================
-% References — numbered and resolvable, mirroring the study's list.
+% References -- numbered and resolvable, mirroring the study's list.
 % thebibliography (no BibTeX) keeps the paper a single self-contained file.
 % ============================================================================
 \begin{thebibliography}{9}

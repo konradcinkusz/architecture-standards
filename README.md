@@ -152,20 +152,33 @@ with the constitution, then pull in the guides the work touches.
   readings, negative results get written up).
 - [`docs/research/TEMPLATE.md`](docs/research/TEMPLATE.md) — the copy-paste
   skeleton for starting a new study.
+- [`docs/research/HOUSE-PREAMBLE.tex`](docs/research/HOUSE-PREAMBLE.tex) — the
+  estate's house LaTeX style as a file you install once per repository and every
+  document `\input`s, rather than a block each one copies. Distributing it as a
+  block did not hold: across the three adopting repositories, two carried all
+  seven house markers and one carried none, and nothing said so. It also carries
+  the edition switch and the `\dgm{}` figure macro, so a second language edition
+  differs from its sibling by two lines.
 - [`docs/research/PAPER-TEMPLATE.tex`](docs/research/PAPER-TEMPLATE.tex) — the
-  LaTeX paper template for when a study graduates to a shareable PDF: the house
-  preamble from the estate's existing LaTeX documents plus a paper-shaped
-  skeleton, with the rules (a paper introduces no numbers of its own, DRAFT
-  marker until the study is verified, PDFs are build output) in
-  `00-RESEARCH-DOCUMENTATION.md`.
+  LaTeX paper template for when a study graduates to a shareable PDF: a
+  paper-shaped skeleton that `\input`s the house preamble, with the rules (a
+  paper introduces no numbers of its own, DRAFT marker until the study is
+  verified, PDFs are build output) in `00-RESEARCH-DOCUMENTATION.md`.
 - [`docs/research/BEAMER-THEME.sty`](docs/research/BEAMER-THEME.sty) — the house
   Beamer theme for when work graduates into a talk rather than a paper.
+- [`docs/research/CHECK-PAPERS.mjs`](docs/research/CHECK-PAPERS.mjs) — the
+  mechanical half: every document root `\input`s the house preamble and meets its
+  contract, the local copy still matches by digest, and language editions pair,
+  couple and call their figures by slug. A build catches a broken document; this
+  catches one that builds perfectly and is wrong anyway.
 - The same document also carries everything else needed to author a document
   that compiles to PDF: how a non-study document borrows the house style
   without claiming to be research, how Mermaid diagrams reach a PDF from a
   single source instead of being redrawn in TikZ, how a second language edition
-  is published, and the shape of the GitHub Actions workflow that builds any of
-  them.
+  and a second variant edition are published from one trunk, what a LaTeX
+  `.gitignore` has to cover, and the shape of the GitHub Actions workflow that
+  builds any of them — including when that workflow needs a pull-request trigger
+  as well as a manual one.
 
 ## The playbook
 
