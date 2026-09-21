@@ -11,8 +11,8 @@
   "plugins": [
     {
       "name": "architecture-core",
-      "description": "The architectural constitution (P1-P15), the review/modernize/recover session playbook, the repository baseline, and the greenfield initializer that scaffolds an empty repo into a compliant containerized application. Install this one first; the other plugins assume it.",
-      "version": "1.4.0",
+      "description": "The architectural constitution (P1-P15), the review/modernize/recover session playbook, the repository baseline, the greenfield initializer that scaffolds an empty repo into a compliant containerized application, and the GitHub Pages one-pager generator. Install this one first; the other plugins assume it.",
+      "version": "1.5.0",
       "author": {
         "name": "Konrad Cinkusz",
         "url": "https://github.com/konradcinkusz"
