@@ -13,7 +13,7 @@ GitHub Copilot, VS Code, Claude Code, Cursor and Codex — so one tree serves ev
 | `deployment-and-platform` | 7 | Fly.io, Azure AI Foundry agents, Azure operations, per-PR preview environments, private-cloud delivery, shared-service reuse, metrics exposition |
 | `services-and-clients` | 6 | Service and API patterns, identity and accounts, payments and metering, Next.js frontends and BFFs, browser extensions, state and snapshot persistence |
 | `quality-and-process` | 8 | LLM evaluation, testing strategy, E2E acceptance suites, security review, open-source release, README badges, metric ethics, demo data and seeding |
-| `research-standards` | 1 | The research-documentation standard, with the study and LaTeX paper templates as bundled assets |
+| `research-standards` | 1 | The research-documentation standard and the estate's LaTeX authoring rules, with the study template, the house preamble, the paper template, the Beamer theme and the paper conformance check as bundled assets |
 | `ticket-delivery` | 7 | The per-ticket procedure: ticket analysis against a document you refine run by run, the master prompt generated from it, the implementation phase, two optional API verification passes (local and deployed), the review of a pull request against its ticket, and the feedback edge that closes every loop |
 
 Most skills here are short routers — when it applies, its failure modes, its checklist —
@@ -158,7 +158,7 @@ Measured with `claude plugin details`:
 | `deployment-and-platform` | ~820 |
 | `quality-and-process` | ~850 |
 | `services-and-clients` | ~670 |
-| `research-standards` | ~155 |
+| `research-standards` | ~180 (estimated) |
 | `ticket-delivery` | ~1,350 (estimated) |
 
 All six is roughly 4.8k tokens per session. Installing only the ones a repo actually needs

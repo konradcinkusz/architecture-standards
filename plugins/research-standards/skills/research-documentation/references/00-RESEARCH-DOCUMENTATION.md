@@ -129,12 +129,17 @@ one, and the estate already writes its formal documents in LaTeX
 house color palette, `titlesec` section styling, `fancyhdr`,
 `hyperref` — is the house look papers keep.
 
-- **Start from [`PAPER-TEMPLATE.tex`](https://github.com/konradcinkusz/architecture-standards/blob/main/docs/research/PAPER-TEMPLATE.tex)** — the house
-  preamble plus a paper-shaped skeleton (title block, abstract,
-  Introduction with the RQs, Background, Method, Results, Discussion
-  covering threats and implications, Conclusion, a Reproducibility section,
-  `thebibliography`). Copy it to `docs/research/papers/NN-SLUG.tex`, keeping
-  the companion study's number and slug.
+- **Install [`HOUSE-PREAMBLE.tex`](https://github.com/konradcinkusz/architecture-standards/blob/main/docs/research/HOUSE-PREAMBLE.tex) once per repository**,
+  as `docs/research/papers/house-preamble.tex` (or `docs/papers/` for a
+  non-study document — see below), and **start the paper from
+  [`PAPER-TEMPLATE.tex`](https://github.com/konradcinkusz/architecture-standards/blob/main/docs/research/PAPER-TEMPLATE.tex)**, which is a paper-shaped
+  skeleton that `\input`s it: title block, abstract, Introduction with the
+  RQs, Background, Method, Results, Discussion covering threats and
+  implications, Conclusion, a Reproducibility section, `thebibliography`.
+  Copy the template to `docs/research/papers/NN-SLUG.tex`, keeping the
+  companion study's number and slug. Why the preamble is a file rather than a
+  block you copy is the next section, and it is the difference between a
+  house style that holds and one that only claims to.
 - **A paper introduces no numbers of its own.** Every figure in the paper
   is already in the companion study, traceable under the evidence rules
   there. If writing the paper surfaces a number the study doesn't have, the
@@ -145,9 +150,10 @@ house color palette, `titlesec` section styling, `fancyhdr`,
   `\paperstatus` command drives both the title block and the running
   header).
 - **PDFs are build output.** Only the `.tex` is committed; the repo's
-  `.gitignore` covers LaTeX intermediates (`*.aux`, `*.log`, `*.out`,
-  `*.toc`) and the generated PDF. Build with `pdflatex` run twice (for
-  cross-references):
+  `.gitignore` covers the LaTeX intermediates (the full list, and the
+  per-directory rule that keeps it readable, is under "What a `.gitignore`
+  for LaTeX actually has to cover" below) and the generated PDF. Build with
+  `pdflatex` run twice (for cross-references):
 
   ```bash
   cd docs/research/papers && pdflatex NN-SLUG.tex && pdflatex NN-SLUG.tex
@@ -156,6 +162,66 @@ house color palette, `titlesec` section styling, `fancyhdr`,
   BibTeX, so a paper travels as one file; the bibliography mirrors the
   study's numbered reference list and always cites the repository itself
   (study + artifacts) as an entry.
+
+## The house preamble is a file, not a block
+
+The house look — 11pt A4 `article`, the color palette, `titlesec` section
+styling, `fancyhdr`, `hyperref` — was extracted from the estate's first
+formal documents (`<saas>/docs/business_analysis.tex`,
+`pitch-deck-demium.tex`) so that a document from any repository looks like it
+came from the same shop. That is the claim. **Distributing it as a block to
+copy into each new document does not hold the claim, and the estate has the
+measurement to prove it.**
+
+Across the three repositories that adopted this standard, against the seven
+markers that make up the house look — the colors, `titlesec` section
+formatting, the `fancyhdr` header, `\paperstatus`, `\repopath`, the 2.2cm
+geometry and the `colorlinks` scheme:
+
+| | markers held |
+|---|---|
+| `agent-eval-bench`, both editions | 7 of 7 |
+| `marcus-shop`, six documents via one shared preamble | 7 of 7 |
+| **`ab-ove`, both editions** | **0 of 7** |
+
+`ab-ove` reached for `margin=28mm`, `hyperref[hidelinks]`, `\maketitle`, a
+private `\code{}` where the house has `\repopath{}`, and a hardcoded
+`\date{14 September 2026}` where the house has `\today`. Nothing was wrong
+with the author; the mechanism was wrong. A convention about copying a
+preamble correctly has nothing to fail, so it failed quietly.
+
+Over the same period the **Beamer theme propagated byte-identically** — the
+adopting copy differs from the canonical one only by the 22-line adoption
+header — because it was always distributed as a file. That is the whole
+lesson:
+
+- **One `house-preamble.tex` per repository, `\input`ed by every document in
+  it.** Fixing the house style is then one edit, not one edit per document,
+  and a new document cannot drift out of it by being written from memory.
+  `marcus-shop`'s `docs/papers/preambula.tex` is the worked example: six
+  documents, one preamble.
+- **The preamble carries no `\documentclass` and no `\begin{document}`.**
+  Those stay in each document, so one preamble can serve documents with
+  different classes.
+- **It takes a contract, stated in its own header.** The including document
+  defines `\paperstatus`, `\headerleft`, `\pdftitleline` and
+  `\pdfauthorline` *before* the `\input` — before, because the preamble reads
+  them as it is read, and defining them after compiles a document with an
+  empty header and wrong PDF metadata. `marcus-shop`'s preamble states its
+  four-command contract the same way, at the top, which is why a sixth
+  document could adopt it without reading it.
+- **A document that needs more packages loads them after the `\input`, with a
+  comment saying they are an addition.** `agent-eval-bench` adds `tikz`,
+  `pifont` and `amssymb` and labels them "not in the house template", so the
+  next reader can tell house from local at a glance.
+- **`\paperstatus` rides in the header of every page.** A reader who opens the
+  PDF at page 9 still sees DRAFT. That is why the marker is in the running
+  header and not only on the title page.
+- **A repository that must deviate says so where deviations are recorded.** A
+  thesis on an institution's own class cannot also carry the house geometry;
+  that is a legitimate exemption, and it belongs in the repository's
+  deviation register with a reason, not in an untracked difference between
+  two PDFs.
 
 ## Presenting work as slides (Beamer)
 
@@ -182,14 +248,12 @@ belong in the deck.
   only things a new deck must fill in — the theme supplies everything else.
 - **PDFs are build output here too.** Only the `.tex` and the copied-in
   `.sty` are committed; nothing generated is. Beamer drops more litter than
-  `article` does, so a `.gitignore` written for papers alone is not enough:
-  alongside `*.pdf`, `*.aux`, `*.log` and `*.out` it needs `*.nav`, `*.snm`,
-  `*.toc` and `*.vrb`. Ignore them per directory (`docs/slides/*.nav`, not a
-  bare `*.nav`) so the pattern says which build it belongs to. The build needs
-  two passes locally, same reason a paper does — the footline's
-  `\inserttotalframenumber` needs a prior run's `.aux` — but `latexmk`
-  (what `xu-cheng/latex-action` drives in CI, see below) reruns
-  automatically and needs no special handling for that.
+  `article` does, so a `.gitignore` written for papers alone is not enough —
+  the full list, and the per-directory rule, are under "What a `.gitignore`
+  for LaTeX actually has to cover" below. The build needs two passes locally,
+  same reason a paper does — the footline's `\inserttotalframenumber` needs a
+  prior run's `.aux` — but `latexmk` (what `xu-cheng/latex-action` drives in
+  CI, see below) reruns automatically and needs no special handling for that.
 - **A known defect, fixed in this copy.** The origin file's `[standout]`
   style sets `\setbeamercolor{normal text}{fg=white,...}` to make body text
   readable against the dark background, but `\setbeamercolor` alone only
@@ -233,7 +297,14 @@ from the same shop.
   names the markdown it presents and introduces no fact that document does not
   already carry. This is the non-research analogue of "a paper introduces no
   numbers of its own", and it exists for the same reason: two documents that
-  are allowed to disagree eventually will.
+  are allowed to disagree eventually will. The house preamble's `\housetitle`
+  takes that line as its last argument, so the provenance sits on the title
+  page rather than only in a header comment a PDF reader never sees.
+- **The house preamble is the same file here.** A non-study document in
+  `docs/papers/` `\input`s the same `house-preamble.tex` a study paper in
+  `docs/research/papers/` does — one copy per repository, wherever its
+  documents live. Borrowing the look is the point; borrowing it by retyping
+  it is what the previous section measures the cost of.
 - **State the drift you are accepting.** A curated `.tex` presentation of a
   markdown document is not a mechanical transform, so nothing enforces that an
   edit to one reaches the other. Record that as an accepted consequence rather
@@ -296,10 +367,67 @@ edition rather than a compromise between the two.
   (`agent-eval-bench-overview.tex` and `agent-eval-bench-overview.pl.tex`),
   mirroring the `.pl.md` suffix the same repository uses for its bilingual
   markdown. Same directory, same build, one visible difference in the name.
-- **Set the language in the preamble, not only in the prose.**
-  `\usepackage[polish]{babel}` — or the relevant option — is what gives the
-  edition correct hyphenation and typographic conventions. Without it the text
-  is translated but still typeset as English.
+- **Set the language in the preamble, not only in the prose.** babel — with
+  the relevant option — is what gives the edition correct hyphenation and
+  typographic conventions. Without it the text is translated but still
+  typeset as English. It is loaded *after* `fontenc` and `inputenc`, because
+  babel reads the active font encoding while setting up its shorthands; the
+  house preamble orders those three for you.
+- **An edition differs from its sibling by a switch, not by a second
+  preamble.** Everything that has to change between editions — the babel
+  language, the labels any local macro prints, which rendering of a diagram
+  gets included — is driven by what the edition file defines *before* the
+  `\input`. With the house preamble that is two lines and nothing else:
+
+  ```latex
+  \def\houselang{polish}     % babel language for this edition
+  \def\editionsuffix{.pl}    % which rendering of each diagram to include
+  ```
+
+  `marcus-shop` is the worked example and the origin of the pattern: a single
+  `\def\edycjaEN{1}` before its `\input` flips babel, two macro labels and the
+  diagram path at once — *one set of macros, two sets of text*. The failure it
+  avoids is the one a second preamble guarantees: two preambles diverge, and
+  the divergence shows up as a typographic difference nobody can attribute.
+- **Call a figure by slug; let the edition resolve the file.** The house
+  preamble's `\dgm` turns a slug into the rendered path for the current
+  edition, so the body text names a diagram the way the diagrams directory
+  does:
+
+  ```latex
+  \includegraphics[width=0.78\linewidth]{\dgm{a1-system-context}}
+  ```
+
+  In the default edition that resolves to
+  `../diagrams/rendered/a1-system-context.pdf`; in an edition that set
+  `\editionsuffix` to `.pl`, to `…-a1-system-context.pl.pdf`. A repository
+  whose editions share one set of diagrams never sets `\editionsuffix`, and
+  every edition resolves to the same file — so the macro costs nothing to
+  adopt and the decision below stays open.
+
+  Hardcoding the path instead costs one edit per figure per edition, and the
+  estate has already paid it: `ab-ove` maintains `b1-reader-loop.pdf` in its
+  English file against `b1-reader-loop.pl.pdf` in its Polish one, by hand, in
+  both. At three figures that is survivable. `agent-eval-bench` has 23.
+- **Decide, once and in writing, whether the diagrams are translated too.**
+  The three adopting repositories answer this three different ways, which is
+  fine — it is a real trade — but two of them answered it by accident.
+  - `agent-eval-bench` ships **one English set** for both editions: no
+    `.pl.mmd` exists, so its Polish reader gets Polish prose around English
+    boxes. Cheapest to maintain, and defensible for a document whose diagram
+    labels are mostly code identifiers anyway.
+  - `marcus-shop` ships **a set per language** and says why in
+    `docs/diagrams/README.md`: *a shared English set would mean the Polish
+    edition loses exactly the part that gets read most* — these are documents
+    people memorize from, and a diagram carries the most content per unit of
+    space. It also names the cost in the same paragraph: two files per
+    diagram, and a drift the build cannot see.
+  - `ab-ove` ships a set per language too, but by hardcoding both paths
+    rather than by deciding.
+
+  Either answer is compliant. **What is not compliant is having the answer
+  emerge from whichever path somebody typed first.** State it where the
+  diagrams live, with the cost named, as `marcus-shop` does.
 - **Translate against terminology that already exists.** Where the repository
   already publishes translated documents, a new edition matches their
   vocabulary instead of inventing its own; otherwise one concept acquires two
@@ -319,6 +447,49 @@ edition rather than a compromise between the two.
   that somebody looked, which is the failure that actually bites — a wrong
   command fixed in one language, left wrong in the other, with nothing going
   red.
+
+  **The same rule applies to `.tex` editions, and until now nothing applied
+  it.** `docs/papers/` sat outside every check in all three repositories:
+  the parity check covers `.md` only, so the edition pairs this section calls
+  siblings were checked by nothing. See "Checking the papers" below.
+
+## One trunk, several editions
+
+A second *language* edition is not the only kind. A document can also have a
+second *variant* — a basic and an advanced edition of the same material, a
+public and an internal cut — where most of the content is shared and a named
+few sections are not. The naive answer is two files that started as a copy,
+and it decays the same way every other copy does.
+
+`marcus-shop` is the worked example: six PDFs — a basic and an advanced
+edition of a session plan, plus a question bank, each in two languages — from
+one trunk.
+
+- **The shared sections are files, `\input`ed by every edition that carries
+  them.** `docs/papers/wspolne/` holds eight of them (`wspolne` is Polish for
+  *common*; an English-speaking repository would call the directory
+  `shared/`). An edition is then a spine: its own front matter, its own
+  variant-only sections, and `\input` lines where the shared material goes.
+- **A shared section is a section, not a fragment.** It begins at a
+  `\section` and ends before the next one, so an edition can place it without
+  knowing anything about its insides, and moving it is moving one line.
+- **The editions differ where they are meant to differ, visibly.** Reading
+  `marcus-shop`'s basic edition against its advanced one, the difference is
+  the presence or absence of `\input` lines and a handful of local sections —
+  not a diff of prose that has to be read word by word to find the three
+  places somebody changed.
+- **Shared sections make every edition a dependent of every edit.** That is
+  the point, and it is also the cost: a change to one trunk file changes
+  every document that includes it. Build them together rather than
+  separately, in one workflow, so the blast radius is visible in one run —
+  `marcus-shop`'s workflow builds all six in one job and says in its header
+  comment that this is why.
+- **Language editions of a trunk get their own trunk directory**
+  (`shared/` and `shared/en/`), not a switch inside each shared file. A
+  language switch inside prose is a file half of whose lines are inert in any
+  given build, and it is the one place the edition-switch pattern above does
+  not pay: `\def` flips a label or a path cleanly, and it does not flip six
+  paragraphs.
 
 ## Building the PDF in CI
 
@@ -348,7 +519,10 @@ latest happens to be on the day the PDF gets built;
 `agent-eval-bench/.github/workflows/build-overview-pdf.yml` is the worked
 example of that ordering.
 
-**Two triggers, chosen by what the paper is a presentation of:**
+**The trigger answers two questions, not one.** *What produces the
+deliverable* and *what catches the break* are separate, and a workflow may
+need a trigger for each. Reaching for one trigger and assuming it covers both
+is what leaves a document that builds on demand and is broken in between.
 
 - **Tag-driven**, when the paper is versioned alongside a release —
   `copilot-scope/.github/workflows/build-research-pdf.yml` builds two papers
@@ -384,11 +558,127 @@ example of that ordering.
   and `extra_system_packages: py3-pygments` — a document with `minted`
   listings needs both, or the build fails the moment it reaches the first
   one.
+- **Manual *and* pull-request, when the document is the repository's
+  product.** Manual-only carries a cost `agent-eval-bench` named in its own
+  ADR-0006 and accepted: *"nothing triggers it automatically, so a break is
+  caught only the next time a human clicks Run workflow."* For a repository
+  whose code is the product and whose overview is a side artifact, that is
+  the right trade. For a repository whose **documents are the product**, it
+  is not: a LaTeX typo or a diagram that stopped rendering is invisible in
+  the diff and surfaces on the day the file is actually needed.
+  `marcus-shop/.github/workflows/build-prep-pdf.yml` is the worked example
+  and names the departure from `agent-eval-bench` explicitly in its header
+  comment. It keeps `workflow_dispatch` as the way to *get* a fresh PDF and
+  adds `pull_request` with a path filter as the way to *catch* a break —
+
+  ```yaml
+  on:
+    workflow_dispatch:
+    pull_request:
+      paths:
+        - 'docs/papers/**'
+        - 'docs/diagrams/**'
+        - 'scripts/**'
+        - 'package.json'
+        - 'package-lock.json'
+        - '.github/workflows/build-prep-pdf.yml'
+  ```
+
+  The path filter is what keeps the cost at zero for every change that does
+  not touch the document. A repository that adds the PR trigger without one
+  has bought a LaTeX build on every commit, which is the reason manual-only
+  was the default in the first place.
+
+**Offer the engine as an input when the document may outgrow `pdflatex`.**
+A document written ASCII-only compiles under `pdflatex` with a stock TeX
+Live, and that is the cheapest thing to keep working. But a revision that
+quotes a second language needs a Unicode engine, and discovering that during
+a build is worse than having the switch ready.
+`ab-ove/.github/workflows/build-overview-pdf.yml` carries it as a
+`workflow_dispatch` choice input, defaulting to the cheap answer and saying
+in the description when to pick another:
+
+```yaml
+on:
+  workflow_dispatch:
+    inputs:
+      engine:
+        description: 'TeX engine. pdflatex is the default; pick xelatex or lualatex if the paper uses system fonts or needs full Unicode shaping.'
+        required: true
+        type: choice
+        default: pdflatex
+        options: [pdflatex, xelatex, lualatex]
+```
+
+This pairs with the ASCII-only rule for diagram sources under "Diagrams in a
+PDF": the rule keeps the default edition on the cheap engine, and the input
+is the escape hatch for the day it stops being enough.
 
 A workflow's trigger says what kind of document it builds before a reader
 ever opens the `.tex` file: a workflow only a human can start is a document
 that only exists when someone asks for it; a workflow a tag starts is a
-document that ships with a release, and the release is incomplete without it.
+document that ships with a release, and the release is incomplete without it;
+and a workflow a pull request starts is a document the repository exists to
+produce.
+
+## What a `.gitignore` for LaTeX actually has to cover
+
+Nothing generated is committed — not the PDF, not the rendered diagrams, not
+the intermediates. The list is longer than it first looks, and all three
+adopting repositories got a different part of it wrong.
+
+- **The `article` set**: `*.pdf`, `*.aux`, `*.log`, `*.out`, `*.toc`.
+- **Beamer adds four**: `*.nav`, `*.snm`, `*.toc`, `*.vrb`. A `.gitignore`
+  written for papers alone does not cover a deck.
+- **`latexmk` adds three more**: `*.fdb_latexmk`, `*.fls` and `*.synctex.gz`.
+  These are easy to miss because the manual recipe in this standard is
+  `pdflatex` run twice, which produces none of them — but `latexmk` is what
+  `xu-cheng/latex-action` drives, so the first contributor who reproduces the
+  CI build locally, or runs `latexmk` because it handles the rerun for them,
+  gets all three as untracked files. `marcus-shop` hit it and added them; the
+  other two have not, and will.
+- **Ignore per directory, not bare.** `docs/papers/*.aux`, not `*.aux`, so
+  the pattern says which build it belongs to. `agent-eval-bench` holds this
+  throughout. `ab-ove` is the anti-example and an instructive one: its
+  `.gitignore` *explains the per-directory rule in a comment* and then writes
+  bare `*.aux` and `*.toc` beside a scoped `docs/papers/*.pdf`. A rule stated
+  next to its own violation is what happens when a file is edited twice by
+  people reading different parts of it — which is the argument for the check
+  below rather than for a longer comment.
+
+## Checking the papers
+
+The rules in this standard were, until now, enforced by prose alone, and the
+measurement in "The house preamble is a file" is what prose alone bought.
+[`CHECK-PAPERS.mjs`](https://github.com/konradcinkusz/architecture-standards/blob/main/docs/research/CHECK-PAPERS.mjs) is the mechanical half: copy it to
+`<repo>/scripts/check-papers.mjs`, fill in its configuration block, and run
+it in the same lint job as the repository's other documentation checks. It
+has no dependencies and compiles nothing.
+
+It checks four things:
+
+1. **Every document root `\input`s the house preamble** — the drift in the
+   table above, caught at lint time.
+2. **The contract is met before that `\input`** — a missing `\headerleft` is
+   a named failure rather than an `Undefined control sequence` eighty lines
+   into a CI log.
+3. **The repository's copy of the preamble still matches the one it was taken
+   from**, by digest — so a local edit to the house style is a deliberate act
+   with a visible diff and a proposed amendment, not a silent fork. This is
+   the check the Beamer theme never needed and the preamble always did.
+4. **Language editions pair, couple, and call their figures by slug** — both
+   halves exist, neither is edited alone (the coupling half needs a base ref,
+   same as the markdown parity check), and no document with editions writes a
+   rendered diagram path by hand.
+
+**A build catches a broken document; this catches a document that builds
+perfectly and is wrong anyway.** Run both. And note what it does not do: no
+script can check that a translation is correct, and this one does not try.
+Its coupling rule checks that somebody looked.
+
+Exemptions are allowed — a thesis on an institution's class cannot also carry
+the house geometry — and an exemption with an empty reason fails the check,
+because an exemption nobody had to justify is one nobody will revisit.
 
 ## Relationship to the rest of the standards
 
@@ -407,3 +697,30 @@ document that ships with a release, and the release is incomplete without it.
   two-parent CPTs are under-specified in a way that zeroes out entire
   branches of the joint distribution — a surprising negative result (rule
   5) with every number traceable to a committed artifact (rule 1).
+
+On the LaTeX track specifically, the three adopting repositories are worth
+reading against each other, because between them they cover every rule above
+and disagree in the places this standard now names:
+
+- `marcus-shop-factorial-part3/docs/papers/` — the furthest along, and the
+  origin of most of what this standard gained in this revision: one
+  `preambula.tex` `\input`ed by six documents with its four-command contract
+  stated in its own header, a `\def\edycjaEN{1}` edition switch, the
+  `\dgm{}` figure macro, a `wspolne/` trunk shared by two editions, and a
+  workflow that builds all six together on dispatch *and* on pull request.
+  Also the source of `\long\def` for a macro whose argument spans
+  paragraphs, with the error it prevents recorded in the comment:
+  `Paragraph ended before \text@command was complete`.
+- `agent-eval-bench/docs/papers/` and `docs/slides/` — the reference for
+  everything the previous revision covered: a paper in two language
+  editions, a Beamer deck in its own workflow, a header that says plainly
+  what the document is not, per-directory ignore patterns, and ADR-0006
+  recording the manual-only trade that `marcus-shop` later departed from
+  with reasons.
+- `ab-ove/docs/papers/` — the anti-example for the house preamble, the
+  hardcoded figure path and the bare ignore pattern, and simultaneously the
+  estate's best example of a document stating what it is not: its 47-line
+  header names the genre, names the markdown that is the source of truth,
+  and says which one is right if they disagree. Both things are true of the
+  same file, which is the point — the prose rules held, and only the
+  mechanical ones drifted.

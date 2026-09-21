@@ -6,13 +6,15 @@ description: >-
   it has to be authored in LaTeX and compiled to PDF. What counts as research
   and what does not, the docs/research layout, the shape of a study document,
   the evidence rules (every number traceable, reproduction stated as a
-  command, validate the instrument before trusting its readings, negative
-  results get written up), when a study graduates to a LaTeX paper or a Beamer
-  deck, how a non-study document borrows the house style without claiming to
-  be research, how Mermaid diagrams reach a PDF from a single source, how a
-  second language edition is published, and the shape of the GitHub Actions
-  workflow that builds any of them. Bundled assets: the study template, the
-  paper template and the Beamer theme.
+  command, validate the instrument before trusting it, negative results get
+  written up), when a study graduates to a LaTeX paper or a Beamer deck, why
+  the house preamble is a file every document inputs rather than a block each
+  one copies, how a non-study document borrows the house style, how Mermaid
+  diagrams reach a PDF from one source and are called by slug, how language
+  and variant editions come from one trunk, what a LaTeX .gitignore covers,
+  the workflow that builds any of them, and the check that keeps it from
+  drifting. Bundled: the study and paper templates, the house preamble, the
+  Beamer theme and the check.
 ---
 
 # Scientific research documentation
@@ -23,7 +25,7 @@ whether this skill applies and to check your work afterwards.
 
 Reference-architecture principles: P14.
 
-Bundled templates: [`assets/TEMPLATE.md`](assets/TEMPLATE.md), [`assets/PAPER-TEMPLATE.tex`](assets/PAPER-TEMPLATE.tex), [`assets/BEAMER-THEME.sty`](assets/BEAMER-THEME.sty).
+Bundled templates: [`assets/TEMPLATE.md`](assets/TEMPLATE.md), [`assets/HOUSE-PREAMBLE.tex`](assets/HOUSE-PREAMBLE.tex), [`assets/PAPER-TEMPLATE.tex`](assets/PAPER-TEMPLATE.tex), [`assets/BEAMER-THEME.sty`](assets/BEAMER-THEME.sty), [`assets/CHECK-PAPERS.mjs`](assets/CHECK-PAPERS.mjs).
 
 ## What this standard covers
 
@@ -32,11 +34,15 @@ Bundled templates: [`assets/TEMPLATE.md`](assets/TEMPLATE.md), [`assets/PAPER-TE
 - The shape of a study
 - The evidence rules
 - From study to paper (LaTeX)
+- The house preamble is a file, not a block
 - Presenting work as slides (Beamer)
 - Documents that borrow the house style without being studies
 - Diagrams in a PDF
 - Publishing a document in more than one language
+- One trunk, several editions
 - Building the PDF in CI
+- What a `.gitignore` for LaTeX actually has to cover
+- Checking the papers
 - Relationship to the rest of the standards
 - Worked example
 
