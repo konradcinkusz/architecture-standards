@@ -216,6 +216,21 @@ a compliant system.
   three genuine decisions are asked, where the AppHost stops and Fly.io starts, and what
   it deliberately never creates.
 
+The next one is not scoped to an empty repository — it adds one thing to whichever repo
+you already have:
+
+- [`docs/scaffold/GENERATE-GITHUB-PAGE.md`](docs/scaffold/GENERATE-GITHUB-PAGE.md) —
+  installs as `/generate-github-page [tagline]`. Publishes a one-page GitHub Pages
+  landing site for any repository — not a documentation site, a single self-contained
+  HTML file with no build step — using this repository's own page
+  ([`docs/index.html`](docs/index.html), live at
+  [konradcinkusz.github.io/architecture-standards](https://konradcinkusz.github.io/architecture-standards/))
+  as its design system and [`.github/workflows/deploy-pages.yml`](.github/workflows/deploy-pages.yml)
+  as its deploy workflow, both reused rather than reinvented. Derives the repository's
+  owner, name and Pages URL from the git remote, fills the bundled template with that
+  repo's real content — no invented stats, no generated logo nobody chose — and refuses
+  to silently overwrite an existing hand-tuned page.
+
 ## The delivery phases
 
 The playbook and the master prompt above cover a *session* against a whole repo. These

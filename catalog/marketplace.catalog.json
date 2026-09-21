@@ -14,8 +14,8 @@
   "plugins": [
     {
       "name": "architecture-core",
-      "version": "1.4.0",
-      "description": "The architectural constitution (P1-P15), the review/modernize/recover session playbook, the repository baseline, and the greenfield initializer that scaffolds an empty repo into a compliant containerized application. Install this one first; the other plugins assume it.",
+      "version": "1.5.0",
+      "description": "The architectural constitution (P1-P15), the review/modernize/recover session playbook, the repository baseline, the greenfield initializer that scaffolds an empty repo into a compliant containerized application, and the GitHub Pages one-pager generator. Install this one first; the other plugins assume it.",
       "keywords": [
         "architecture",
         "standards",
@@ -66,6 +66,18 @@
             "P1-P15"
           ],
           "description": "Use when starting a brand-new repository from nothing - the repo name is passed and the repo is empty. Scaffolds the estate's default containerized application in one pass: an Aspire AppHost composition root, a ServiceDefaults kernel with its size and no-domain guards, one service owning its database and migrating it from a hosted service, a Next.js product surface with runtime config, cookie sessions and the catch-all BFF proxy, multi-stage Dockerfiles, a Fly.io app per service, tag-driven workflows that provision a cold estate from the first tag, the repository baseline (secret scanning, one-command onboarding, central package management), and the docs set including ADRs and the LaTeX PDF track. Derives every name from the repo name and runs the verification gates before the first commit. Refuses a repo that already holds an application - that is a modernize or delivery session, not an init."
+        },
+        {
+          "name": "generate-github-page",
+          "source": "docs/scaffold/GENERATE-GITHUB-PAGE.md",
+          "kind": "procedure",
+          "frontMatter": {
+            "argument-hint": "[tagline]"
+          },
+          "assets": [
+            "docs/scaffold/ONE-PAGER-TEMPLATE.html"
+          ],
+          "description": "Use when a repository wants a published GitHub Pages landing page - a one-pager, not a documentation site. Derives the owner, repo name and the GitHub Pages URL from the git remote (including the owner.github.io root-page special case), fills in the bundled one-page HTML/CSS template (the same design system this repository's own page uses) with that repo's real tagline, stats and links rather than invented content, reuses this repository's deploy-pages.yml workflow verbatim since it already takes no repository-specific parameters, and names the one manual step no API can perform - switching Settings, Pages, Source to GitHub Actions. Refuses to silently overwrite an existing hand-tuned page or deploy workflow."
         }
       ]
     },

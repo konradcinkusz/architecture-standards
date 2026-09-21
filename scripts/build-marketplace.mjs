@@ -188,6 +188,19 @@ function buildSkill(skill, plugin, catalog) {
 
   const skillDir = `plugins/${plugin.name}/skills/${skill.name}`;
 
+  // Bundled assets ship for either skill shape: a procedure invoked as a command can
+  // need a template file exactly as much as a reference guide can (generate-github-page
+  // needs ONE-PAGER-TEMPLATE.html regardless of being a procedure), so this runs before
+  // the procedure branch returns rather than only in the reference-skill path below.
+  for (const asset of skill.assets ?? []) {
+    const assetName = posix.basename(asset);
+    const assetRaw = readFileSync(join(ROOT, asset), 'utf8');
+    emit(
+      `${skillDir}/assets/${assetName}`,
+      assetName.endsWith('.md') ? rewriteLinks(assetRaw, asset, baseUrl) : assetRaw
+    );
+  }
+
   if (skill.kind === 'procedure') {
     emit(`${skillDir}/SKILL.md`, buildProcedureSkill(skill, sourcePath, raw, baseUrl));
     return;
@@ -200,15 +213,6 @@ function buildSkill(skill, plugin, catalog) {
       rewriteLinks(raw, sourcePath, baseUrl).trimEnd() +
       '\n'
   );
-
-  for (const asset of skill.assets ?? []) {
-    const assetName = posix.basename(asset);
-    const assetRaw = readFileSync(join(ROOT, asset), 'utf8');
-    emit(
-      `${skillDir}/assets/${assetName}`,
-      assetName.endsWith('.md') ? rewriteLinks(assetRaw, asset, baseUrl) : assetRaw
-    );
-  }
 
   const outline = sections
     .map((s) => stripNumber(s.heading))
