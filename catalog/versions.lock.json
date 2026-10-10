@@ -6,8 +6,8 @@
       "contentHash": "sha256:4f17d775805b6611"
     },
     "deployment-and-platform": {
-      "version": "1.3.0",
-      "contentHash": "sha256:602c5fad5943a4ff"
+      "version": "1.4.0",
+      "contentHash": "sha256:d2744c15cdde0727"
     },
     "services-and-clients": {
       "version": "1.4.0",

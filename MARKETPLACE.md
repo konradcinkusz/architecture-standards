@@ -10,7 +10,7 @@ GitHub Copilot, VS Code, Claude Code, Cursor and Codex — so one tree serves ev
 | Plugin | Skills | Covers |
 |---|---|---|
 | `architecture-core` | 6 | The constitution (P1–P15), the REVIEW/MODERNIZE/RECOVER playbook, the master delivery prompt, the repository baseline, `/init-generic-template` — the greenfield initializer that turns an empty repo into a compliant containerized application — and `/generate-github-page` — a parameterized one-page GitHub Pages site for any repo, reusing this repository's own page as its template. Also ships the three custom agents. Install this first. |
-| `deployment-and-platform` | 7 | Fly.io, Azure AI Foundry agents, Azure operations, per-PR preview environments, private-cloud delivery, shared-service reuse, metrics exposition |
+| `deployment-and-platform` | 8 | Fly.io, Azure AI Foundry agents, Azure operations, per-PR preview environments, private-cloud delivery, shared-service reuse, metrics exposition, GitHub Actions on self-hosted runners |
 | `services-and-clients` | 6 | Service and API patterns, identity and accounts, payments and metering, Next.js frontends and BFFs, browser extensions, state and snapshot persistence |
 | `quality-and-process` | 8 | LLM evaluation, testing strategy, E2E acceptance suites, security review, open-source release, README badges, metric ethics, demo data and seeding |
 | `research-standards` | 1 | The research-documentation standard and the estate's LaTeX authoring rules, with the study template, the house preamble, the paper template, the Beamer theme and the paper conformance check as bundled assets |
@@ -18,7 +18,7 @@ GitHub Copilot, VS Code, Claude Code, Cursor and Codex — so one tree serves ev
 
 Most skills here are short routers — when it applies, its failure modes, its checklist —
 with the **full standard bundled underneath it** in `references/`. Agents load the
-reference only when the skill actually fires, so twenty-six standards cost nothing until
+reference only when the skill actually fires, so twenty-seven standards cost nothing until
 one is needed.
 
 Nine skills are the exception, and deliberately so: `ticket-delivery`'s seven, plus
