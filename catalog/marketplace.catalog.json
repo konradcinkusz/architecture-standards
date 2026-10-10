@@ -83,8 +83,8 @@
     },
     {
       "name": "deployment-and-platform",
-      "version": "1.3.0",
-      "description": "Getting services deployed and kept running: Fly.io, Azure AI Foundry, Azure operations, per-PR preview environments, and customer-hosted private-cloud delivery.",
+      "version": "1.4.0",
+      "description": "Getting services deployed and kept running: Fly.io, Azure AI Foundry, Azure operations, per-PR preview environments, customer-hosted private-cloud delivery, and GitHub Actions on local self-hosted runners.",
       "keywords": [
         "deployment",
         "fly-io",
@@ -140,6 +140,15 @@
             "P15"
           ],
           "description": "Use when adding or reviewing a /metrics endpoint, choosing metric labels, or diagnosing a monitoring system that is growing without bound: which labels are cardinality decisions, capping high-cardinality views, exporting the fact that you truncated, and provisioning dashboards from the repository."
+        },
+        {
+          "name": "self-hosted-runners",
+          "source": "docs/guides/SELF-HOSTED-RUNNERS.md",
+          "principles": [
+            "P5",
+            "P12"
+          ],
+          "description": "Use when running GitHub Actions on local self-hosted runners instead of GitHub-hosted ones, or when reviewing such a setup. One repository variable (RUNNER_LABELS, a JSON array) switches every job, with cloud as the default; the guard for jobs that need an OS the host lacks; release and secret-bearing jobs that stay on cloud; runner host setup with ephemeral registration and re-minted tokens; concurrency and timeouts; the security rules for running pull-request code on your own machine; operations and the offline-runner fallback; and the agent procedure that writes docs/RUNNER.md."
         }
       ]
     },

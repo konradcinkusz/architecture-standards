@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>architecture-standards — an architecture constitution you can install</title>
-<meta name="description" content="Fifteen architectural principles and twenty-two operational guides for .NET Aspire services on Fly.io and Azure, extracted from systems already in production — readable as documentation, installable as agent plugins, and runnable as a per-ticket delivery procedure under Claude Code, GitHub Copilot and VS Code.">
+<meta name="description" content="Fifteen architectural principles and twenty-three operational guides for .NET Aspire services on Fly.io and Azure, extracted from systems already in production — readable as documentation, installable as agent plugins, and runnable as a per-ticket delivery procedure under Claude Code, GitHub Copilot and VS Code.">
 <link rel="icon" href="assets/logo.svg" type="image/svg+xml">
 <meta property="og:type" content="website">
 <meta property="og:title" content="architecture-standards">
@@ -217,7 +217,7 @@
     <h1>architecture-standards</h1>
     <p class="tagline">
       An architecture constitution for .NET Aspire services on Fly.io and Azure —
-      fifteen principles and twenty-two operational guides, every one extracted from
+      fifteen principles and twenty-three operational guides, every one extracted from
       systems already running in production rather than written from first principles.
       Installable, and now runnable: the per-ticket delivery procedure is part of it.
     </p>
@@ -259,6 +259,7 @@
         <tr><td class="cmd">/pr-preview-environments</td><td>Giving each pull request its own running environment — and teardown that actually tears down.</td></tr>
         <tr><td class="cmd">/private-cloud-delivery</td><td>Shipping the product as a customer-hosted edition: image push, per-client registry, handover IaC, upgrades.</td></tr>
         <tr><td class="cmd">/shared-service-reuse</td><td>One codebase, one independent instance per consuming system, each with its own database and signing key.</td></tr>
+        <tr><td class="cmd">/self-hosted-runners</td><td>Running Actions on local runners: one variable as the switch, cloud as default, deploy jobs kept off it, the security rules.</td></tr>
         <tr><td class="cmd">/metrics-exposition</td><td>Which metric labels are cardinality decisions, capping high-cardinality views, dashboards provisioned from the repo.</td></tr>
         <tr><th class="grp" colspan="2">services-and-clients</th></tr>
         <tr><td class="cmd">/service-api-patterns</td><td>Rate limiting, endpoint groups, validation, list clamping, hardened cross-service calls, 202 jobs, seeding.</td></tr>
@@ -431,7 +432,7 @@ copilot plugin install architecture-core@architecture-standards</code></pre>
     <p>
       Most skills are short routers — when it applies, its failure modes, its checklist —
       with the full standard bundled underneath it in <code>references/</code>. Agents
-      load the reference only when the skill actually fires, so twenty-six standards
+      load the reference only when the skill actually fires, so twenty-seven standards
       cost nothing until one is needed. <code>ticket-delivery</code> is the exception:
       its skills are procedures you invoke, so each carries its document as its body.
     </p>
@@ -443,8 +444,8 @@ copilot plugin install architecture-core@architecture-standards</code></pre>
       </div>
       <div class="card">
         <h3><span class="n">deployment-and-platform</span></h3>
-        <div class="meta">7 skills</div>
-        <p>Fly.io, Azure AI Foundry agents, Azure operations, per-PR preview environments, and customer-hosted private-cloud delivery.</p>
+        <div class="meta">8 skills</div>
+        <p>Fly.io, Azure AI Foundry agents, Azure operations, per-PR preview environments, customer-hosted private-cloud delivery, and GitHub Actions on self-hosted runners.</p>
       </div>
       <div class="card">
         <h3><span class="n">services-and-clients</span></h3>
@@ -487,6 +488,7 @@ copilot plugin install architecture-core@architecture-standards</code></pre>
         <li><a href="https://github.com/konradcinkusz/architecture-standards/blob/main/docs/guides/AZURE-OPERATIONS.md">AZURE-OPERATIONS.md</a><em>Passwordless SQL, provision-vs-deploy staleness, CI credential preflight, soft-delete recovery.</em></li>
         <li><a href="https://github.com/konradcinkusz/architecture-standards/blob/main/docs/guides/PR-PREVIEW-ENVIRONMENTS.md">PR-PREVIEW-ENVIRONMENTS.md</a><em>Naming as isolation, shared-vs-per-PR classification, teardown that actually tears down.</em></li>
         <li><a href="https://github.com/konradcinkusz/architecture-standards/blob/main/docs/guides/PRIVATE-CLOUD-DELIVERY.md">PRIVATE-CLOUD-DELIVERY.md</a><em>Selling the SaaS as self-hosted: the vendor/customer split and the one-flag product switch.</em></li>
+        <li><a href="https://github.com/konradcinkusz/architecture-standards/blob/main/docs/guides/SELF-HOSTED-RUNNERS.md">SELF-HOSTED-RUNNERS.md</a><em>Actions on local runners: one variable as the switch, deploy jobs kept on cloud, the security rules.</em></li>
       </ul>
     </div>
 

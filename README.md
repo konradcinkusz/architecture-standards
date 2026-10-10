@@ -5,7 +5,7 @@
 # architecture-standards
 
 A written architecture constitution for .NET Aspire services on Fly.io and Azure —
-fifteen principles plus twenty-two operational guides, each one extracted from systems
+fifteen principles plus twenty-three operational guides, each one extracted from systems
 already running in production rather than written from first principles. It ships three
 ways: as documentation you read; as installable agent plugins, so a coding agent reads
 the standard instead of re-deriving it from whatever code it happens to see; and as
@@ -75,6 +75,11 @@ with the constitution, then pull in the guides the work touches.
   selling the SaaS as self-hosted: the vendor-pushes-images / customer-runs-everything
   split, the per-client registry, the IaC you hand over, and the one-flag product
   switch.
+- [`docs/guides/SELF-HOSTED-RUNNERS.md`](docs/guides/SELF-HOSTED-RUNNERS.md) — running
+  GitHub Actions on local runners instead of GitHub-hosted ones: one repository variable
+  as the switch, the jobs that must stay on cloud, runner host setup with re-minted
+  registration tokens, and the security rules for running pull-request code on your
+  own machine.
 
 **Building services and clients**
 
