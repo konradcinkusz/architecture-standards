@@ -94,7 +94,7 @@ generic ones:
 | HTTP surface | Endpoint group and trust level, validation filter, list clamping ([`SERVICE-API-PATTERNS.md`](../guides/SERVICE-API-PATTERNS.md) §2–§4) |
 | Anti-corruption boundary | Any external shape entering the domain is translated at the edge (P11) |
 | Cross-service calls | Resilience handler, explicit timeouts, bearer forwarding (`SERVICE-API-PATTERNS.md` §5) |
-| Frontend / BFF | Product surface changes go through [`FRONTEND-BFF.md`](../guides/FRONTEND-BFF.md) — cookie sessions, `/api/config`, the proxy route |
+| Frontend / BFF | Product surface changes go through [`FRONTEND-BFF.md`](../guides/FRONTEND-BFF.md) for Next.js — cookie sessions, `/api/config`, the proxy route — or [`BLAZOR-WEB-APP.md`](../guides/BLAZOR-WEB-APP.md) for a Blazor Web App — render mode, typed clients, `InvokeAsync`, origin guard |
 | AppHost | A new service or resource is declared with `WithReference`, `WaitFor` and `WithHttpHealthCheck` (P1) |
 
 **Load the guide for every domain in that list**, and say which ones you loaded. This is

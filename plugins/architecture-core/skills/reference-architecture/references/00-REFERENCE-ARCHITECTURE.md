@@ -45,7 +45,7 @@ flowchart TB
     subgraph Services["Runtime — one container per service"]
         S1["Service A<br/><i>+ ServiceDefaults</i>"]
         S2["Service B<br/><i>+ ServiceDefaults</i>"]
-        S3["Frontend<br/><i>Next.js standalone</i>"]
+        S3["Frontend<br/><i>Next.js standalone or Blazor Web App</i>"]
     end
 
     subgraph Shared["Shared kernel — thin, plumbing only"]
@@ -160,7 +160,8 @@ The catalogue of plumbing a kernel *should* offer beyond the table above — rat
 limiting, validation filters, hardened cross-service HTTP, the migration completion
 signal — is in [`docs/guides/SERVICE-API-PATTERNS.md`](https://github.com/konradcinkusz/architecture-standards/blob/main/docs/guides/SERVICE-API-PATTERNS.md);
 its frontend counterpart (the shared web-kit workspace package) is in
-[`docs/guides/FRONTEND-BFF.md`](https://github.com/konradcinkusz/architecture-standards/blob/main/docs/guides/FRONTEND-BFF.md) §7.
+[`docs/guides/FRONTEND-BFF.md`](https://github.com/konradcinkusz/architecture-standards/blob/main/docs/guides/FRONTEND-BFF.md) §7, and for a Blazor frontend in
+[`docs/guides/BLAZOR-WEB-APP.md`](https://github.com/konradcinkusz/architecture-standards/blob/main/docs/guides/BLAZOR-WEB-APP.md) §11.
 
 <a name="p2a"></a>
 
@@ -301,7 +302,10 @@ ENTRYPOINT ["dotnet", "<Service>.dll"]
   does not cross a major; CopilotScope currently violates this (review §3.1) and it is a
   startup failure, not a warning.
 - **Node frontends** use the three-stage `deps → builder → runner` pattern with Next.js
-  `standalone` output and a non-root `nextjs` user.
+  `standalone` output and a non-root `nextjs` user. A **Blazor Web App** is built like any
+  other .NET service (SDK stage, runtime stage, non-root) with no Node stage, and is kept
+  running (`min_machines_running = 1`) because its open pages live in server memory
+  ([`BLAZOR-WEB-APP.md`](https://github.com/konradcinkusz/architecture-standards/blob/main/docs/guides/BLAZOR-WEB-APP.md) §14).
   > `<saas>.Web.Portal/Dockerfile`
 - **Native dependencies are declared, not assumed** — e.g. `libfontconfig1` for QuestPDF
   in `<saas>.AgenticService/Dockerfile`.
@@ -689,7 +693,7 @@ moving target.
 - *2026-08-14* — eleven operational guides added, extracted from a full sweep of
   the reference SaaS (docs, code, infra/CI) for generic knowledge the standards lacked:
   `PAYMENTS-AND-MONETIZATION`, `IDENTITY-AND-ACCOUNTS`, `SERVICE-API-PATTERNS`,
-  `FRONTEND-BFF`, `BROWSER-EXTENSIONS`, `TESTING-STRATEGY`, `SECURITY-REVIEW`,
+  `FRONTEND-BFF`, `BLAZOR-WEB-APP`, `BROWSER-EXTENSIONS`, `TESTING-STRATEGY`, `SECURITY-REVIEW`,
   `REPO-BASELINE`, `PR-PREVIEW-ENVIRONMENTS`, `PRIVATE-CLOUD-DELIVERY`,
   `AZURE-OPERATIONS`. Cross-references added from P2, P5, P7, P12, P13 and P14; P14
   given the stale-README corollary; three deviations recorded in the reference SaaS's

@@ -12,7 +12,7 @@
     {
       "name": "architecture-core",
       "description": "The architectural constitution (P1-P15), the review/modernize/recover session playbook, the repository baseline, the greenfield initializer that scaffolds an empty repo into a compliant containerized application, and the GitHub Pages one-pager generator. Install this one first; the other plugins assume it.",
-      "version": "1.5.0",
+      "version": "1.6.0",
       "author": {
         "name": "Konrad Cinkusz",
         "url": "https://github.com/konradcinkusz"
@@ -53,8 +53,8 @@
     },
     {
       "name": "services-and-clients",
-      "description": "Recurring patterns inside services and the clients that call them: HTTP/API plumbing, identity, payments, Next.js frontends and BFFs, and browser extensions.",
-      "version": "1.4.0",
+      "description": "Recurring patterns inside services and the clients that call them: HTTP/API plumbing, identity, payments, Next.js and Blazor frontends and BFFs, and browser extensions.",
+      "version": "1.5.0",
       "author": {
         "name": "Konrad Cinkusz",
         "url": "https://github.com/konradcinkusz"
@@ -67,6 +67,7 @@
         "oauth",
         "payments",
         "nextjs",
+        "blazor",
         "bff",
         "browser-extension"
       ],
@@ -115,7 +116,7 @@
     {
       "name": "ticket-delivery",
       "description": "The per-ticket delivery procedure as phases you invoke: ticket analysis against an analysis document you refine run by run, the generation of a self-contained master prompt from it, the implementation phase itself, the review of a pull request against the ticket, and a feedback phase that lands a correction in the artifact that owns it. Unlike the other plugins, which are rules you consult, these are procedures you run — expressed in the constitution's terms rather than a generic checklist.",
-      "version": "2.1.0",
+      "version": "2.2.0",
       "author": {
         "name": "Konrad Cinkusz",
         "url": "https://github.com/konradcinkusz"

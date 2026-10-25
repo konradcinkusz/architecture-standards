@@ -60,7 +60,7 @@ their own user store and do not mint their own tokens.
 Repo:      <TARGET_REPO>
 Context:   <1–2 sentences: what it is, live/legacy/greenfield, and why now —
             e.g. periodic checkpoint, standards moved, authservice moved>
-Frontend:  Next.js — the estate default (FRONTEND-BFF) — unless overridden: <override?>
+Frontend:  Next.js — the estate default (FRONTEND-BFF) — or Blazor Web App (BLAZOR-WEB-APP): <Next.js | Blazor>
 Azure:     <yes — prepare the provisioning job in parallel | no — skip 6>
 ──────────────────────────────────────────────────────────────────────────
 
@@ -82,7 +82,12 @@ The job, in phases. Do not start a phase until the previous one is verified
    fly.toml live in <TARGET_REPO>'s infrastructure, its source is never
    modified.
 
-3. FRONTEND — bring the web application inside the standards: one Next.js
+3. FRONTEND — bring the web application inside the standards. For
+   `Frontend: Blazor`, one Blazor Web App with interactive server rendering is
+   the product surface, following BLAZOR-WEB-APP (render mode and styles
+   bundle pinned, typed clients through service discovery, the origin guard,
+   cookie auth on the host, a stateful-hosting plan); the rest of this phase
+   describes the Next.js option. For Next.js, one Next.js
    app is the product surface, consuming the system's services per
    FRONTEND-BFF — HttpOnly cookie sessions, runtime config via
    `/api/config` (never `NEXT_PUBLIC_*` for addresses), one catch-all proxy
@@ -91,8 +96,9 @@ The job, in phases. Do not start a phase until the previous one is verified
    rather than only decoding it. If this system has more than one frontend
    app, they share one pnpm workspace and one `@<org>/web-kit` package for
    the BFF routes, auth/session context and UI primitives — the frontend
-   ServiceDefaults (§7). If the current frontend is not Next.js, plan the
-   migration in phase 1's documents and execute it here.
+   ServiceDefaults (§7). If the current frontend is neither the chosen framework nor
+   close to it (for example Blazor WebAssembly, which is not supported), plan
+   the migration in phase 1's documents and execute it here.
 
 4. UI/UX DOCUMENTATION — write <TARGET_REPO>/docs/ux/UI-UX.md: the
    inventory of screens and user flows as they exist after phase 3, what
@@ -132,7 +138,7 @@ Ground rules:
 |---|---|
 | `<TARGET_REPO>` | The one repository this session may modify |
 | `Context` | What the repo is and why it is being looked at now: periodic checkpoint, standards moved, authservice moved, repo drifted |
-| `Frontend` | Leave as Next.js unless this system has a deliberate reason to differ — and then the override is recorded as a decision in phase 1, not made by omission |
+| `Frontend` | `Next.js` (the default) or `Blazor`. Choose with the table in `BLAZOR-WEB-APP.md` §1 and record the choice as a decision in phase 1, not by omission. A framework outside these two is a deviation, recorded the same way |
 | `Azure` | `yes` to prepare the parallel Azure provisioning job, `no` to skip phase 6 |
 
 ## What to attach to the session
@@ -156,7 +162,7 @@ All of it in the target repo:
    that every later phase traces back to.
 2. authservice as the only identity provider — no parallel user store, no locally
    minted tokens.
-3. One Next.js web application as the product surface, following FRONTEND-BFF.
+3. One web application as the product surface — Next.js following FRONTEND-BFF, or a Blazor Web App following BLAZOR-WEB-APP, per the `Frontend` field.
 4. `docs/ux/UI-UX.md` — screens and flows as built, what changed, and the ranked
    backlog of what remains.
 5. A live deployment on Fly.io with one end-to-end user journey demonstrated against
@@ -165,13 +171,16 @@ All of it in the target repo:
 
 ## A note on the frontend framework
 
-[`FRONTEND-BFF.md`](https://github.com/konradcinkusz/architecture-standards/blob/main/docs/guides/FRONTEND-BFF.md) is not framework-agnostic — it opens by
-stating the estate's frontends are Next.js apps, and its rules are written at that
-level of detail: `NEXT_PUBLIC_*` variables are baked at build time so runtime config
-goes through a dynamic `/api/config` route instead, the shared kernel is a pnpm
-workspace package, and the reference Dockerfile is Next.js's `deps → builder → runner`
-staged build producing a `standalone` output (`FLY-IO-DEPLOYMENT.md` §5). Phase 3
-targets Next.js because that is the documented, evidenced standard, not a default
-picked for this prompt. The `Frontend` field exists for the rare target with a
-deliberate reason to differ — recorded as a decision in phase 1, same as any other
-deviation — not as a menu of equally supported options.
+Two product surfaces are documented and supported, and the `Frontend` field picks one.
+[`FRONTEND-BFF.md`](https://github.com/konradcinkusz/architecture-standards/blob/main/docs/guides/FRONTEND-BFF.md) is the Next.js option and is not
+framework-agnostic: `NEXT_PUBLIC_*` variables are baked at build time so runtime config
+goes through a dynamic `/api/config` route, the shared kernel is a pnpm workspace package,
+and the reference Dockerfile is Next.js's `deps → builder → runner` staged build producing
+a `standalone` output (`FLY-IO-DEPLOYMENT.md` §5). [`BLAZOR-WEB-APP.md`](https://github.com/konradcinkusz/architecture-standards/blob/main/docs/guides/BLAZOR-WEB-APP.md)
+is the Blazor option: interactive server rendering, where the circuit is the BFF, there is
+no Node toolchain, and open pages live in server memory (so the web app is kept running
+rather than scaled to zero). Both keep one invariant — no token or backend address in the
+browser. Next.js stays the default for public, horizontally scaled products; Blazor fits
+bounded audiences and .NET-only teams (`BLAZOR-WEB-APP.md` §1 has the comparison). Blazor
+WebAssembly is not supported. Any other framework is a deviation, recorded as a decision in
+phase 1 like any other.

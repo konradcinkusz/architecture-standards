@@ -14,7 +14,7 @@
   "plugins": [
     {
       "name": "architecture-core",
-      "version": "1.5.0",
+      "version": "1.6.0",
       "description": "The architectural constitution (P1-P15), the review/modernize/recover session playbook, the repository baseline, the greenfield initializer that scaffolds an empty repo into a compliant containerized application, and the GitHub Pages one-pager generator. Install this one first; the other plugins assume it.",
       "keywords": [
         "architecture",
@@ -154,14 +154,15 @@
     },
     {
       "name": "services-and-clients",
-      "version": "1.4.0",
-      "description": "Recurring patterns inside services and the clients that call them: HTTP/API plumbing, identity, payments, Next.js frontends and BFFs, and browser extensions.",
+      "version": "1.5.0",
+      "description": "Recurring patterns inside services and the clients that call them: HTTP/API plumbing, identity, payments, Next.js and Blazor frontends and BFFs, and browser extensions.",
       "keywords": [
         "api",
         "identity",
         "oauth",
         "payments",
         "nextjs",
+        "blazor",
         "bff",
         "browser-extension"
       ],
@@ -196,6 +197,15 @@
             "P6"
           ],
           "description": "Use when building a Next.js frontend or its backend-for-frontend. The browser talks only to its own origin: runtime configuration so one image serves every environment, HttpOnly cookie sessions instead of a token API, edge middleware that verifies rather than merely decodes, the catch-all proxy with a candidate ladder, entitlement UX, and the shared web kernel whose absence is the costliest finding in the worked example."
+        },
+        {
+          "name": "blazor-web-app",
+          "source": "docs/guides/BLAZOR-WEB-APP.md",
+          "principles": [
+            "P2",
+            "P6"
+          ],
+          "description": "Use when building a Blazor Web App frontend (interactive server rendering) as the product surface instead of Next.js, or when choosing between the two. Why the circuit is the BFF, the root components and render mode, the dependency budget, typed clients with service discovery and one resilience handler, SSE consumed server-side, InvokeAsync and disposal, cookie auth mapped onto Blazor, the origin guard for websockets and cross-site posts, a frozen CSS token contract, logic kept out of markup, static export with HtmlRenderer, bUnit/Playwright testing with the circuit handshake, and hosting a stateful frontend."
         },
         {
           "name": "browser-extensions",
@@ -322,7 +332,7 @@
     },
     {
       "name": "ticket-delivery",
-      "version": "2.1.0",
+      "version": "2.2.0",
       "description": "The per-ticket delivery procedure as phases you invoke: ticket analysis against an analysis document you refine run by run, the generation of a self-contained master prompt from it, the implementation phase itself, the review of a pull request against the ticket, and a feedback phase that lands a correction in the artifact that owns it. Unlike the other plugins, which are rules you consult, these are procedures you run — expressed in the constitution's terms rather than a generic checklist.",
       "keywords": [
         "ticket",
