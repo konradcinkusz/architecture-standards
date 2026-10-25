@@ -33,6 +33,7 @@ domain the repo touches rather than reconstructing its patterns:
 | an identity service, OAuth, account lifecycle | `identity-and-accounts` |
 | payments, subscriptions, quotas | `payments-and-monetization` |
 | a Next.js frontend or BFF | `frontend-bff` |
+| a Blazor Web App frontend, or Next.js vs Blazor | `blazor-web-app` |
 | a browser extension | `browser-extensions` |
 | LLM-backed features or agents | `ai-evals` |
 | test suites | `testing-strategy`, `e2e-acceptance-testing` |

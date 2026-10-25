@@ -9,6 +9,10 @@ proxies the estate. The blueprint's ServiceDefaults rule (P2) has a frontend
 counterpart, stated at the end, and its absence is the most expensive finding in the
 worked example.
 
+This guide is the Next.js option. A system whose team and audience fit a Blazor Web App
+uses [`BLAZOR-WEB-APP.md`](https://github.com/konradcinkusz/architecture-standards/blob/main/docs/guides/BLAZOR-WEB-APP.md) instead, which states when to choose which
+(§1 there) and keeps the same invariant: no token or backend address in the browser.
+
 **Contents**
 
 1. [The model in one paragraph](#1-the-model-in-one-paragraph)

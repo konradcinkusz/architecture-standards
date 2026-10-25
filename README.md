@@ -5,7 +5,7 @@
 # architecture-standards
 
 A written architecture constitution for .NET Aspire services on Fly.io and Azure —
-fifteen principles plus twenty-three operational guides, each one extracted from systems
+fifteen principles plus twenty-four operational guides, each one extracted from systems
 already running in production rather than written from first principles. It ships three
 ways: as documentation you read; as installable agent plugins, so a coding agent reads
 the standard instead of re-deriving it from whatever code it happens to see; and as
@@ -101,6 +101,12 @@ with the constitution, then pull in the guides the work touches.
 - [`docs/guides/FRONTEND-BFF.md`](docs/guides/FRONTEND-BFF.md) — browser talks only to
   its own origin: runtime configuration, HttpOnly cookie sessions, verifying edge
   middleware, the catch-all proxy with a candidate ladder, and the shared web kernel.
+  This is the Next.js option.
+- [`docs/guides/BLAZOR-WEB-APP.md`](docs/guides/BLAZOR-WEB-APP.md) — the other supported
+  product surface: a Blazor Web App with interactive server rendering. When to choose it
+  over Next.js, the render-mode and styles-bundle pins, typed clients through service
+  discovery, SSE consumed server-side, `InvokeAsync` and disposal, the origin guard for
+  websockets, a token-and-test style contract, static export, and hosting a stateful frontend.
 - [`docs/guides/BROWSER-EXTENSIONS.md`](docs/guides/BROWSER-EXTENSIONS.md) — the
   fourth client: MV3 patterns, web-to-extension session handoff, per-site adapters,
   CI packaging per environment, store submission, and self-distribution with release

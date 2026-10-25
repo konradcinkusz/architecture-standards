@@ -378,6 +378,13 @@ own origin; everything else follows from that.
 - The Dockerfile is the three-stage `deps → builder → runner` pattern with `standalone`
   output and a non-root `nextjs` user (P6).
 
+**Blazor instead.** This template scaffolds Next.js only. If the owner asks for a Blazor Web
+App, that is a supported choice ([`BLAZOR-WEB-APP.md`](https://github.com/konradcinkusz/architecture-standards/blob/main/docs/guides/BLAZOR-WEB-APP.md) §1) but
+not one this procedure generates: stop (below), confirm, record the choice in `docs/adr/`,
+and replace the `web/` workspace with a `src/<slug>.Web` project laid out per that guide's
+§4, registered in the AppHost and the solution, with the render-mode, styles-link and origin
+guard tests of its §3, §8 and §13 in the first commit.
+
 ## 7. Containers and the Fly.io topology
 
 **One container per service, multi-stage** (P6): project files copied and restored before
@@ -549,8 +556,8 @@ non-goals — so that scope creep has something to fail against:
 
 - the repository is not empty (§2);
 - the name does not match `^[a-z][a-z0-9-]*$`, or no name can be resolved (§1);
-- you are asked for a framework other than the ones the standards evidence — Next.js and
-  .NET Aspire are the documented standard, and a different choice is a recorded decision in
+- you are asked for a framework other than Next.js (scaffolded) and .NET Aspire — a Blazor
+  Web App is documented but not scaffolded (§6), and anything else is a recorded decision in
   `docs/adr/`, not a silent substitution;
 - a standard and the request genuinely conflict. Record it as a deviation with its reason;
   a deviation you keep is a decision, and one you leave silent is a finding somebody else

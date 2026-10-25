@@ -23,7 +23,7 @@ principles**. Load `reference-architecture` (P1–P15 plus the compliance checkl
 then `architecture-session-playbook`, then the guide for each domain the migration will
 reach — `fly-io-deployment` before anything that ends in "deploy it",
 `service-api-patterns` for service plumbing, `identity-and-accounts`,
-`payments-and-monetization`, `frontend-bff`, `browser-extensions`,
+`payments-and-monetization`, `frontend-bff`, `blazor-web-app`, `browser-extensions`,
 `azure-ai-foundry-agents`, `azure-operations`, `testing-strategy` as applicable.
 
 ## Mode check
